@@ -6,3 +6,28 @@ Hide color mode toggle in small viewports
     display: none;
   }
 }
+
+.centeredNavbar {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  padding: 0 1rem;
+}
+
+.navbarItemsCenter {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-grow: 1;
+  gap: 1rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* 移动设备适配 */
+@media (max-width: 768px) {
+  .navbarItemsCenter {
+    justify-content: space-between;
+    gap: 0.5rem;
+  }
+}
