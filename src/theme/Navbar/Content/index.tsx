@@ -15,7 +15,7 @@ function useNavbarItems() {
   return useThemeConfig().navbar.items as NavbarItemConfig[]
 }
 
-function NavbarItems({ items }: { items: NavbarItemConfig[] }): JSX.Element {
+function NavbarItems({ items }: { items: NavbarItemConfig[] }) {
   return (
     <>
       {items.map((item, i) => (
@@ -44,14 +44,16 @@ function NavbarContentLayout({
   right: ReactNode
 }) {
   return (
-    <div className="navbar__inner">
-      <div className="navbar__items">{left}</div>
-      <div className="navbar__items navbar__items--right">{right}</div>
+    <div className={`navbar__inner ${styles.centeredNavbar}`}>
+      <div className={`navbar__items ${styles.navbarItemsCenter}`}>
+        {left}
+        {right}
+      </div>
     </div>
   )
 }
 
-export default function NavbarContent(): JSX.Element {
+export default function NavbarContent() {
   const mobileSidebar = useNavbarMobileSidebar()
 
   const items = useNavbarItems()
