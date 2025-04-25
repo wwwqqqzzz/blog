@@ -1,11 +1,11 @@
 export const projects: Project[] = [
   {
-    title: '愧怍的小站',
-    description: '🦖 基于 Docusaurus 静态网站生成器实现个人博客',
-    preview: '/img/project/blog.png',
-    website: 'https://kuizuo.cn',
-    source: 'https://github.com/kuizuo/blog',
-    tags: ['opensource', 'design', 'favorite'],
+    title: '王起哲的博客',
+    description: '基于 Docusaurus 静态站点生成器实现',
+    preview: require('./showcase/blog.png'),
+    website: 'https://wangqizhe.cn',
+    source: 'https://github.com/wwwqqqzzz/blog',
+    tags: ['opensource', 'favorite', 'design'],
     type: 'web',
   },
   {
