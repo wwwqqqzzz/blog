@@ -1,14 +1,14 @@
 {
   "homepage.hero.greet": {
-    "message": "Hello! I'm ",
+    "message": "Hello! I am",
     "description": "hero greet"
   },
   "homepage.hero.name": {
-    "message": "Kuizuo",
-    "description": "hero name"
+    "message": "Wang Qizhe",
+    "description": "my name"
   },
   "homepage.hero.text": {
-    "message": "Here I will share the problems and solutions encountered by various technology stacks, take you to understand the latest technology stacks and how to apply them in actual development, and hope that my development experience will inspire you",
+    "message": "Here I share solutions to problems encountered with various tech stacks, introduce you to the latest technologies and their practical applications, and hope my development experiences will inspire you.",
     "description": "hero text"
   },
   "hompage.hero.introduce": {

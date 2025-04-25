@@ -2,7 +2,7 @@
 id: docusaurus-config
 slug: /docusaurus-config
 title: 配置文件
-authors: kuizuo
+authors: wqz
 ---
 
 ## docusaurus.config.ts
@@ -13,18 +13,18 @@ authors: kuizuo
 
 ```typescript title='docusaurus.config.ts' icon='logos:docusaurus'
 const config: Config = {
-  title: '愧怍的小站',
-  url: 'https://kuizuo.cn',
+  title: '王起哲的小站',
+  url: 'https://20030727.xyz',
   baseUrl: '/',
   favicon: 'img/favicon.ico',
-  organizationName: 'kuizuo',
+  organizationName: 'wangqizhe',
   projectName: 'blog',
   themeConfig: {
     image: 'img/logo.png',
     metadata: [
       {
         name: 'keywords',
-        content: '愧怍, kuizuo, blog, javascript, typescript, node, react, vue, web, 前端, 后端',
+        content: '王起哲, wqz, blog, javascript, typescript, node, react, vue, web, 前端, 后端',
       },
     ],
     // ...
@@ -47,7 +47,7 @@ export default config
 
 ### 基本信息
 
-站点名和作者名只需要搜索 **愧怍** 或 **kuizuo** 便能找到关键位置，将其更改为你的便可。
+站点名和作者名只需要搜索 **王起哲** 或 **wqz** 便能找到关键位置，将其更改为你的便可。
 
 ### 关于我 页面
 
