@@ -1,89 +1,77 @@
 <h2 align="center">
-王起哲的个人博客
+王起哲的个人博客站点
 </h2>
 <p align="center">
-<a href="https://vercel.com/new/clone?repository-url=https://github.com/kuizuo/blog/tree/main&project-name=blog&repo-name=blog" rel="nofollow"><img src="https://vercel.com/button"></a>
-<a href="https://app.netlify.com/start/deploy?repository=https://github.com/kuizuo/blog" rel="nofollow"><img src="https://www.netlify.com/img/deploy/button.svg"></a>
-<a href="https://stackblitz.com/github/kuizuo/blog" rel="nofollow"><img src="https://developer.stackblitz.com/img/open_in_stackblitz.svg"></a>
+<a href="https://vercel.com/new/clone?repository-url=https://github.com/wangqizhe/blog/tree/main&project-name=blog&repo-name=blog" rel="nofollow"><img src="https://vercel.com/button"></a>
+<a href="https://app.netlify.com/start/deploy?repository=https://github.com/wangqizhe/blog" rel="nofollow"><img src="https://www.netlify.com/img/deploy/button.svg"></a>
+<a href="https://stackblitz.com/github/wangqizhe/blog" rel="nofollow"><img src="https://developer.stackblitz.com/img/open_in_stackblitz.svg"></a>
 </p>
 
 ## 👋 介绍
 
-在这里我会分享各类技术栈所遇到问题与解决方案，带你了解最新的技术栈以及实际开发中如何应用，并希望我的开发经历对你有所启发。
+这是我的个人技术博客，在这里我会分享我的学习经历、技术笔记、项目经验以及生活感悟。希望通过记录自己的成长历程，既能巩固知识，也能帮助到有相似学习路径的朋友们。
 
-如果你想要搭建一个类似的站点，可直接 [Fork](https://github.com/kuizuo/blog/fork) 本仓库使用，或者通过 [StackBlitz](https://stackblitz.com/github/kuizuo/blog) 在线运行本项目，通过 [Vercel](https://vercel.com/new/clone?repository-url=https://github.com/kuizuo/blog/tree/main&project-name=blog&repo-name=blog) 一键部署。
+本博客基于Docusaurus构建，如果你也想搭建类似的站点，可以直接Fork本仓库，或通过上方的按钮快速部署。
 
 ## ✨ 特性
 
-- 🦖 **Docusaurus** - 基于 Docusaurus，提供强大的文档生成和博客功能
-- ✍️ **Markdown** - 写作方便，Markdown
-- 🎨 **Beautiful** - 整洁，美观，阅读体验优先
-- 🖥️ **PWA** - 支持 PWA，可安装，离线可用
-- 🌐 **i18n** - 支持国际化
-- 💯 **SEO** - 搜索引擎优化，易于收录
-- 📊 **谷歌分析** - 支持 Google Analytics
-- 🔎 **全文搜索** - 支持 [Algolia DocSearch](https://github.com/algolia/docsearch)
-- 🚀 **持续集成** - 支持 CI/CD，自动部署更新内容
-- 🏞️ **首页视图** - 显示最新博客文章、项目展示，个人特点，技术栈等
-- 🗃️ **博文视图** - 不同的博文视图，列表、宫格
-- 🌈 **资源导航** - 收集并分享有用、有意思的资源
-- 📦 **项目展示** - 展示你的项目，可用作于作品集
+- 🦖 **Docusaurus** - 基于React的静态网站生成器，简单易用
+- ✍️ **Markdown** - 使用Markdown轻松创作内容
+- 🎨 **美观设计** - 简洁现代的UI设计，注重阅读体验
+- 🖥️ **PWA支持** - 支持PWA，可安装到桌面，离线可用
+- 🔍 **全站搜索** - 快速找到你需要的内容
+- 📱 **响应式** - 完美适配各种设备尺寸
+- 🌙 **深色模式** - 支持浅色/深色主题切换
+- 🚀 **快速部署** - 支持Vercel、Netlify等平台一键部署
+- 📊 **访问统计** - 集成访问数据分析功能
 
-我的主题魔改实现：[Docusaurus 主题魔改](https://kuizuo.cn/docs/docusaurus-guides)
+## 📚 内容分类
+
+- **开发笔记** - 前后端开发技术、问题解决方案
+- **项目分享** - 个人项目展示与技术细节分析
+- **学习资源** - 优质学习资料整理与推荐
+- **生活随笔** - 关于技术人生活的思考与记录
 
 ## :wrench: 技术栈
 
-- Docusaurus
-- TailwindCSS
-- Framer motion & magicui 
+- **前端框架**: React, TypeScript
+- **网站生成**: Docusaurus v3
+- **样式方案**: TailwindCSS
+- **动画效果**: Framer Motion
+- **部署平台**: Vercel/Netlify
 
-## 📊 目录结构
-
-```bash
-├── blog                           # 博客
-│   ├── first-blog.md
-├── docs                           # 文档/笔记
-│   └── doc.md
-├── data
-│   ├── feature.tsx                # 特点
-│   ├── friends.tsx                # 友链
-│   ├── projects.tsx               # 项目
-│   ├── skills.tsx                 # 技术栈
-│   └── social.ts                  # 社交链接
-├── i18n                           # 国际化
-├── src
-│   ├── components                 # 组件
-│   ├── css                        # 自定义CSS
-│   ├── pages                      # 自定义页面
-│   ├── plugin                     # 自定义插件
-│   └── theme                      # 自定义主题组件
-├── static                         # 静态资源文件
-│   └── img                        # 静态图片
-├── docusaurus.config.ts           # 站点的配置信息
-├── sidebars.ts                    # 文档的侧边栏
-├── package.json
-├── tsconfig.json
-└── pnpm-lock.yaml
-```
-
-## 📥 运行
+## 🚀 本地运行
 
 ```bash
-git clone https://github.com/kuizuo/blog.git
+# 克隆仓库
+git clone https://github.com/wangqizhe/blog.git
+
+# 进入项目目录
 cd blog
-pnpm install
-pnpm start
+
+# 安装依赖
+npm install
+
+# 启动开发服务器
+npm start
 ```
 
-构建
+## 📦 构建部署
 
 ```bash
-pnpm build
+# 构建静态文件
+npm run build
+
+# 本地预览构建结果
+npm run serve
 ```
 
-## 📷 截图
+## 📫 联系我
 
-<img width="1471" alt="Live Demo" src="https://github.com/kuizuo/blog/blob/main/static/img/og.png?raw=true">
+如果你有任何问题或建议，欢迎通过以下方式联系我：
+
+- 📧 Email: [您的邮箱]
+- 💬 GitHub Issues: [提交Issue](https://github.com/wangqizhe/blog/issues)
 
 ## 📝 许可证
 
