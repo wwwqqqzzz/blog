@@ -6,6 +6,7 @@ authors: wqz
 tags: [浏览器自动化, AI, DeepSeek, Browser-Use, WebUI, Playwright, Python]
 keywords: [浏览器自动化, AI, DeepSeek, Browser-Use, WebUI, Playwright, Python, Gradio, 自动化测试]
 description: 一份详细指南，介绍如何结合 Browser-Use WebUI、DeepSeek AI 和 Playwright 实现浏览器自动化操作，包括环境搭建、项目配置和常见问题解决。
+image: https://cdn.jsdelivr.net/gh/wwwqqqzzz/Image/img/1746228260123-2165db07cd85e2b30f4827a6c3c18a70.png
 ---
 
 <!-- truncate -->

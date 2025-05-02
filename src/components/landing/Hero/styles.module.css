@@ -1,147 +1,263 @@
 /* hero */
 .hero {
-  @apply h-[calc(100vh-60px)] w-screen max-w-full m-0 flex items-center relative;
-  letter-spacing: 0.04em;
-  padding: 0;
-}
-
-.intro {
-  @apply p-4 relative z-10;
-  margin-left: 15%;
-  width: 30%;
-}
-
-.intro > p {
-  @apply my-6 text-[#6e7b8c] text-justify text-base leading-8;
-  letter-spacing: -0.04em;
-  text-shadow: 0 0 #8c99ab;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - var(--ifm-navbar-height));
+  padding: 4rem 2rem;
+  overflow: hidden;
+  background: linear-gradient(to bottom, rgba(80, 117, 177, 0.1), rgba(80, 117, 177, 0.05));
 }
 
 .hero_text {
-  font-size: calc(1.5em + 1.2vw);
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.name {
+  font-size: 3rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #5075B1 0%, #8BA8D9 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  line-height: 1.2;
+}
+
+.intro {
+  position: relative;
+  z-index: 1;
+  max-width: 800px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.intro p {
+  font-size: 1.2rem;
+  line-height: 1.8;
+  margin: 2rem 0;
+  color: var(--ifm-color-emphasis-700);
+}
+
+.decorative_icons {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 1.5rem;
+  margin-top: 3rem;
+  width: 100%;
+  max-width: 600px;
+  padding: 0 1rem;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.icon_wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 12px;
+  background: rgba(80, 117, 177, 0.1);
+  backdrop-filter: blur(8px);
+  transition: all 0.3s ease;
+}
+
+.tech_icon {
+  width: 2rem;
+  height: 2rem;
+}
+
+.grid_background {
+  @apply absolute inset-0 z-0;
+  background-image: 
+    linear-gradient(rgba(80, 117, 177, 0.15) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(80, 117, 177, 0.15) 1px, transparent 1px);
+  background-size: 32px 32px;
+  mask-image: linear-gradient(to bottom, transparent 0%, black 20%, black 80%, transparent 100%);
+}
+
+@media (max-width: 768px) {
+  .name {
+    font-size: 2.5rem;
+  }
+
+  .intro p {
+    font-size: 1rem;
+  }
+
+  .decorative_icons {
+    grid-template-columns: repeat(5, 1fr);
+    gap: 1rem;
+    padding: 0 0.5rem;
+  }
+
+  .icon_wrapper {
+    width: 3rem;
+    height: 3rem;
+  }
+
+  .tech_icon {
+    width: 1.8rem;
+    height: 1.8rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .decorative_icons {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.75rem;
+  }
+
+  .icon_wrapper {
+    width: 2.5rem;
+    height: 2.5rem;
+  }
+
+  .tech_icon {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
 }
 
 /* 编程语言图标样式 */
 .decorative_icons {
-  @apply mt-6 flex flex-wrap gap-4;
+  @apply mt-12 flex flex-wrap gap-4 justify-center;
   width: 100%;
-  max-width: 500px;
-}
-
-.icon_wrapper {
-  @apply flex items-center justify-center p-2 rounded-lg transition-all;
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(5px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  width: calc(20% - 16px);
+  max-width: 600px;
+  margin: 2rem auto;
 }
 
 .icon_wrapper:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-4px) scale(1.05);
+  background: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  border-color: rgba(255, 255, 255, 0.2);
 }
 
-.tech_icon {
-  @apply w-6 h-6;
+.icon_wrapper:hover .tech_icon {
+  transform: scale(1.1);
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
 }
 
 .name {
-  --lighting-size: 300px;
-  --lighting-color: var(--ifm-color-primary);
-  --lighting-highlight-color: var(--ifm-color-primary-lightest);
-
-  background-image: radial-gradient(
-    var(--lighting-highlight-color),
-    var(--lighting-color),
-    var(--lighting-color)
+  @apply relative inline-block font-bold;
+  background: linear-gradient(135deg, 
+    #60A5FA 0%,
+    #3B82F6 50%,
+    #2563EB 100%
   );
-  background-size: var(--lighting-size) var(--lighting-size);
-  background-repeat: no-repeat;
-  background-position-x: calc(
-    var(--x) - var(--mouse-x) - calc(var(--lighting-size) / 2)
-  );
-  background-position-y: calc(
-    var(--y) - var(--mouse-y) - calc(var(--lighting-size) / 2)
-  );
-  background-color: var(--lighting-color);
-  color: transparent;
+  -webkit-background-clip: text;
   background-clip: text;
+  color: transparent;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.background {
-  @apply relative w-full h-[90%] grid place-items-center items-start pt-40;
-  z-index: 5;
-  flex: 1;
+/* 鼠标跟随发光效果 */
+.grid_background::before {
+  content: '';
+  @apply absolute w-[64px] h-[64px] opacity-0;
+  background: radial-gradient(circle at center,
+    rgba(80, 117, 177, 0.4) 0%,
+    rgba(80, 117, 177, 0.2) 50%,
+    transparent 100%
+  );
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  transition: opacity 0.3s ease;
 }
 
-.background svg {
-  @apply w-[50%] h-auto;
+.hero:hover .grid_background::before {
+  opacity: 1;
 }
 
-.circle {
-  @apply absolute top-0 w-full h-full bg-gradient-to-r from-[rgb(150,255,244,0.81)] to-[rgb(0,71,252,0.81)] rounded-full opacity-30;
-  filter: blur(80px);
-  z-index: -1;
+/* 装饰性几何图形 */
+.geometric_shapes {
+  @apply absolute inset-0 z-0 overflow-hidden;
 }
 
-.box {
-  @apply absolute inline-flex justify-center items-center bg-transparent text-transparent backdrop-blur-[2px] shadow-[inset_1px_1px_5px_rgb(255,255,255,0.3),0_0_5px_rgb(0,0,0,0.2)] rounded-lg p-2 w-14 h-14;
+.geometric_shapes::before {
+  content: '';
+  @apply absolute w-[40vw] h-[40vw] rounded-full;
+  background: linear-gradient(135deg, rgba(80, 117, 177, 0.2), rgba(80, 117, 177, 0.3));
+  top: -20vw;
+  right: -20vw;
+  filter: blur(60px);
+}
+
+.geometric_shapes::after {
+  content: '';
+  @apply absolute w-[30vw] h-[30vw];
+  background: linear-gradient(135deg, rgba(80, 117, 177, 0.3), rgba(80, 117, 177, 0.2));
+  bottom: -15vw;
+  left: -15vw;
+  border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+  filter: blur(60px);
+}
+
+/* 暗色模式调整 */
+html[data-theme='dark'] .grid_background {
+  background-image: 
+    linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+}
+
+html[data-theme='dark'] .grid_background::before {
+  background: radial-gradient(circle at center,
+    rgba(96, 165, 250, 0.4) 0%,
+    rgba(59, 130, 246, 0.2) 50%,
+    transparent 100%
+  );
+}
+
+html[data-theme='dark'] .geometric_shapes::before {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(37, 99, 235, 0.2));
+}
+
+html[data-theme='dark'] .geometric_shapes::after {
+  background: linear-gradient(135deg, rgba(37, 99, 235, 0.2), rgba(59, 130, 246, 0.1));
 }
 
 @media (max-width: 1000px) {
   .hero {
-    @apply flex-col items-start h-auto;
+    @apply py-12;
   }
 
   .intro {
-    @apply p-0 pt-16 flex flex-col items-center;
-    margin-left: 0;
-    width: 100%;
+    @apply px-6;
   }
 
-  .background {
-    @apply w-full justify-self-center pt-16 h-full grid place-items-center;
-  }
-
-  .background svg {
-    @apply w-[75%] h-auto;
-  }
-
-  .box {
-    @apply w-12 h-12;
+  .hero_text {
+    @apply text-4xl md:text-5xl;
   }
 
   .decorative_icons {
-    @apply mt-6 justify-center;
-    max-width: 100%;
+    @apply gap-3;
   }
 
   .icon_wrapper {
-    width: calc(20% - 16px);
-    max-width: 60px;
+    @apply p-3;
+    width: calc(20% - 12px);
+    max-width: 70px;
   }
 }
 
 @media (max-width: 570px) {
   .hero {
-    @apply h-auto;
-  }
-
-  .background {
-    @apply pt-8;
-  }
-
-  .background svg {
-    @apply w-[85%] h-auto;
-  }
-
-  .box {
-    @apply w-8 h-8;
+    @apply py-8;
   }
 
   .intro {
-    @apply pt-8;
+    @apply px-4;
+  }
+
+  .hero_text {
+    @apply text-3xl;
+  }
+
+  .intro > p {
+    @apply text-base;
   }
 
   .decorative_icons {
@@ -149,11 +265,12 @@
   }
 
   .icon_wrapper {
+    @apply p-2;
     width: calc(20% - 8px);
-    max-width: 50px;
+    max-width: 55px;
   }
 
   .tech_icon {
-    @apply w-5 h-5;
+    @apply w-6 h-6;
   }
 }

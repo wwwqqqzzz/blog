@@ -4,6 +4,7 @@ import BlogSection from '../components/landing/BlogSection'
 import FeaturesSection from '../components/landing/FeaturesSection'
 import Hero from '../components/landing/Hero'
 import ProjectSection from '../components/landing/ProjectSection'
+import AIAssistantSection from '../components/landing/AIAssistantSection'
 import Particles from '../components/magicui/particles'
 
 export default function Home() {
@@ -22,6 +23,7 @@ export default function Home() {
           <div className="mx-auto max-w-7xl bg-background lg:px-8">
             <BlogSection />
             <ProjectSection />
+            <AIAssistantSection />
             <FeaturesSection />
           </div>
           <div
