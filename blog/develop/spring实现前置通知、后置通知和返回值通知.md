@@ -5,7 +5,8 @@ date: 2024-11-09
 authors: wqz
 tags: [Spring, AOP, 面向切面编程, 前置通知, 后置通知, 返回值通知, Java]
 keywords: [Spring, AOP, AspectJ, 前置通知, 后置通知, 返回值通知, Java, Spring Boot, 示例代码]
-description: 本文介绍 Spring 框架中面向切面编程（AOP）的实现，通过一个简单的案例展示了如何使用前置通知、后置通知和返回值通知，实现日志记录功能�?
+description: 本文介绍 Spring 框架中面向切面编程（AOP）的实现，通过一个简单的案例展示了如何使用前置通知、后置通知和返回值通知，实现日志记录功能。
+image: https://cdn.jsdelivr.net/gh/wwwqqqzzz/Image/img/1746227837019-eac3809ba8b68bb487696dbcdac53eb2.png
 ---
 
 <!-- truncate -->
@@ -14,7 +15,7 @@ description: 本文介绍 Spring 框架中面向切面编程（AOP）的实现�
 
 ## 介绍
 
-�?这个项目是一个基�?**Spring 框架** 的面向切面编程（AOP）案例，展示了如何通过 AOP 在方法执行的不同阶段（前置、后置、返回值）插入日志记录功能。项目通过实现一个简单的服务�?`UserinfoService`，并利用切面�?`LoggingAspect` 来分别在方法调用前后记录日志信息�?
+这个项目是一个基于 **Spring 框架** 的面向切面编程（AOP）案例，展示了如何通过 AOP 在方法执行的不同阶段（前置、后置、返回值）插入日志记录功能。项目通过实现一个简单的服务类 `UserinfoService`，并利用切面类 `LoggingAspect` 来分别在方法调用前后记录日志信息。
 
 
 
@@ -30,30 +31,30 @@ classDiagram
 
 ## 解释
 
-`MainApp` 依赖�?`AppConfig` 配置类，获取 `UserinfoService` Bean 并调用方法�?
+`MainApp` 依赖于 `AppConfig` 配置类，获取 `UserinfoService` Bean 并调用方法。
 
-`UserinfoService` 受到 `LoggingAspect` �?AOP 通知（切面）�?
+`UserinfoService` 受到 `LoggingAspect` 的 AOP 通知（切面）。
 
-`AppConfig` 配置类配置了 `UserinfoService` �?`LoggingAspect`�?
+`AppConfig` 配置类配置了 `UserinfoService` 和 `LoggingAspect`。
 
 ## 操作
 
 ### 1. 创建项目结构
 
-�?创建 `com.mtw.test` 包，并在该包中添加`Service.UserinfoService` 服务类和 `Aspect.LoggingAspect`切面类�?
+创建 `com.mtw.test` 包，并在该包中添加`Service.UserinfoService` 服务类和 `Aspect.LoggingAspect`切面类。
 
-�?同样我们需要一个配置类来告�?Spring 我们的应用有哪些包需要被扫描、哪些功能需要启�?所以创建一个`Config.AppConfig`配置�?以及一个`Test.MainApp`测试类来运行 `UserinfoService` 中的 `foo1` �?`foo2` 方法，并观察 `LoggingAspect` 的切面通知是否会执行�?
+同样我们需要一个配置类来告诉 Spring 我们的应用有哪些包需要被扫描、哪些功能需要启用，所以创建一个`Config.AppConfig`配置类，以及一个`Test.MainApp`测试类来运行 `UserinfoService` 中的 `foo1` 和 `foo2` 方法，并观察 `LoggingAspect` 的切面通知是否会执行。
 
 | 文件和文件夹结构示例                                         |                                                              |
 | ------------------------------------------------------------ | ------------------------------------------------------------ |
-| src<br/>└── main<br/>    └── java<br/>        └── com<br/>            └── mtw<br/>                └── test<br/>                    ├── aspect<br/>                    �?  └── LoggingAspect.java<br/>                    ├── service<br/>                    �?  └── UserinfoService.java<br/>                    ├── config<br/>                    �?  └── AppConfig.java<br/>                    └── Test<br/>                        └── MainApp.java | ![image-20241109211816260](https://cdn.jsdelivr.net/gh/wwwqqqzzz/Image/img/image-20241109211816260.png) |
+| src<br/>└── main<br/>    └── java<br/>        └── com<br/>            └── mtw<br/>                └── test<br/>                    ├── aspect<br/>                    │   └── LoggingAspect.java<br/>                    ├── service<br/>                    │   └── UserinfoService.java<br/>                    ├── config<br/>                    │   └── AppConfig.java<br/>                    └── Test<br/>                        └── MainApp.java | ![image-20241109211816260](https://cdn.jsdelivr.net/gh/wwwqqqzzz/Image/img/image-20241109211816260.png) |
 
-### 2. 定义 `UserinfoService` �?
+### 2. 定义 `UserinfoService` 类
 
-�?这是一个业务逻辑类，负责执行核心功能。在这里，我们定义了两个简单的业务方法�?
+这是一个业务逻辑类，负责执行核心功能。在这里，我们定义了两个简单的业务方法：
 
-- `foo1()`：打�?"foo1被调�?
-- `foo2()`：打�?"foo2被调�?
+- `foo1()`：打印"foo1被调用"
+- `foo2()`：打印"foo2被调用"
 
 ```mermaid
 classDiagram
@@ -73,27 +74,27 @@ import org.springframework.stereotype.Service;
 public class UserinfoService {
 
     public void foo1(){
-        System.out.println("foo1被调�?);
+        System.out.println("foo1被调用");
     }
 
     public void foo2(){
-        System.out.println("foo2被调�?);
+        System.out.println("foo2被调用");
     }
 
 }
 ```
 
-### 3. 定义切面�?`LoggingAspect`
+### 3. 定义切面类 `LoggingAspect`
 
-�?这是一个切面类，用于实�?AOP（面向切面编程）。切面中定义了多个通知方法，这些方法会�?`foo1()` �?`foo2()` 执行时被调用，记录不同阶段的日志�?
+这是一个切面类，用于实现 AOP（面向切面编程）。切面中定义了多个通知方法，这些方法会在 `foo1()` 和 `foo2()` 执行时被调用，记录不同阶段的日志。
 
-- **前置通知**：方法执行之前触发，记录 "前置通知"�?
-- **后置通知**：方法执行之后触发，记录 "后置通知"�?
-- **返回值通知**：方法执行完并返回值之后触发，记录 "返回值通知"�?
+- **前置通知**：方法执行之前触发，记录 "前置通知"。
+- **后置通知**：方法执行之后触发，记录 "后置通知"。
+- **返回值通知**：方法执行完并返回值之后触发，记录 "返回值通知"。
 
 > [!WARNING]
 >
-> 要使�?`@Aspect` 注解�?Spring AOP 功能，确保在项目�?`pom.xml` 文件中添加以�?Spring AOP 依赖�?
+> 要使用 `@Aspect` 注解和 Spring AOP 功能，确保在项目的 `pom.xml` 文件中添加以下 Spring AOP 依赖：
 >
 > ```xml
 > <dependency>
@@ -103,7 +104,7 @@ public class UserinfoService {
 > </dependency>
 > ```
 >
-> 此外，还需要以下依赖，以确�?Spring AOP 能正常工作：
+> 此外，还需要以下依赖，以确保 Spring AOP 能正常工作：
 >
 > ```xml
 > <dependency>
@@ -118,7 +119,7 @@ public class UserinfoService {
 > </dependency>
 > ```
 >
-> 这些依赖项允许项目使�?`@Aspect` 注解并支持面向切面的编程功能�?
+> 这些依赖项允许项目使用 `@Aspect` 注解并支持面向切面的编程功能。
 >
 > ![image-20241109204547684](https://cdn.jsdelivr.net/gh/wwwqqqzzz/Image/img/image-20241109204547684.png)
 
@@ -175,7 +176,7 @@ public class LoggingAspect {
 
 ### 4. 配置 Spring AOP
 
-�?这个类是 Spring 配置类，配置�?Spring AOP 和组件扫描。通过 `@EnableAspectJAutoProxy` 启用 AOP 功能，并通过 `@ComponentScan` 告诉 Spring 扫描 `com.mtw.test` 包下的所有组件（�?`UserinfoService` �?`LoggingAspect`）�?
+这个类是 Spring 配置类，配置了 Spring AOP 和组件扫描。通过 `@EnableAspectJAutoProxy` 启用 AOP 功能，并通过 `@ComponentScan` 告诉 Spring 扫描 `com.mtw.test` 包下的所有组件（如 `UserinfoService` 和 `LoggingAspect`）。
 
 ```mermaid
 classDiagram
@@ -207,7 +208,7 @@ public class Appconfig {
 
 ### 5. 测试代码
 
-�?这是一个简单的测试类，负责启动 Spring 容器并调�?`UserinfoService` 中的方法（`foo1()` �?`foo2()`）。通过运行这个类，你可以验证切面通知是否在方法执行的各个阶段被正确触发�?
+这是一个简单的测试类，负责启动 Spring 容器并调用 `UserinfoService` 中的方法（`foo1()` 和 `foo2()`）。通过运行这个类，你可以验证切面通知是否在方法执行的各个阶段被正确触发。
 
 ```mermaid
 classDiagram
@@ -243,13 +244,13 @@ public class MainApp {
 }
 ```
 
-### 6. 运行和输�?
+### 6. 运行和输出
 
 运行 `MainApp`，控制台输出应如下：
 
 | 运行结果                                                     |                                                              |
 | ------------------------------------------------------------ | ------------------------------------------------------------ |
-| 前置通知    <br/>foo1被调�? <br/>返回值通知  <br/>后置通知       <br/>----------                   <br/>前置通知    <br/>foo2被调�?br/>返回值通知<br/>后置通知 | ![image-20241109212509327](https://cdn.jsdelivr.net/gh/wwwqqqzzz/Image/img/image-20241109212509327.png) |
+| 前置通知    <br/>foo1被调用 <br/>返回值通知  <br/>后置通知       <br/>----------                   <br/>前置通知    <br/>foo2被调用<br/>返回值通知<br/>后置通知 | ![image-20241109212509327](https://cdn.jsdelivr.net/gh/wwwqqqzzz/Image/img/image-20241109212509327.png) |
 
 
 
@@ -273,6 +274,6 @@ sequenceDiagram
     L->>S: 后置通知 (After Advice)
 ```
 
-- **前置通知**：在目标方法执行前触发�?
-- **后置通知**：在目标方法执行后触发，无论是否抛出异常�?
-- **返回值通知**：在目标方法正常执行并返回后触发�?
+- **前置通知**：在目标方法执行前触发
+- **后置通知**：在目标方法执行后触发，无论是否抛出异常
+- **返回值通知**：在目标方法正常执行并返回后触发

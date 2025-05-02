@@ -9,7 +9,7 @@ const beian1 = ''
 
 const config: Config = {
   title: '王起哲的博客',
-  url: 'https://wangqizhe.cn',
+  url: 'https://20030727.xyz',
   baseUrl: '/',
   favicon: 'img/favicon.ico',
   organizationName: 'wwwqqqzzz',

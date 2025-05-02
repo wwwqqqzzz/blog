@@ -7,6 +7,7 @@ tags: [Next.js, React, Prisma, Socket.io, WebRTC, 实时通讯]
 keywords: [Discord, 聊天应用, WebSocket, 实时通讯, Next.js, React, Prisma, Tailwind CSS]
 description: 本文详细记录了我使用Next.js, React, Prisma和Socket.io开发Discord克隆应用的过程，包括技术选型、架构设计、核心功能实现和部署经验。
 sticky: 85
+image: https://cdn.jsdelivr.net/gh/wwwqqqzzz/Image/img/1746226498971-83ab8bd4d2ff449da2ccfdb4011581de.png
 ---
 
 这篇文章记录了我使用现代Web技术栈开发Discord克隆应用的完整过程，包括从需求分析到最终部署的各个环节。

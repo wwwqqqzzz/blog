@@ -52,9 +52,17 @@
     --blog-item-shadow: 0 10px 18px #f1f5f9dd, 0 0 10px 0 #e4e4e7dd;
     --blog-item-shade: #f4f4f5;
 
+    /* AI 小助手颜色变量 */
+    --ai-terminal-bg: #0f172a;
+    --ai-terminal-text: #4ade80;
+    --ai-bubble-user: var(--ifm-color-primary);
+    --ai-bubble-ai: #f3f4f6;
+
     -webkit-font-smoothing: unset;
 
     --docusaurus-highlighted-code-line-bg: #d1d5db;
+
+    --navbar-sidebar-background: rgba(80, 117, 177, 0.5);
   }
 
   html[data-theme='dark'] {
@@ -74,7 +82,15 @@
     --blog-item-shadow: 0 10px 18px #25374833, 0 0 8px #25374866;
     --blog-item-shade: #27272a;
 
+    /* AI 小助手暗色模式颜色变量 */
+    --ai-terminal-bg: #0f172a;
+    --ai-terminal-text: #4ade80;
+    --ai-bubble-user: var(--ifm-color-primary);
+    --ai-bubble-ai: #333333;
+
     --docusaurus-highlighted-code-line-bg: #4b5563;
+
+    --navbar-sidebar-background:  rgba(24, 24, 27, 0.95);
   }
 }
 
@@ -88,6 +104,61 @@ a:hover {
   }
   .bg-blog-shade {
     background: var(--blog-item-shade);
+  }
+
+  /* 自定义滚动条 */
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 4px;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: rgba(155, 155, 155, 0.5);
+    border-radius: 20px;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: rgba(155, 155, 155, 0.7);
+  }
+
+  /* 打字机光标动画 */
+  .animate-blink {
+    animation: blink 1s step-end infinite;
+  }
+
+  /* 打字思考中动画 */
+  .animate-pulse {
+    animation: pulse 1.5s infinite;
+  }
+  
+  .animate-delay-200 {
+    animation-delay: 0.2s;
+  }
+  
+  .animate-delay-500 {
+    animation-delay: 0.5s;
+  }
+}
+
+/* 动画关键帧 */
+@keyframes blink {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
   }
 }
 
@@ -296,4 +367,9 @@ div[class^='announcementBar_'] {
     :where([class~='not-prose'], [class~='not-prose'] *)
   )::after {
   content: '';
+}
+
+.navbar-sidebar {
+  background: var(--navbar-sidebar-background);
+  backdrop-filter: blur(10px);
 }
