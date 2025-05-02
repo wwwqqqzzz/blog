@@ -1,9 +1,11 @@
 .socialLinks {
-  @apply w-full flex items-center md:flex-wrap md:gap-3 py-2 relative z-50 flex-wrap gap-1;
+  @apply flex items-center justify-center gap-4 py-2 relative z-50;
+  width: fit-content;
+  margin: 0 auto;
 }
 
 .socialLinks a {
-  @apply inline-flex box-content size-7 items-center justify-center transition-colors duration-300 rounded-full p-1 hover:text-white hover:bg-[var(--color)];
+  @apply inline-flex box-content size-8 items-center justify-center transition-colors duration-300 rounded-full p-1 hover:text-white hover:bg-[var(--color)];
 }
 
 .socialLinks .dropdown {

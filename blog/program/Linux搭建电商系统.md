@@ -6,6 +6,7 @@ authors: wqz
 tags: [Linux, 电商系统, 部署, Java, Spring Boot, MySQL, Redis, Elasticsearch, Kafka, Nginx]
 keywords: [Linux, 电商系统, 部署, Spring Boot, MariaDB, Redis, Elasticsearch, Kafka, Nginx, 自动化部署, 教程]
 description: 本文详细介绍了在 Linux 系统上搭建一个应用商城系统的完整流程，包括基础环境配置、基础服务安装、服务配置和应用商城系统部署。
+image: https://cdn.jsdelivr.net/gh/wwwqqqzzz/Image/img/1746229265207-5fa423c1161a543a863367339bea72f2.png
 ---
 
 <!-- truncate -->

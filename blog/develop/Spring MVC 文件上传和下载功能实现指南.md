@@ -6,6 +6,7 @@ authors: wqz
 tags: [Spring MVC, 文件上传, 文件下载, Java, Spring Boot, Web开发, 教程]
 keywords: [Spring MVC, Spring Boot, 文件上传, 文件下载, RestController, MultipartFile, 教程, 示例代码]
 description: 本文提供了一份详细的指南，介绍如何使用 Spring MVC 实现文件上传和下载功能，包括项目搭建、代码实现和测试步骤。
+image: https://cdn.jsdelivr.net/gh/wwwqqqzzz/Image/img/1746227629136-1dd2d34b65e5fc951b1b07427f8c1f4a.png
 ---
 
 <!-- truncate -->
