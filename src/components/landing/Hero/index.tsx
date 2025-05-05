@@ -194,6 +194,37 @@ export default function Hero() {
 
         <DecorativeIcons />
       </div>
+
+      {/* 平滑过渡元素 */}
+      <motion.div
+        className={styles.smooth_transition}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 1, duration: 0.8 }}
+      >
+        <div className={styles.transition_wave}>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 1440 200"
+            preserveAspectRatio="none"
+            className={styles.wave_svg}
+          >
+            {/* 使用更平滑的曲线路径 */}
+            <path
+              d="M0,160 C240,100 480,180 720,150 C960,120 1200,160 1440,140 L1440,200 L0,200 Z"
+              fill="var(--ifm-background-color)"
+              fillOpacity="0.95"
+            />
+            <path
+              d="M0,180 C320,150 720,190 1200,160 C1280,150 1360,180 1440,170 L1440,200 L0,200 Z"
+              fill="var(--ifm-background-color)"
+              fillOpacity="1"
+            />
+          </svg>
+        </div>
+        <div className={styles.transition_gradient}></div>
+        <div className={styles.transition_line}></div>
+      </motion.div>
     </motion.div>
   )
 }
