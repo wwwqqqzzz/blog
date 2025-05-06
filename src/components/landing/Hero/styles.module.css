@@ -120,6 +120,7 @@
 .decorative_icons {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
+  grid-template-rows: repeat(2, auto);
   gap: 1.5rem;
   width: 100%;
   max-width: 600px;
@@ -447,43 +448,55 @@ html[data-theme='dark'] .smooth_transition::after {
   }
 
   .decorative_icons {
-    gap: 0.75rem;
+    gap: 1rem;
+    max-width: 550px;
   }
 
   .icon_wrapper {
-    padding: 0.75rem;
-    width: calc(20% - 12px);
-    max-width: 70px;
+    width: 3.2rem;
+    height: 3.2rem;
+  }
+  
+  .tech_icon {
+    width: 1.8rem;
+    height: 1.8rem;
   }
 }
 
 @media (max-width: 768px) {
   .hero {
-    padding-bottom: 6rem;
+    padding: 2.5rem 1.5rem 5rem;
+    min-height: auto;
   }
   
   .name {
-    font-size: 2.5rem;
+    font-size: 2.25rem;
+    line-height: 1.3;
   }
 
   .intro p {
     font-size: 1rem;
+    margin: 1.5rem 0;
+    line-height: 1.6;
   }
 
   .decorative_icons {
     grid-template-columns: repeat(5, 1fr);
-    gap: 1rem;
+    gap: 0.8rem;
     padding: 0 0.5rem;
+    margin: 1.5rem auto;
+    max-width: 450px;
   }
 
   .icon_wrapper {
     width: 3rem;
     height: 3rem;
+    border-radius: 10px;
   }
 
   .tech_icon {
-    width: 1.8rem;
-    height: 1.8rem;
+    width: 1.7rem;
+    height: 1.7rem;
   }
   
   .transition_wave {
@@ -524,41 +537,64 @@ html[data-theme='dark'] .smooth_transition::after {
 
 @media (max-width: 570px) {
   .hero {
-    padding: 2rem 1rem 6rem;
+    padding: 2rem 1rem 5rem;
   }
 
   .intro {
-    padding: 0 1rem;
+    padding: 0 0.75rem;
+    max-width: 100%;
   }
 
   .hero_text {
+    margin-bottom: 1rem;
+  }
+
+  .name {
     font-size: 2rem;
+    line-height: 1.2;
   }
 
   .intro > p {
-    font-size: 1rem;
+    font-size: 0.95rem;
+    margin: 1.25rem 0;
+    padding: 0 0.5rem;
   }
 
   .decorative_icons {
-    gap: 0.5rem;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 0.6rem;
+    row-gap: 0.8rem;
+    max-width: 100%;
+    padding: 0 0.5rem;
   }
 
   .icon_wrapper {
-    padding: 0.5rem;
-    width: calc(20% - 8px);
-    max-width: 55px;
+    width: 2.8rem;
+    height: 2.8rem;
+    border-radius: 8px;
   }
 
   .tech_icon {
-    width: 1.5rem;
-    height: 1.5rem;
+    width: 1.6rem;
+    height: 1.6rem;
+  }
+  
+  .transition_wave {
+    height: 100px;
+    bottom: -5px;
   }
 }
 
 @media (max-width: 480px) {
+  .hero {
+    padding: 1.5rem 0.75rem 4rem;
+  }
+  
   .decorative_icons {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 0.75rem;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 0.4rem;
+    row-gap: 0.6rem;
+    padding: 0 0.25rem;
   }
 
   .icon_wrapper {
@@ -567,7 +603,39 @@ html[data-theme='dark'] .smooth_transition::after {
   }
 
   .tech_icon {
-    width: 1.5rem;
-    height: 1.5rem;
+    width: 1.4rem;
+    height: 1.4rem;
+  }
+  
+  .smooth_transition {
+    bottom: -5px;
+  }
+  
+  /* 确保按钮在小屏幕上适当缩放 */
+  .intro a {
+    font-size: 0.9rem;
+    padding: 0.5rem 1rem;
   }
 }
+
+@media (max-width: 375px) {
+  .decorative_icons {
+    grid-template-columns: repeat(5, 1fr);
+    gap: 0.3rem;
+    row-gap: 0.5rem;
+    max-width: 100%;
+    padding: 0 0.2rem;
+  }
+  
+  .icon_wrapper {
+    width: 2.2rem;
+    height: 2.2rem;
+    border-radius: 6px;
+  }
+  
+  .tech_icon {
+    width: 1.3rem;
+    height: 1.3rem;
+  }
+}
+

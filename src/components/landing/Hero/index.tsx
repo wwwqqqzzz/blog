@@ -1,7 +1,7 @@
 import { type Variants, motion, useScroll, useTransform } from 'framer-motion'
 import Translate from '@docusaurus/Translate'
 import { Icon } from '@iconify/react'
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import SocialLinks from '@site/src/components/SocialLinks'
 import { MovingButton } from '../../magicui/moving-border'
 import { DoodleDecoration } from '../../ui/doodle-decoration'
@@ -22,6 +22,7 @@ const variants: Variants = {
   hidden: { opacity: 0, y: 30 },
 }
 
+// 技术图标，响应式处理
 const techIcons = [
   { icon: 'logos:react', title: 'React' },
   { icon: 'logos:typescript-icon', title: 'TypeScript' },
@@ -34,6 +35,11 @@ const techIcons = [
   { icon: 'logos:python', title: 'Python' },
   { icon: 'logos:webpack', title: 'Webpack' },
 ]
+
+type TechIcon = {
+  icon: string
+  title: string
+}
 
 function Name() {
   return (
@@ -74,7 +80,8 @@ function Name() {
   )
 }
 
-function DecorativeIcons() {
+function DecorativeIcons({ isMobile }) {
+  // 使用所有图标，两行显示，每行5个
   return (
     <motion.div
       className={styles.decorative_icons}
@@ -100,8 +107,25 @@ function DecorativeIcons() {
 
 export default function Hero() {
   const gridRef = useRef<HTMLDivElement>(null)
+  const [isMobile, setIsMobile] = useState(false)
 
   useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768)
+    }
+
+    // 初始化
+    handleResize()
+
+    // 监听窗口大小变化
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
+
+  useEffect(() => {
+    // 只在非移动设备上启用鼠标跟踪效果
+    if (isMobile) return
+
     const grid = gridRef.current
     if (!grid) return
 
@@ -139,7 +163,7 @@ export default function Hero() {
       grid.removeEventListener('mousemove', handleMouseMove)
       grid.removeEventListener('mouseleave', handleMouseLeave)
     }
-  }, [])
+  }, [isMobile])
 
   return (
     <motion.div className={styles.hero}>
@@ -170,21 +194,21 @@ export default function Hero() {
           initial="hidden"
           animate="visible"
           variants={variants}
-          className="flex w-full items-center justify-center"
+          className="flex w-full flex-wrap items-center justify-center"
         >
           <SocialLinks />
         </motion.div>
 
         <motion.div
-          className="mt-8 flex justify-center gap-3"
+          className="mt-6 flex justify-center gap-3 md:mt-8"
           custom={4}
           initial="hidden"
           animate="visible"
           variants={variants}
         >
           <MovingButton
-            borderRadius="1.25rem"
-            className="relative z-10 flex items-center rounded-2xl border border-solid border-blue-500 bg-blue-500 bg-opacity-10 px-6 py-3 text-center text-base font-semibold text-blue-400 transition-all hover:bg-opacity-20 hover:shadow-lg"
+            borderRadius={isMobile ? '1rem' : '1.25rem'}
+            className="relative z-10 flex items-center rounded-2xl border border-solid border-blue-500 bg-blue-500 bg-opacity-10 px-4 py-2 text-center text-sm font-semibold text-blue-400 transition-all hover:bg-opacity-20 hover:shadow-lg md:px-6 md:py-3 md:text-base"
           >
             <a href="/about" className="font-semibold">
               <Translate id="hompage.hero.introduce">了解更多</Translate>
@@ -192,7 +216,7 @@ export default function Hero() {
           </MovingButton>
         </motion.div>
 
-        <DecorativeIcons />
+        <DecorativeIcons isMobile={isMobile} />
       </div>
 
       {/* 平滑过渡元素 */}
@@ -200,7 +224,7 @@ export default function Hero() {
         className={styles.smooth_transition}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 1, duration: 0.8 }}
+        transition={{ delay: isMobile ? 0.5 : 1, duration: 0.8 }}
       >
         <div className={styles.transition_wave}>
           <svg
