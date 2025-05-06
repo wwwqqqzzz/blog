@@ -5,6 +5,7 @@ import FeaturesSection from '../components/landing/FeaturesSection'
 import Hero from '../components/landing/Hero'
 import ProjectSection from '../components/landing/ProjectSection'
 import AIAssistantSection from '../components/landing/AIAssistantSection'
+import PersonalTraitsSection from '../components/landing/PersonalTraitsSection'
 import Particles from '../components/magicui/particles'
 import { motion } from 'framer-motion'
 import { useEffect, useState } from 'react'
@@ -154,7 +155,7 @@ export default function Home() {
               <BlogSection />
               <ProjectSection />
               <AIAssistantSection />
-              <FeaturesSection />
+              <PersonalTraitsSection />
             </div>
           </div>
 
