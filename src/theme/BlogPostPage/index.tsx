@@ -2,6 +2,7 @@ import { type BlogSidebar } from '@docusaurus/plugin-content-blog'
 import { BlogPostProvider, useBlogPost } from '@docusaurus/plugin-content-blog/client'
 import { HtmlClassNameProvider, ThemeClassNames } from '@docusaurus/theme-common'
 import Comment from '@site/src/components/Comment'
+import ReadingProgress from '@site/src/components/ReadingProgress'
 import { cn } from '@site/src/lib/utils'
 import BackToTopButton from '@theme/BackToTopButton'
 import BlogLayout from '@theme/BlogLayout'
@@ -10,7 +11,7 @@ import type { Props } from '@theme/BlogPostPage'
 import BlogPostPageMetadata from '@theme/BlogPostPage/Metadata'
 import BlogPostPaginator from '@theme/BlogPostPaginator'
 import TOC from '@theme/TOC'
-import { type ReactNode } from 'react'
+import React, { type ReactNode } from 'react'
 
 function BlogPostPageContent({
   sidebar,
@@ -18,7 +19,7 @@ function BlogPostPageContent({
 }: {
   sidebar: BlogSidebar
   children: ReactNode
-}): JSX.Element {
+}): React.ReactElement {
   const { metadata, toc } = useBlogPost()
   const { nextItem, prevItem, frontMatter } = metadata
   const {
@@ -52,12 +53,13 @@ function BlogPostPageContent({
   )
 }
 
-export default function BlogPostPage(props: Props): JSX.Element {
+export default function BlogPostPage(props: Props): React.ReactElement {
   const BlogPostContent = props.content
   return (
     <BlogPostProvider content={props.content} isBlogPostPage>
       <HtmlClassNameProvider className={cn(ThemeClassNames.wrapper.blogPages, ThemeClassNames.page.blogPostPage)}>
         <BlogPostPageMetadata />
+        <ReadingProgress />
         <BlogPostPageContent sidebar={props.sidebar}>
           <BlogPostContent />
         </BlogPostPageContent>

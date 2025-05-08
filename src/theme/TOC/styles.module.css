@@ -4,11 +4,76 @@
   position: sticky;
   top: calc(var(--ifm-navbar-height) + 1rem);
   color: var(--ifm-font-color-secondary);
+  padding: 1rem;
+  border-radius: 0.5rem;
+  background-color: var(--ifm-background-surface-color);
+  border: 1px solid var(--ifm-border-color);
+  box-shadow: var(--shadow-sm);
+  transition: all 0.3s ease;
+}
+
+.tocHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.tocTitle {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--ifm-heading-color);
+}
+
+.collapseButton {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--ifm-color-primary);
+  padding: 0.25rem;
+  border-radius: 0.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s;
+}
+
+.collapseButton:hover {
+  background-color: var(--ifm-color-primary-lightest);
+}
+
+.tocContent {
+  max-height: 70vh;
+  overflow-y: auto;
+  transition: max-height 0.3s ease, opacity 0.3s ease;
+  opacity: 1;
+}
+
+.tocContentHidden {
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+}
+
+/* 移动设备样式 */
+.tocMobile {
+  position: relative;
+  width: 100%;
+  margin-bottom: 2rem;
+}
+
+/* 折叠时样式 */
+.tocCollapsed {
+  padding-bottom: 0.5rem;
 }
 
 @media (max-width: 996px) {
   .tableOfContents {
-    display: none;
+    display: block;
+    position: relative;
+    top: 0;
+    margin-bottom: 1.5rem;
   }
 
   .docItemContainer {
@@ -17,14 +82,14 @@
 }
 
 .hr {
-  margin: 0;
+  margin: 0.5rem 0;
   border: none;
   border-top: 1px solid var(--ifm-border-color);
 }
 
 .percent {
   display: inline-block;
-  margin: var(--ifm-toc-padding-vertical) var(--ifm-toc-padding-horizontal);
+  margin: 0.5rem 0 0;
   font-size: 0.9rem;
   color: var(--ifm-color-emphasis-600);
 }
