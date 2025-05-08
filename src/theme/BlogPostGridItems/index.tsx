@@ -4,11 +4,11 @@ import { cn } from '@site/src/lib/utils'
 import Tag from '@site/src/theme/Tag'
 import type { Props as BlogPostItemsProps } from '@theme/BlogPostItems'
 import { AnimatePresence, motion } from 'framer-motion'
-import { useState } from 'react'
+import React, { useState } from 'react'
 
 import styles from './styles.module.css'
 
-export default function BlogPostGridItems({ items }: BlogPostItemsProps): JSX.Element {
+export default function BlogPostGridItems({ items }: BlogPostItemsProps): React.ReactNode {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
 
   const data = items.map(({ content: BlogPostContent }) => {
@@ -58,7 +58,7 @@ export default function BlogPostGridItems({ items }: BlogPostItemsProps): JSX.El
             </AnimatePresence>
 
             <Card className={cn('relative bg-blog', item.sticky && styles.blogSticky)}>
-              <CardTitle className="transition duration-300 hover:text-primary">{item.title}</CardTitle>
+              <CardTitle className="transition duration-300 hover:text-[#12AFFA]">{item.title}</CardTitle>
               <CardFooter className="flex justify-between pt-4">
                 <div
                   className={cn(styles.blogTags, 'inline-flex items-center gap-1 whitespace-nowrap text-sm text-text')}

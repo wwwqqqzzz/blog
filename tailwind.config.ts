@@ -6,7 +6,7 @@ const { default: flattenColorPalette } = require('tailwindcss/lib/util/flattenCo
 
 const twConfig: Config = {
   content: ['./src/**/*.{js,jsx,ts,tsx}'],
-  darkMode: ['selector', '[data-theme="dark"]', 'class'],
+  darkMode: 'class',
   theme: {
     extend: {
       colors: {
@@ -15,17 +15,94 @@ const twConfig: Config = {
         text: 'var(--ifm-text-color)',
         secondary: 'var(--ifm-secondary-text-color)',
         link: 'var(--ifm-link-color)',
-        primary: 'var(--ifm-color-primary)',
+        primary: {
+          50: '#E6F7FF',
+          100: '#BAE7FF',
+          200: '#91D5FF',
+          300: '#69C0FF',
+          400: '#40A9FF',
+          500: '#12AFFA', // 主色
+          600: '#0E9FE5',
+          700: '#0A81BC',
+          800: '#086293',
+          900: '#0B5A82',
+          DEFAULT: '#12AFFA',
+        },
+        accent: {
+          50: '#EEF2FF',
+          100: '#E0E7FF',
+          200: '#C7D2FE',
+          300: '#A5B4FC',
+          400: '#818CF8',
+          500: '#6366F1', // 辅助色
+          600: '#4F46E5',
+          700: '#4338CA',
+          800: '#3730A3',
+          900: '#312E81',
+        },
+        success: {
+          DEFAULT: '#10B981',
+          50: '#ECFDF5',
+          500: '#10B981',
+          600: '#059669',
+        },
+        warning: {
+          DEFAULT: '#F59E0B',
+          50: '#FFFBEB',
+          500: '#F59E0B',
+          600: '#D97706',
+        },
+        error: {
+          DEFAULT: '#EF4444',
+          50: '#FEF2F2',
+          500: '#EF4444',
+          600: '#DC2626',
+        },
+        info: {
+          DEFAULT: '#3B82F6',
+          50: '#EFF6FF',
+          500: '#3B82F6',
+          600: '#2563EB',
+        },
         border: 'var(--ifm-border-color)',
       },
       fontFamily: {
+        sans: ['Inter', 'Noto Sans SC', 'sans-serif'],
+        mono: ['JetBrains Mono', 'monospace'],
         misans: ['misans'],
       },
+      fontSize: {
+        'xs': ['0.75rem', { lineHeight: '1rem' }],
+        'sm': ['0.875rem', { lineHeight: '1.25rem' }],
+        'base': ['1rem', { lineHeight: '1.5rem' }],
+        'lg': ['1.125rem', { lineHeight: '1.75rem' }],
+        'xl': ['1.25rem', { lineHeight: '1.75rem' }],
+        '2xl': ['1.5rem', { lineHeight: '2rem' }],
+        '3xl': ['1.875rem', { lineHeight: '2.25rem' }],
+        '4xl': ['2.25rem', { lineHeight: '2.5rem' }],
+        '5xl': ['3rem', { lineHeight: '1.2' }],
+      },
       borderRadius: {
+        sm: '6px',
+        md: '12px',
+        lg: '16px',
         card: 'var(--ifm-card-border-radius)',
       },
       boxShadow: {
         blog: 'var(--blog-item-shadow)',
+        sm: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
+        md: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+        lg: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+      },
+      spacing: {
+        '2xs': '4px',
+        'xs': '8px',
+        'sm': '16px',
+        'md': '24px',
+        'lg': '32px',
+        'xl': '48px',
+        '2xl': '64px',
+        '3xl': '96px',
       },
       animation: {
         'marquee': 'marquee var(--duration) linear infinite',
@@ -69,7 +146,10 @@ const twConfig: Config = {
 
 export default twConfig
 
-function addVariablesForColors({ addBase, theme }) {
+type AddBaseType = (options: Record<string, any>) => void
+type ThemeType = (path: string) => Record<string, string>
+
+function addVariablesForColors({ addBase, theme }: { addBase: AddBaseType, theme: ThemeType }) {
   const allColors = flattenColorPalette(theme('colors'))
   const newVars = Object.fromEntries(Object.entries(allColors).map(([key, val]) => [`--${key}`, val]))
 

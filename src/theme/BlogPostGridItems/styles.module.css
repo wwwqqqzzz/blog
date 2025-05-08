@@ -1,5 +1,5 @@
 .blogTags a {
-  @apply p-px border-0 text-inherit hover:text-primary;
+  @apply p-px border-0 text-inherit hover:text-[#12AFFA];
 }
 
 .blogSticky:after {
