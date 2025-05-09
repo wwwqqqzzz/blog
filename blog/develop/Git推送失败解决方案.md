@@ -3,7 +3,7 @@ slug: git-push-failed-solution
 title: Git 推送失败解决方案
 date: 2024-11-08
 authors: wqz
-tags: [Git, 推送失败, 分支, 远程仓库, 冲突解决, 版本控制]
+tags: [Git, 冲突解决, 版本控制]
 keywords: [Git, push error, 远程分支, 本地分支, 冲突, rebase, force push, 分支重命名, 解决推送失败]
 description: 针对 Git 推送失败的常见原因（本地分支落后于远程、分支名称不一致）提供详细的解决方案，包括拉取更新、处理冲突、分支重命名和强制推送等操作。
 ---

@@ -3,7 +3,7 @@ slug: linux-install-configure-nginx
 title: Linux 安装配置 Nginx
 date: 2024-11-08
 authors: wqz
-tags: [Linux, Nginx, Web服务器, 安装, 配置, CentOS, 防火墙]
+tags: [后端, Linux, 教程]
 keywords: [Nginx, Linux, CentOS, Web服务器, 安装, 配置, Yum源, 防火墙, 静态网页]
 description: 本文详细介绍了在 Linux 系统上安装和配置 Nginx Web 服务器的步骤，包括添加Yum 源、安装Nginx、配置服务、设置防火墙以及测试网页访问。
 image: https://cdn.jsdelivr.net/gh/wwwqqqzzz/Image/img/1746229059682-1ba24b444eeff0841d5cbc4483ee61d7.png
@@ -67,7 +67,7 @@ stop
 本人环境
 
 > ```basj
-> cat /etc/redhat-release 
+> cat /etc/redhat-release
 > ```
 >
 > ![1722886531556](https://cdn.jsdelivr.net/gh/wwwqqqzzz/Image/img/1722886531556.png)
@@ -98,7 +98,7 @@ sudo yum repolist
 
 ![1722887382744](https://cdn.jsdelivr.net/gh/wwwqqqzzz/Image/img/1722887382744.png)
 
- 
+
 
 ### 安装 `Nginx`
 

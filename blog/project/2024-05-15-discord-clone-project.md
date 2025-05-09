@@ -3,7 +3,7 @@ slug: discord-clone
 title: Discord克隆项目：全栈实时通讯应用开发记录
 date: 2024-05-15
 authors: [wqz]
-tags: [Next.js, React, Prisma, Socket.io, WebRTC, 实时通讯]
+tags: [前端, React, 项目]
 keywords: [Discord, 聊天应用, WebSocket, 实时通讯, Next.js, React, Prisma, Tailwind CSS]
 description: 本文详细记录了我使用Next.js, React, Prisma和Socket.io开发Discord克隆应用的过程，包括技术选型、架构设计、核心功能实现和部署经验。
 sticky: 85
@@ -124,7 +124,7 @@ export default async function SocketHandler(req: NextApiRequest, res: NextApiRes
       path: '/api/socket',
       addTrailingSlash: false,
     });
-    
+
     io.on('connection', (socket) => {
       socket.on('message', async (data) => {
         // 处理新消息
@@ -138,21 +138,21 @@ export default async function SocketHandler(req: NextApiRequest, res: NextApiRes
             user: true,
           }
         });
-        
+
         // 广播消息给频道内所有客户端
         io.to(data.channelId).emit('message', message);
       });
-      
+
       socket.on('join-channel', (channelId) => {
         socket.join(channelId);
       });
-      
+
       // 更多事件处理...
     });
-    
+
     res.socket.server.io = io;
   }
-  
+
   res.end();
 }
 ```
@@ -238,7 +238,7 @@ export function useMediaCall(channelId: string) {
   const [remoteStreams, setRemoteStreams] = useState<Record<string, MediaStream>>({});
   const peerConnections = useRef<Record<string, RTCPeerConnection>>({});
   const socket = useSocket();
-  
+
   useEffect(() => {
     const initCall = async () => {
       try {
@@ -246,33 +246,33 @@ export function useMediaCall(channelId: string) {
           audio: true,
           video: true,
         });
-        
+
         setLocalStream(stream);
         socket.emit('join-call', { channelId });
       } catch (error) {
         console.error('Failed to get media devices:', error);
       }
     };
-    
+
     if (channelId) {
       initCall();
     }
-    
+
     // 处理新用户加入、信令交换等
     socket.on('user-joined', handleUserJoined);
     socket.on('offer', handleOffer);
     socket.on('answer', handleAnswer);
     socket.on('ice-candidate', handleIceCandidate);
-    
+
     return () => {
       // 清理资源
       localStream?.getTracks().forEach(track => track.stop());
       Object.values(peerConnections.current).forEach(pc => pc.close());
     };
   }, [channelId]);
-  
+
   // 处理WebRTC信令和连接的函数...
-  
+
   return { localStream, remoteStreams };
 }
 ```
@@ -286,7 +286,7 @@ export function useMediaCall(channelId: string) {
 ```tsx
 const ChatLayout = ({ children }: { children: React.ReactNode }) => {
   const { isOpen } = useModal();
-  
+
   return (
     <div className="h-full">
       <div className="hidden md:flex h-full w-60 z-20 flex-col fixed inset-y-0">
@@ -396,4 +396,4 @@ jobs:
 欢迎查看项目演示和源代码：
 
 - [在线演示](https://discord-clone.wangqizhe.cn)
-- [GitHub仓库](https://github.com/wwwqqqzzz/discord-clone) 
+- [GitHub仓库](https://github.com/wwwqqqzzz/discord-clone)

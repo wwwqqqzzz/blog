@@ -3,7 +3,7 @@ slug: idea-create-springmvc-login-guide
 title: 使用IDEA创建SpringMVC项目并实现简单登录功能的步骤指南
 date: 2024-12-02
 authors: wqz
-tags: [Spring MVC, IDEA, Java, Thymeleaf, 登录功能, 教程]
+tags: [后端, Spring Boot, 教程]
 keywords: [Spring MVC, IntelliJ IDEA, Java 23, Thymeleaf, Spring Boot, Web开发, 登录示例, 教程]
 description: 一份详细指南，介绍如何使用IntelliJ IDEA创建一个基于SpringMVC的项目，并实现一个简单的登录功能，使用Java 23和Thymeleaf。
 image: https://cdn.jsdelivr.net/gh/wwwqqqzzz/Image/img/1746228592784-fa267e3fc11a23612b423e78c6ca2d86.png
