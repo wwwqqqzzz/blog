@@ -15,10 +15,18 @@ export function transformBlogItems(items: BlogPostItemsProps['items']): BlogPost
       -2,
     )}-${`0${dateObj.getDate()}`.slice(-2)}`
 
+    // 为标签添加count初始值，真实值会在extractAllTags中计算
+    const tagsWithCount = tags
+      ? tags.map(tag => ({
+          ...tag,
+          count: 1, // 初始值会在extractAllTags中被重新计算
+        }))
+      : []
+
     return {
       title: title || '',
       link: permalink,
-      tags: tags || [],
+      tags: tagsWithCount,
       date: dateString,
       description: description || '',
       sticky,
@@ -32,17 +40,30 @@ export function transformBlogItems(items: BlogPostItemsProps['items']): BlogPost
  * 从博客文章数据中提取所有标签
  */
 export function extractAllTags(items: BlogPostData[]): BlogTag[] {
-  const tagsMap = new Map<string, BlogTag>()
+  const tagsMap = new Map<string, { tag: BlogTag, count: number }>()
 
   items.forEach((item) => {
     item.tags?.forEach((tag) => {
       if (!tagsMap.has(tag.label)) {
-        tagsMap.set(tag.label, tag)
+        tagsMap.set(tag.label, {
+          tag: {
+            ...tag,
+            count: 1,
+          },
+          count: 1,
+        })
+      }
+      else {
+        const existingEntry = tagsMap.get(tag.label)
+        if (existingEntry) {
+          existingEntry.count += 1
+          existingEntry.tag.count = existingEntry.count
+        }
       }
     })
   })
 
-  return Array.from(tagsMap.values())
+  return Array.from(tagsMap.values()).map(entry => entry.tag)
 }
 
 /**

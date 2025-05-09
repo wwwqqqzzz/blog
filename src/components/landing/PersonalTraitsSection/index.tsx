@@ -65,7 +65,7 @@ const PersonalTraitsSection = () => {
               'border-border/50 border backdrop-blur-sm',
               'hover:border-primary/30 hover:shadow-lg',
               activeId === trait.id
-                ? 'ring-primary/50 ring-2'
+                ? 'ring-2 ring-primary/50'
                 : '',
             )}
             style={{
@@ -105,8 +105,8 @@ const PersonalTraitsSection = () => {
             </div>
 
             {/* 装饰效果 */}
-            <div className="bg-primary/5 absolute -right-20 -top-20 size-40 rounded-full opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
-            <div className="bg-primary/5 absolute -bottom-20 -left-20 size-40 rounded-full opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+            <div className="absolute -right-20 -top-20 size-40 rounded-full bg-primary/5 opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+            <div className="absolute -bottom-20 -left-20 size-40 rounded-full bg-primary/5 opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
           </motion.div>
         ))}
       </div>

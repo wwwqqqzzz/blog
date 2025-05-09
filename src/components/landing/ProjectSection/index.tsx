@@ -214,7 +214,7 @@ export function ProjectModal({
               href={project.website}
               target="_blank"
               rel="noreferrer"
-              className="hover:bg-primary/80 group inline-flex items-center rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white transition-colors"
+              className="group inline-flex items-center rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-primary/80"
               whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.98 }}
             >

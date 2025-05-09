@@ -93,3 +93,416 @@
 .svgIconFavorite {
   margin-left: 1rem;
 }
+
+/* 页面标题区域 - 简化为与现有风格匹配 */
+.showcaseHeader {
+  text-align: center;
+  padding: 2rem 0 3rem;
+  margin-bottom: 2rem;
+}
+
+.showcaseHeaderContent {
+  max-width: 768px;
+  margin: 0 auto;
+}
+
+.showcaseHeaderTitle {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.showcaseHeaderDescription {
+  font-size: 1.1rem;
+  max-width: 640px;
+  margin: 0 auto;
+  color: var(--ifm-color-emphasis-700);
+}
+
+/* 移除复杂波浪效果 */
+.showcaseHeaderWave {
+  display: none;
+}
+
+/* 项目展示区域 */
+.showcaseSection {
+  padding: 1rem 0 3rem;
+}
+
+/* 简化类型选择器 */
+.typeSelector {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+}
+
+.typeButton {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  background: var(--ifm-background-surface-color);
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--ifm-font-color-base);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.typeButton:hover {
+  border-color: var(--ifm-color-primary);
+  color: var(--ifm-color-primary);
+}
+
+.typeIcon {
+  margin-right: 0.5rem;
+  font-size: 1.125rem;
+}
+
+.activeType {
+  background: var(--ifm-color-primary-lightest);
+  color: var(--ifm-color-primary);
+  border-color: var(--ifm-color-primary);
+}
+
+/* 类型信息 */
+.typeInfo {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 1.25rem;
+  background: var(--ifm-background-surface-color);
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 0.5rem;
+  margin-bottom: 2rem;
+}
+
+.typeIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 0.5rem;
+  font-size: 1.5rem;
+  color: white;
+}
+
+.typeDetails {
+  flex: 1;
+}
+
+.typeTitle {
+  font-size: 1.25rem;
+  margin-bottom: 0.5rem;
+}
+
+.typeDescription {
+  margin: 0;
+  color: var(--ifm-color-emphasis-700);
+  font-size: 0.95rem;
+}
+
+/* 项目网格 - 使用与博客相同的网格样式 */
+.projectsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+/* 项目卡片 - 与博客卡片风格统一 */
+.projectCard {
+  background: var(--ifm-background-surface-color);
+  border: 1px solid var(--ifm-color-emphasis-200);
+  border-radius: 0.5rem;
+  overflow: hidden;
+  box-shadow: var(--ifm-shadow-lw);
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.projectCard:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--ifm-shadow-md);
+  border-color: var(--ifm-color-emphasis-300);
+}
+
+.projectImage {
+  position: relative;
+  height: 180px;
+  overflow: hidden;
+}
+
+.projectImage img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.projectCard:hover .projectImage img {
+  transform: scale(1.05);
+}
+
+.projectType {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  background: rgba(0, 0, 0, 0.5);
+  color: white;
+  border-radius: 50%;
+  z-index: 2;
+}
+
+.projectTypeIcon {
+  font-size: 1.125rem;
+}
+
+.projectImageOverlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.projectCard:hover .projectImageOverlay {
+  opacity: 1;
+}
+
+.previewButton {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 1rem;
+  background: white;
+  color: var(--ifm-color-gray-900);
+  border: none;
+  border-radius: 0.25rem;
+  font-weight: 500;
+  cursor: pointer;
+  font-size: 0.875rem;
+}
+
+.previewIcon {
+  font-size: 1.125rem;
+}
+
+.projectInfo {
+  padding: 1rem;
+}
+
+.projectTitle {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.projectDescription {
+  font-size: 0.875rem;
+  color: var(--ifm-color-emphasis-700);
+  margin-bottom: 1rem;
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.projectTags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.375rem;
+}
+
+.projectTag {
+  padding: 0.2rem 0.625rem;
+  font-size: 0.75rem;
+  border-radius: 0.25rem;
+  font-weight: 500;
+}
+
+/* 预览模态框 - 简化样式 */
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  padding: 1rem;
+}
+
+.modalContent {
+  position: relative;
+  width: 100%;
+  max-width: 800px;
+  max-height: 90vh;
+  background: var(--ifm-background-surface-color);
+  border-radius: 0.5rem;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: var(--ifm-shadow-xl);
+}
+
+.modalClose {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  width: 2rem;
+  height: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.2);
+  border: none;
+  border-radius: 50%;
+  color: white;
+  font-size: 1rem;
+  cursor: pointer;
+  z-index: 10;
+}
+
+.modalPreview {
+  position: relative;
+  height: 280px;
+  overflow: hidden;
+  border-bottom: 1px solid var(--ifm-color-emphasis-200);
+}
+
+.modalPreview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.modalPreviewType {
+  position: absolute;
+  bottom: 0.75rem;
+  left: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.375rem 0.75rem;
+  border-radius: 0.25rem;
+  color: white;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.modalInfo {
+  padding: 1.25rem;
+  overflow-y: auto;
+}
+
+.modalTitle {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 0.75rem;
+}
+
+.modalDescription {
+  color: var(--ifm-color-emphasis-700);
+  margin-bottom: 1.25rem;
+  line-height: 1.6;
+  font-size: 0.95rem;
+}
+
+.modalTags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.375rem;
+  margin-bottom: 1.25rem;
+}
+
+.modalTag {
+  padding: 0.2rem 0.625rem;
+  border-radius: 0.25rem;
+  color: white;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.modalActions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1.25rem;
+}
+
+.modalButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.5rem 1rem;
+  background: var(--ifm-color-primary);
+  color: white;
+  border: none;
+  border-radius: 0.25rem;
+  font-weight: 500;
+  font-size: 0.875rem;
+  text-decoration: none;
+}
+
+.modalButton:hover {
+  opacity: 0.9;
+  text-decoration: none;
+  color: white;
+}
+
+.modalButtonOutline {
+  background: transparent;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  color: var(--ifm-font-color-base);
+}
+
+.modalButtonOutline:hover {
+  color: var(--ifm-font-color-base);
+  border-color: var(--ifm-color-emphasis-500);
+}
+
+.modalButtonIcon {
+  font-size: 1.125rem;
+}
+
+/* 响应式样式 */
+@media (max-width: 996px) {
+  .typeInfo {
+    flex-direction: column;
+    text-align: center;
+    gap: 0.75rem;
+    padding: 1rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .showcaseHeaderTitle {
+    font-size: 2rem;
+  }
+  
+  .projectsGrid {
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  }
+}
+
+@media (max-width: 480px) {
+  .projectsGrid {
+    grid-template-columns: 1fr;
+  }
+  
+  .modalActions {
+    flex-direction: column;
+  }
+}

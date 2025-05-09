@@ -86,7 +86,7 @@ function ChatBubble({ message }: { message: Message }) {
           animate={{ scale: 1 }}
           className="mt-1 shrink-0"
         >
-          <div className="from-primary/20 to-primary/10 flex size-8 items-center justify-center overflow-hidden rounded-full bg-gradient-to-r ring-1 ring-white/10">
+          <div className="flex size-8 items-center justify-center overflow-hidden rounded-full bg-gradient-to-r from-primary/20 to-primary/10 ring-1 ring-white/10">
             <Icon icon="ri:robot-line" className="size-5 text-primary" />
           </div>
         </motion.div>
@@ -99,7 +99,7 @@ function ChatBubble({ message }: { message: Message }) {
           relative max-w-[80%] rounded-xl px-3.5 py-2.5 
           ${isAi
       ? 'text-foreground border-border/10 border bg-card shadow-sm'
-      : 'bg-primary/10 text-foreground shadow-sm'}
+      : 'text-foreground bg-primary/10 shadow-sm'}
         `}
       >
         {isAi
@@ -147,7 +147,7 @@ function ChatBubble({ message }: { message: Message }) {
           animate={{ scale: 1 }}
           className="mt-1 shrink-0"
         >
-          <div className="bg-primary/5 ring-primary/20 flex size-8 items-center justify-center overflow-hidden rounded-full shadow-sm ring-1">
+          <div className="flex size-8 items-center justify-center overflow-hidden rounded-full bg-primary/5 shadow-sm ring-1 ring-primary/20">
             <Icon icon="ri:user-3-line" className="size-5 text-primary" />
           </div>
         </motion.div>
@@ -289,7 +289,7 @@ function BubbleChat({ messages, inputValue, setInputValue, handleSendMessage, lo
         layout="position"
         className="border-border/30 flex items-center border-b p-3"
       >
-        <div className="from-primary/20 to-primary/10 mr-3 flex size-10 items-center justify-center overflow-hidden rounded-full bg-gradient-to-r ring-1 ring-white/10">
+        <div className="mr-3 flex size-10 items-center justify-center overflow-hidden rounded-full bg-gradient-to-r from-primary/20 to-primary/10 ring-1 ring-white/10">
           <Icon icon="ri:robot-line" className="size-6 text-primary" />
         </div>
         <div className="flex-1">
@@ -316,7 +316,7 @@ function BubbleChat({ messages, inputValue, setInputValue, handleSendMessage, lo
                   exit={{ opacity: 0 }}
                   className="flex h-full flex-col items-center justify-center py-8 text-center"
                 >
-                  <div className="bg-primary/10 mb-3 rounded-full p-4">
+                  <div className="mb-3 rounded-full bg-primary/10 p-4">
                     <Icon icon="ri:robot-line" className="size-8 text-primary" />
                   </div>
                   <h4 className="mb-1.5 text-base font-medium text-text">你好！我是AI小助手</h4>
@@ -333,7 +333,7 @@ function BubbleChat({ messages, inputValue, setInputValue, handleSendMessage, lo
                           setInputValue(item.text)
                           setTimeout(() => handleSendMessage(), 300)
                         }}
-                        className="bg-primary/5 ring-primary/10 hover:bg-primary/10 flex items-center gap-2 rounded-lg px-3 py-2 text-left text-xs text-text ring-1 transition-colors"
+                        className="flex items-center gap-2 rounded-lg bg-primary/5 px-3 py-2 text-left text-xs text-text ring-1 ring-primary/10 transition-colors hover:bg-primary/10"
                       >
                         <Icon icon={item.icon} className="size-3.5 text-primary" />
                         <span>{item.text}</span>
@@ -400,7 +400,7 @@ function BubbleChat({ messages, inputValue, setInputValue, handleSendMessage, lo
             className={`ml-0.5 flex size-8 shrink-0 items-center justify-center rounded-full transition-colors ${
               isListening
                 ? 'animate-pulse bg-primary text-white'
-                : 'bg-primary/10 hover:bg-primary/20 text-primary'
+                : 'bg-primary/10 text-primary hover:bg-primary/20'
             } ${loading && 'cursor-not-allowed opacity-50'}`}
             aria-label="语音输入"
           >
@@ -427,8 +427,8 @@ function BubbleChat({ messages, inputValue, setInputValue, handleSendMessage, lo
             disabled={!inputValue.trim() || loading}
             className={`mr-0.5 flex size-8 shrink-0 items-center justify-center rounded-full transition-colors ${
               inputValue.trim() && !loading
-                ? 'hover:bg-primary/90 bg-primary text-white'
-                : 'bg-primary/50 cursor-not-allowed text-white opacity-50'
+                ? 'bg-primary text-white hover:bg-primary/90'
+                : 'cursor-not-allowed bg-primary/50 text-white opacity-50'
             }`}
             aria-label="发送消息"
           >
@@ -478,7 +478,7 @@ function AIIntroPanel({ onClickSuggestion }: { onClickSuggestion: (question: str
         ))}
       </div>
 
-      <div className="bg-primary/10 mt-3 rounded-lg p-2.5">
+      <div className="mt-3 rounded-lg bg-primary/10 p-2.5">
         <p className="flex items-center text-xs font-medium text-primary">
           <Icon icon="ri:lightbulb-flash-line" className="mr-1" />
           小贴士
