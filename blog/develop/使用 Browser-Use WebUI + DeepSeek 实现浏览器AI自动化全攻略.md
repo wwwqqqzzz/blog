@@ -3,7 +3,7 @@ slug: browser-use-webui-deepseek-ai-automation-guide
 title: 使用 Browser-Use WebUI + DeepSeek 实现浏览器AI自动化全攻略
 date: 2025-03-24
 authors: wqz
-tags: [浏览器自动化, AI, DeepSeek, Browser-Use, WebUI, Playwright, Python]
+tags: [人工智能, Python, 教程]
 keywords: [浏览器自动化, AI, DeepSeek, Browser-Use, WebUI, Playwright, Python, Gradio, 自动化测试]
 description: 一份详细指南，介绍如何结合 Browser-Use WebUI、DeepSeek AI 和 Playwright 实现浏览器自动化操作，包括环境搭建、项目配置和常见问题解决。
 image: https://cdn.jsdelivr.net/gh/wwwqqqzzz/Image/img/1746228260123-2165db07cd85e2b30f4827a6c3c18a70.png
@@ -37,7 +37,7 @@ playwright install
 >   # Windows
 >   set PLAYWRIGHT_DOWNLOAD_HOST=https://npmmirror.com/mirrors/playwright
 >   playwright install
->       
+>
 >   # macOS/Linux
 >   export PLAYWRIGHT_DOWNLOAD_HOST=https://npmmirror.com/mirrors/playwright
 >   playwright install
@@ -87,7 +87,7 @@ git clone https://github.com/browser-use/web-ui.git
    ```bash
    cp .env.example .env
    ```
-   
+
 ![img](https://img2023.cnblogs.com/blog/3349836/202503/3349836-20250324043234910-1044836211.png)
 2. 关键配置项说明：
    ```ini
@@ -95,7 +95,7 @@ git clone https://github.com/browser-use/web-ui.git
    CHROME_PATH = "C:\Program Files\Google\Chrome\Application\chrome.exe"
    CHROME_USER_DATA = "C:\Users\<YourName>\AppData\Local\Google\Chrome\User Data"
    ```
-   
+
 ![img](https://img2023.cnblogs.com/blog/3349836/202503/3349836-20250324043255070-1806307920.png)
 
 ---

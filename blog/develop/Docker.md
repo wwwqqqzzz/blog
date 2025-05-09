@@ -3,7 +3,7 @@ slug: docker-connection-error-solution
 title: Docker连接错误解决
 date: 2024-11-08
 authors: wqz
-tags: [Docker, 网络问题, 连接错误, 镜像拉取, Docker Hub, 故障排查]
+tags: [工具, Docker, 教程]
 keywords: [Docker, 连接错误, 超时, 镜像拉取, Docker Hub, 认证失败, 镜像加速器, 网络问题, 故障排查, CMD JSON]
 description: 解决 Docker 在拉取镜像时常见的连接错误、授权失败和超时问题，包括网络检查、配置镜像加速器、清理缓存和处理 CMD 指令警告等方法。
 ---

@@ -3,7 +3,7 @@ slug: ai-education-system
 title: AI开发教务管理系统
 date: 2024-12-08
 authors: wqz
-tags: [Spring Boot, SSM, MySQL, Java, Web开发, 教务管理系统, AI]
+tags: [后端, Spring Boot, 项目]
 keywords: [Spring Boot, SSM, MySQL, Java, 教务管理系统, AI, 数据库设计, 前后端分离, 课程管理, 学生管理, 教师管理]
 description: 本文介绍了基于Spring Boot 和 SSM 框架开发的教务管理系统，结合AI 技术，实现学生、教师、管理员等角色的管理，以及课程管理和选课功能。
 image: https://cdn.jsdelivr.net/gh/wwwqqqzzz/Image/img/1746226378643-9bb523eaa058ce6f601f20934ba66cf1.png
@@ -61,7 +61,7 @@ image: https://cdn.jsdelivr.net/gh/wwwqqqzzz/Image/img/1746226378643-9bb523eaa05
 
 - 如果使用的是 SSM，可以在 IDE 中手动创建项目结构，并添加所需依赖
 
-  - >把服务器URL换成 `https://start.aliyun.com/` 就可以使用Java 8 
+  - >把服务器URL换成 `https://start.aliyun.com/` 就可以使用Java 8
     >
     >![image-20241111224416735](https://cdn.jsdelivr.net/gh/wwwqqqzzz/Image/img/image-20241111224416735.png)
     >

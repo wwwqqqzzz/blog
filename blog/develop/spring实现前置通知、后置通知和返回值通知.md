@@ -3,7 +3,7 @@ slug: spring-aop-example
 title: spring实现不同通知
 date: 2024-11-09
 authors: wqz
-tags: [Spring, AOP, 面向切面编程, 前置通知, 后置通知, 返回值通知, Java]
+tags: [后端, Spring Boot, 教程]
 keywords: [Spring, AOP, AspectJ, 前置通知, 后置通知, 返回值通知, Java, Spring Boot, 示例代码]
 description: 本文介绍 Spring 框架中面向切面编程（AOP）的实现，通过一个简单的案例展示了如何使用前置通知、后置通知和返回值通知，实现日志记录功能。
 image: https://cdn.jsdelivr.net/gh/wwwqqqzzz/Image/img/1746227837019-eac3809ba8b68bb487696dbcdac53eb2.png
