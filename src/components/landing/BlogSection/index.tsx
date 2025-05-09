@@ -64,7 +64,7 @@ export function BlogSidebar({
           placeholder="搜索文章..."
           value={searchTerm}
           onChange={e => setSearchTerm(e.target.value)}
-          className="focus:ring-primary/30 w-full rounded-lg border bg-background py-2 pl-10 pr-4 text-sm focus:outline-none focus:ring-2"
+          className="w-full rounded-lg border bg-background py-2 pl-10 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
         />
       </div>
 
@@ -79,7 +79,7 @@ export function BlogSidebar({
             <button
               key={tag}
               onClick={() => setActiveTag(tag)}
-              className="bg-primary/10 hover:bg-primary/20 rounded-full px-2 py-1 text-xs text-primary transition-colors"
+              className="rounded-full bg-primary/10 px-2 py-1 text-xs text-primary transition-colors hover:bg-primary/20"
             >
               {tag}
             </button>
@@ -149,7 +149,7 @@ export function FeaturedBlogCard({ post }: { post: BlogPost }) {
           {frontMatter.tags?.slice(0, 2).map((tag, idx) => (
             <span
               key={idx}
-              className="bg-primary/90 rounded-full px-3 py-1 text-xs font-medium text-white backdrop-blur-sm"
+              className="rounded-full bg-primary/90 px-3 py-1 text-xs font-medium text-white backdrop-blur-sm"
             >
               {typeof tag === 'string' ? tag : (tag as any).label}
             </span>
@@ -229,7 +229,7 @@ export function BlogCard({ post }: { post: BlogPost }) {
               {frontMatter.tags?.slice(0, 1).map((tag, idx) => (
                 <span
                   key={idx}
-                  className="bg-primary/80 rounded-full px-2.5 py-0.5 text-xs font-medium text-white"
+                  className="rounded-full bg-primary/80 px-2.5 py-0.5 text-xs font-medium text-white"
                 >
                   {typeof tag === 'string' ? tag : (tag as any).label}
                 </span>

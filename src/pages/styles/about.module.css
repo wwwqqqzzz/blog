@@ -1,0 +1,518 @@
+/* 关于页面样式 */
+
+.aboutPage {
+  padding: 2rem 0;
+}
+
+/* 头部英雄区样式 */
+.hero {
+  padding: 3rem 0;
+  background-color: var(--ifm-background-surface-color);
+  margin-bottom: 2rem;
+}
+
+.heroInner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 2rem;
+}
+
+.heroBio {
+  flex: 1;
+  min-width: 300px;
+}
+
+.heroTitle {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.name {
+  color: var(--ifm-color-primary);
+  margin-left: 0.5rem;
+}
+
+.wave {
+  display: inline-block;
+  animation: wave 2.5s infinite;
+  transform-origin: 70% 70%;
+  margin-right: 0.5rem;
+}
+
+@keyframes wave {
+  0% { transform: rotate(0deg); }
+  10% { transform: rotate(14deg); }
+  20% { transform: rotate(-8deg); }
+  30% { transform: rotate(14deg); }
+  40% { transform: rotate(-4deg); }
+  50% { transform: rotate(10deg); }
+  60% { transform: rotate(0deg); }
+  100% { transform: rotate(0deg); }
+}
+
+.heroSubtitle {
+  font-size: 1.3rem;
+  margin-bottom: 1.5rem;
+  color: var(--ifm-color-emphasis-700);
+}
+
+.heroTags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+  margin-top: 1.5rem;
+}
+
+.tag {
+  display: flex;
+  align-items: center;
+  background-color: var(--ifm-color-emphasis-100);
+  border-radius: 20px;
+  padding: 0.4rem 0.8rem;
+  font-size: 0.9rem;
+  color: var(--ifm-color-emphasis-800);
+}
+
+.tag svg {
+  margin-right: 0.4rem;
+}
+
+.heroImage {
+  flex: 0 0 auto;
+  position: relative;
+  width: 250px;
+  height: 250px;
+}
+
+.avatarContainer {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.avatar {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+  position: relative;
+  z-index: 2;
+  border: 5px solid var(--ifm-color-primary);
+}
+
+.avatarBlob {
+  position: absolute;
+  top: -15%;
+  left: -15%;
+  width: 130%;
+  height: 130%;
+  background: linear-gradient(45deg, var(--ifm-color-primary-lightest), var(--ifm-color-primary));
+  border-radius: 60% 40% 70% 30% / 30% 60% 40% 70%;
+  z-index: 1;
+  animation: blob 10s linear infinite;
+}
+
+@keyframes blob {
+  0% { border-radius: 60% 40% 70% 30% / 30% 60% 40% 70%; }
+  25% { border-radius: 30% 60% 40% 70% / 50% 60% 40% 50%; }
+  50% { border-radius: 40% 60% 70% 30% / 40% 50% 60% 60%; }
+  75% { border-radius: 30% 40% 50% 70% / 60% 30% 70% 40%; }
+  100% { border-radius: 60% 40% 70% 30% / 30% 60% 40% 70%; }
+}
+
+/* 段落和节区样式 */
+.section {
+  padding: 3rem 0;
+  border-bottom: 1px solid var(--ifm-color-emphasis-200);
+}
+
+.section:last-child {
+  border-bottom: none;
+}
+
+.sectionHeader {
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.sectionTitle {
+  font-size: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.sectionIcon {
+  font-size: 1.8rem;
+  margin-right: 0.8rem;
+  color: var(--ifm-color-primary);
+}
+
+.sectionDescription {
+  font-size: 1.1rem;
+  color: var(--ifm-color-emphasis-700);
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.aboutContent {
+  max-width: 800px;
+  margin: 0 auto;
+  line-height: 1.8;
+  font-size: 1.1rem;
+}
+
+.quote {
+  font-style: italic;
+  border-left: 4px solid var(--ifm-color-primary);
+  padding-left: 1rem;
+  margin: 1.5rem 0;
+  color: var(--ifm-color-emphasis-700);
+}
+
+/* 技能部分样式 */
+.skillCategories {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.skillGroup {
+  margin-bottom: 1.5rem;
+}
+
+.skillGroupTitle {
+  display: flex;
+  align-items: center;
+  font-size: 1.3rem;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--ifm-color-emphasis-200);
+}
+
+.skillGroupTitle svg {
+  margin-right: 0.5rem;
+  color: var(--ifm-color-primary);
+}
+
+.skillCards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1rem;
+}
+
+.skillCard {
+  background-color: var(--ifm-background-surface-color);
+  border-radius: var(--ifm-card-border-radius);
+  padding: 1rem;
+  display: flex;
+  align-items: center;
+  box-shadow: var(--ifm-card-shadow);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.skillCard:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.skillIcon {
+  font-size: 2rem;
+  margin-right: 1rem;
+  flex-shrink: 0;
+}
+
+.skillInfo {
+  flex: 1;
+}
+
+.skillNameWrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.skillName {
+  font-weight: bold;
+}
+
+.skillLevel {
+  font-size: 0.85rem;
+  color: var(--ifm-color-emphasis-600);
+}
+
+.skillBar {
+  height: 8px;
+  background-color: var(--ifm-color-emphasis-200);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.skillProgress {
+  height: 100%;
+  background-color: var(--ifm-color-primary);
+  border-radius: 4px;
+  transition: width 1s ease;
+}
+
+/* 开发环境样式 */
+.environmentCards {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+.environmentCard {
+  background-color: var(--ifm-background-surface-color);
+  border-radius: var(--ifm-card-border-radius);
+  padding: 1.5rem;
+  text-align: center;
+  flex: 0 0 calc(33.333% - 2rem);
+  min-width: 200px;
+  box-shadow: var(--ifm-card-shadow);
+  transition: transform 0.3s ease;
+}
+
+.environmentCard:hover {
+  transform: translateY(-5px);
+}
+
+.environmentIcon {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  color: var(--ifm-color-primary);
+}
+
+.environmentCard h3 {
+  margin-bottom: 0.5rem;
+}
+
+.environmentCard p {
+  color: var(--ifm-color-emphasis-700);
+}
+
+/* 时间线样式 */
+.timelineContainer {
+  position: relative;
+  max-width: 1200px;
+  margin: 3rem auto 0;
+}
+
+.timelineLine {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 2px;
+  background-color: var(--ifm-color-primary);
+  transform: translateX(-50%);
+}
+
+.timelineItem {
+  position: relative;
+  margin-bottom: 3rem;
+  width: 50%;
+}
+
+.timelineItem:last-child {
+  margin-bottom: 0;
+}
+
+.timelineLeft {
+  left: 0;
+  padding-right: 40px;
+}
+
+.timelineRight {
+  left: 50%;
+  padding-left: 40px;
+}
+
+.timelineContent {
+  position: relative;
+  padding: 1.5rem;
+  background-color: var(--ifm-background-surface-color);
+  border-radius: var(--ifm-card-border-radius);
+  box-shadow: var(--ifm-card-shadow);
+}
+
+.timelineContent:after {
+  content: "";
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  background-color: var(--ifm-color-primary);
+  border-radius: 50%;
+  top: 1.5rem;
+}
+
+.timelineLeft .timelineContent:after {
+  right: -10px;
+}
+
+.timelineRight .timelineContent:after {
+  left: -10px;
+}
+
+.timelineYear {
+  display: inline-block;
+  padding: 0.3rem 0.8rem;
+  background-color: var(--ifm-color-primary);
+  color: white;
+  border-radius: var(--ifm-badge-border-radius);
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+.timelineTitle {
+  margin-bottom: 1rem;
+}
+
+.timelineEvents {
+  padding-left: 1.2rem;
+}
+
+.timelineEvents li {
+  margin-bottom: 0.5rem;
+}
+
+.timelineGoal .timelineContent {
+  border: 2px dashed var(--ifm-color-primary-light);
+  background-color: var(--ifm-color-primary-lightest);
+}
+
+/* 兴趣部分样式 */
+.interestGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+.interestCard {
+  background-color: var(--ifm-background-surface-color);
+  border-radius: var(--ifm-card-border-radius);
+  padding: 1.5rem;
+  text-align: center;
+  box-shadow: var(--ifm-card-shadow);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.interestCard:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.interestIcon {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  color: var(--ifm-color-primary);
+}
+
+.interestTitle {
+  margin-bottom: 0.8rem;
+}
+
+.interestDescription {
+  color: var(--ifm-color-emphasis-700);
+  line-height: 1.6;
+}
+
+/* 联系方式样式 */
+.contactGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+.contactCard {
+  background-color: var(--ifm-background-surface-color);
+  border-radius: var(--ifm-card-border-radius);
+  padding: 1.5rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: var(--ifm-card-shadow);
+  text-decoration: none;
+  color: var(--ifm-font-color-base);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.contactCard:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+  color: var(--ifm-color-primary);
+}
+
+.contactIcon {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  color: var(--ifm-color-primary);
+}
+
+/* 评论部分 */
+.comments {
+  background-color: var(--ifm-background-surface-color);
+}
+
+/* 响应式布局 */
+@media (max-width: 996px) {
+  .heroInner {
+    justify-content: center;
+    text-align: center;
+  }
+  
+  .heroTitle {
+    justify-content: center;
+  }
+  
+  .heroTags {
+    justify-content: center;
+  }
+  
+  .timelineItem {
+    width: 100%;
+    padding: 0 20px;
+    left: 0;
+  }
+  
+  .timelineLine {
+    left: 20px;
+  }
+  
+  .timelineContent:after {
+    left: -30px;
+  }
+}
+
+@media (max-width: 768px) {
+  .heroTitle {
+    font-size: 2rem;
+  }
+  
+  .skillCards,
+  .interestGrid,
+  .contactGrid {
+    grid-template-columns: 1fr;
+  }
+  
+  .environmentCards {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .environmentCard {
+    width: 100%;
+  }
+} 

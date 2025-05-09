@@ -69,7 +69,7 @@ export default function Home() {
           >
             {/* 模糊背景效果 */}
             <div
-              className="absolute inset-x-[5%] -top-[30px] z-[1] h-[60px]"
+              className="absolute inset-x-[5%] top-[-30px] z-[1] h-[60px]"
               style={{
                 background: 'linear-gradient(to bottom, transparent, var(--ifm-background-color) 80%)',
                 filter: 'blur(15px)',
@@ -80,7 +80,7 @@ export default function Home() {
 
             {/* 圆角边框装饰 - 第3层 */}
             <div
-              className="absolute inset-x-0 -top-[2px] z-[3] h-[55px] overflow-hidden rounded-t-[45px]"
+              className="absolute inset-x-0 top-[-2px] z-[3] h-[55px] overflow-hidden rounded-t-[45px]"
               style={{
                 background: 'var(--ifm-background-color)',
                 boxShadow: 'inset 0 0 0 2px var(--ifm-background-surface-color)',
@@ -108,7 +108,7 @@ export default function Home() {
 
             {/* 外部装饰边框 - 第2层 */}
             <div
-              className="absolute -inset-x-[6px] -top-[6px] z-[1] h-[61px] rounded-t-[51px]"
+              className="absolute inset-x-[-6px] top-[-6px] z-[1] h-[61px] rounded-t-[51px]"
               style={{
                 background: 'transparent',
                 boxShadow: '0 -10px 36px -10px rgba(32, 180, 250, 0.2)',
@@ -117,7 +117,7 @@ export default function Home() {
 
             {/* 最外层光晕 - 第1层 */}
             <div
-              className="absolute -inset-x-[15px] -top-[15px] z-0 h-[80px] rounded-t-[60px]"
+              className="absolute inset-x-[-15px] top-[-15px] z-0 h-[80px] rounded-t-[60px]"
               style={{
                 background: 'transparent',
                 boxShadow: '0 -10px 40px -5px rgba(32, 180, 250, 0.15), 0 -2px 15px rgba(32, 180, 250, 0.08)',

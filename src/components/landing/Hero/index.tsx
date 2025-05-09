@@ -208,7 +208,7 @@ export default function Hero() {
         >
           <MovingButton
             borderRadius={isMobile ? '1rem' : '1.25rem'}
-            className="relative z-10 flex items-center rounded-2xl border border-solid border-blue-500 bg-blue-500 bg-opacity-10 px-4 py-2 text-center text-sm font-semibold text-blue-400 transition-all hover:bg-opacity-20 hover:shadow-lg md:px-6 md:py-3 md:text-base"
+            className="relative z-10 flex items-center rounded-2xl border border-solid border-blue-500 bg-blue-500/10 px-4 py-2 text-center text-sm font-semibold text-blue-400 transition-all hover:bg-blue-500/20 hover:shadow-lg md:px-6 md:py-3 md:text-base"
           >
             <a href="/about" className="font-semibold">
               <Translate id="hompage.hero.introduce">了解更多</Translate>

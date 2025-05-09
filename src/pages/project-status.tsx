@@ -19,29 +19,29 @@ const DESCRIPTION = translate({
 })
 
 // 将项目分为已部署和未部署两类
-const deployedProjects = projects.filter(project => 
-  project.website.startsWith('http') && 
-  !project.website.includes('/project-status')
+const deployedProjects = projects.filter(project =>
+  project.website.startsWith('http')
+  && !project.website.includes('/project-status'),
 )
 
-const notDeployedProjects = projects.filter(project => 
-  !project.website.startsWith('http') || 
-  project.website.includes('/project-status')
+const notDeployedProjects = projects.filter(project =>
+  !project.website.startsWith('http')
+  || project.website.includes('/project-status'),
 )
 
 // 项目卡片组件
-const ProjectCard = ({ 
-  project, 
-  isDeployed 
-}: { 
-  project: typeof projects[0], 
-  isDeployed: boolean 
+const ProjectCard = ({
+  project,
+  isDeployed,
+}: {
+  project: typeof projects[0]
+  isDeployed: boolean
 }) => {
   return (
-    <motion.div 
+    <motion.div
       className={cn(
         styles.projectCard,
-        isDeployed ? styles.deployed : styles.notDeployed
+        isDeployed ? styles.deployed : styles.notDeployed,
       )}
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
@@ -49,15 +49,15 @@ const ProjectCard = ({
       whileHover={{ y: -5 }}
     >
       <div className={styles.cardHeader}>
-        <Icon 
-          icon={isDeployed ? "ri:check-line" : "ri:code-line"} 
-          className={styles.statusIcon} 
+        <Icon
+          icon={isDeployed ? 'ri:check-line' : 'ri:code-line'}
+          className={styles.statusIcon}
         />
         <h3 className={styles.projectTitle}>{project.title}</h3>
       </div>
-      
+
       <p className={styles.projectDescription}>{project.description}</p>
-      
+
       <div className={styles.projectLinks}>
         {isDeployed && (
           <Link href={project.website} className={styles.demoLink} target="_blank">
@@ -65,14 +65,14 @@ const ProjectCard = ({
             访问网站
           </Link>
         )}
-        
+
         {!isDeployed && (
           <div className={styles.statusBadge}>
             <Icon icon="ri:information-line" style={{ marginRight: '0.3rem' }} />
             未部署到公网
           </div>
         )}
-        
+
         {project.source && (
           <Link href={project.source} className={styles.sourceLink} target="_blank">
             <Icon icon="ri:github-fill" style={{ marginRight: '0.3rem' }} />
@@ -88,7 +88,7 @@ const ProjectCard = ({
 const ContactMethods = () => {
   return (
     <div className={styles.contactMethods}>
-      <motion.div 
+      <motion.div
         className={styles.contactMethod}
         whileHover={{ y: -2, backgroundColor: 'var(--ifm-color-emphasis-200)' }}
       >
@@ -97,8 +97,8 @@ const ContactMethods = () => {
           GitHub: wwwqqqzzz
         </Link>
       </motion.div>
-      
-      <motion.div 
+
+      <motion.div
         className={styles.contactMethod}
         whileHover={{ y: -2, backgroundColor: 'var(--ifm-color-emphasis-200)' }}
       >
@@ -120,25 +120,31 @@ export default function ProjectStatus(): JSX.Element {
           <h1>{TITLE}</h1>
           <p>{DESCRIPTION}</p>
         </div>
-        
+
         <section className={styles.section}>
           <h2 className={styles.sectionTitle}>
             <Icon icon="ri:information-line" className={styles.sectionIcon} />
             关于项目部署
           </h2>
           <p className={styles.sectionDescription}>
-            在我的<Link href="/project">项目展示</Link>页面中，您可以看到我开发的各种项目。这些项目分为两类：
+            在我的
+            <Link href="/project">项目展示</Link>
+            页面中，您可以看到我开发的各种项目。这些项目分为两类：
           </p>
           <ul className={styles.infoList}>
             <li>
-              <strong>已部署项目</strong> - 这些项目已经部署到公网，您可以通过点击项目标题或"预览演示"按钮直接访问它们。
+              <strong>已部署项目</strong>
+              {' '}
+              - 这些项目已经部署到公网，您可以通过点击项目标题或"预览演示"按钮直接访问它们。
             </li>
             <li>
-              <strong>仅源码项目</strong> - 这些项目目前只提供源代码，尚未部署到公网。您可以通过点击"源码"按钮查看项目的GitHub仓库。
+              <strong>仅源码项目</strong>
+              {' '}
+              - 这些项目目前只提供源代码，尚未部署到公网。您可以通过点击"源码"按钮查看项目的GitHub仓库。
             </li>
           </ul>
         </section>
-        
+
         <section className={styles.section}>
           <h2 className={styles.sectionTitle}>
             <Icon icon="ri:check-double-line" className={styles.sectionIcon} />
@@ -148,16 +154,16 @@ export default function ProjectStatus(): JSX.Element {
             目前，以下项目已经部署到公网，您可以直接访问：
           </p>
           <div className={styles.projectGrid}>
-            {deployedProjects.map((project, index) => (
-              <ProjectCard 
-                key={project.title} 
-                project={project} 
-                isDeployed={true} 
+            {deployedProjects.map(project => (
+              <ProjectCard
+                key={project.title}
+                project={project}
+                isDeployed={true}
               />
             ))}
           </div>
         </section>
-        
+
         <section className={styles.section}>
           <h2 className={styles.sectionTitle}>
             <Icon icon="ri:code-box-line" className={styles.sectionIcon} />
@@ -167,16 +173,16 @@ export default function ProjectStatus(): JSX.Element {
             以下项目目前尚未部署到公网，仅提供源代码：
           </p>
           <div className={styles.projectGrid}>
-            {notDeployedProjects.map((project, index) => (
-              <ProjectCard 
-                key={project.title} 
-                project={project} 
-                isDeployed={false} 
+            {notDeployedProjects.map(project => (
+              <ProjectCard
+                key={project.title}
+                project={project}
+                isDeployed={false}
               />
             ))}
           </div>
         </section>
-        
+
         <section className={styles.section}>
           <h2 className={styles.sectionTitle}>
             <Icon icon="ri:question-line" className={styles.sectionIcon} />
@@ -191,7 +197,7 @@ export default function ProjectStatus(): JSX.Element {
             <li>部署需要的服务器资源有限</li>
             <li>项目是为特定场景设计，不适合公开部署</li>
           </ul>
-          
+
           <p className={styles.contactInfo}>
             如果您对某个未部署的项目特别感兴趣，欢迎通过以下方式联系我：
           </p>

@@ -15,7 +15,7 @@
     --color-primary-700: #0A81BC;
     --color-primary-800: #086293;
     --color-primary-900: #0B5A82;
-    
+
     /* 辅助色 */
     --color-accent-50: #EEF2FF;
     --color-accent-100: #E0E7FF;
@@ -27,24 +27,24 @@
     --color-accent-700: #4338CA;
     --color-accent-800: #3730A3;
     --color-accent-900: #312E81;
-    
+
     /* 功能色 */
     --color-success-50: #ECFDF5;
     --color-success-500: #10B981;
     --color-success-600: #059669;
-    
+
     --color-warning-50: #FFFBEB;
     --color-warning-500: #F59E0B;
     --color-warning-600: #D97706;
-    
+
     --color-error-50: #FEF2F2;
     --color-error-500: #EF4444;
     --color-error-600: #DC2626;
-    
+
     --color-info-50: #EFF6FF;
     --color-info-500: #3B82F6;
     --color-info-600: #2563EB;
-    
+
     /* 主题变量 */
     --content-background: #fefefe;
     --ifm-color-primary: #12affa;
@@ -123,19 +123,19 @@
     --content-background: #18181b;
     --ifm-color-primary: hsl(214deg 100% 60%);
     --ifm-color-primary-light: hsl(214deg 100% 75%);
-    
+
     /* 文本颜色 - 暗色模式 */
     --ifm-text-color: #F9FAFB;
     --ifm-secondary-text-color: #9CA3AF;
     --ifm-heading-color: hsl(0deg 0% 100%);
-    
+
     /* 菜单颜色 */
     --ifm-menu-color: #eceef1;
-    
+
     /* 背景颜色 - 暗色模式 */
     --ifm-background-color: #121212;
     --ifm-background-surface-color: #1E1E1E;
-    
+
     /* 边框颜色 - 暗色模式 */
     --ifm-border-color: #374151;
     --ifm-toc-border-color: var(--ifm-border-color);
@@ -180,16 +180,16 @@ a:hover {
   .custom-scrollbar::-webkit-scrollbar {
     width: 4px;
   }
-  
+
   .custom-scrollbar::-webkit-scrollbar-track {
     background: transparent;
   }
-  
+
   .custom-scrollbar::-webkit-scrollbar-thumb {
     background: rgba(155, 155, 155, 0.5);
     border-radius: 20px;
   }
-  
+
   .custom-scrollbar::-webkit-scrollbar-thumb:hover {
     background: rgba(155, 155, 155, 0.7);
   }
@@ -203,11 +203,11 @@ a:hover {
   .animate-pulse {
     animation: pulse 1.5s infinite;
   }
-  
+
   .animate-delay-200 {
     animation-delay: 0.2s;
   }
-  
+
   .animate-delay-500 {
     animation-delay: 0.5s;
   }
@@ -442,4 +442,432 @@ div[class^='announcementBar_'] {
 .navbar-sidebar {
   background: var(--navbar-sidebar-background);
   backdrop-filter: blur(10px);
+}
+
+/* 主题切换动画 */
+.theme-transition {
+  transition-property: background-color, color, border-color, fill, stroke;
+  transition-duration: 0s;
+}
+
+.theme-transition-active {
+  transition-duration: 0.3s;
+  transition-timing-function: ease;
+}
+
+.theme-transition-active * {
+  transition-property: color, background-color, border-color, outline-color, fill, stroke, opacity, box-shadow, transform;
+  transition-duration: 0.3s !important;
+  transition-timing-function: ease !important;
+}
+
+/* 增强暗模式阴影效果 */
+html[data-theme='dark'] .shadow-md {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -2px rgba(0, 0, 0, 0.2);
+}
+
+html[data-theme='dark'] .shadow-lg {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -4px rgba(0, 0, 0, 0.3);
+}
+
+/* 优化暗模式下的图片亮度 */
+html[data-theme='dark'] img:not([class*="dark-img"]) {
+  filter: brightness(0.9);
+}
+
+/* 增强暗模式下的文本可读性 */
+html[data-theme='dark'] {
+  font-weight: 350;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* 优化暗模式下的代码块 */
+html[data-theme='dark'] pre,
+html[data-theme='dark'] code {
+  /* 稍微增加暗模式下代码的对比度 */
+  filter: contrast(1.05);
+}
+
+/* 沉浸式阅读模式 */
+.immersive-mode {
+  --immersive-bg: var(--ifm-background-color);
+  --immersive-text: var(--ifm-text-color);
+}
+
+/* 隐藏干扰元素但保留功能按钮 */
+.immersive-mode .navbar {
+  opacity: 0;
+  transform: translateY(-100%);
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.immersive-mode .navbar:hover,
+.immersive-mode .navbar:focus-within {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* 确保功能按钮组和回到顶部按钮在沉浸式模式下始终可见 */
+.immersive-mode #feature-buttons-group,
+.immersive-mode .back-to-top-button {
+  opacity: 0.7 !important;
+  visibility: visible !important;
+  display: flex !important;
+  z-index: 9999 !important;
+  transition: opacity 0.3s ease;
+}
+
+.immersive-mode #feature-buttons-group:hover,
+.immersive-mode .back-to-top-button:hover {
+  opacity: 1 !important;
+}
+
+.immersive-mode .theme-doc-sidebar-container {
+  position: fixed;
+  left: -300px;
+  transition: left 0.3s ease;
+}
+
+.immersive-mode .theme-doc-sidebar-container:hover {
+  left: 0;
+}
+
+.immersive-mode .table-of-contents {
+  opacity: 0.3;
+  transition: opacity 0.3s ease;
+}
+
+.immersive-mode .table-of-contents:hover {
+  opacity: 1;
+}
+
+/* 优化文章阅读体验 */
+.immersive-mode .theme-doc-markdown {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 2rem;
+  font-size: 1.1rem;
+  line-height: 1.8;
+}
+
+.immersive-mode .theme-doc-markdown h1,
+.immersive-mode .theme-doc-markdown h2,
+.immersive-mode .theme-doc-markdown h3 {
+  margin-top: 2em;
+}
+
+.immersive-mode .theme-doc-markdown p {
+  margin-bottom: 1.5em;
+}
+
+/* 暗模式优化 */
+html[data-theme='dark'].immersive-mode .theme-doc-markdown {
+  color: rgba(255, 255, 255, 0.95);
+}
+
+/* 增强暗模式可读性 */
+@media (prefers-color-scheme: dark) {
+  html[data-theme='dark'] {
+    --ifm-font-weight-semibold: 600;
+    --ifm-heading-font-weight: 600;
+    --ifm-color-emphasis-500: #adb5bd;
+    --ifm-color-emphasis-600: #ced4da;
+    --ifm-color-emphasis-700: #dee2e6;
+  }
+}
+
+/* 增强暗模式图片处理 */
+html[data-theme='dark'] .markdown img:not(.dark-image-unset):not([src*=".svg"]) {
+  filter: brightness(0.85) contrast(1.05);
+  transition: filter 0.3s ease;
+}
+
+html[data-theme='dark'] .markdown img:not(.dark-image-unset):not([src*=".svg"]):hover {
+  filter: brightness(0.95) contrast(1.05);
+}
+
+/* 优化暗模式下的代码高亮 */
+html[data-theme='dark'] pre code {
+  --ifm-code-background: #1e1e2e;
+  background-color: #1e1e2e;
+}
+
+html[data-theme='dark'] pre {
+  background-color: #1e1e2e;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* 增强暗模式下链接的可见性 */
+html[data-theme='dark'] a:not(.button):not(.navbar__item):not(.menu__link) {
+  text-decoration-color: var(--ifm-color-primary-light);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 2px;
+}
+
+html[data-theme='dark'] a:not(.button):not(.navbar__item):not(.menu__link):hover {
+  text-decoration-thickness: 2px;
+}
+
+/* 优化暗模式下的表格 */
+html[data-theme='dark'] .markdown table {
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+html[data-theme='dark'] .markdown table tr {
+  background-color: transparent;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+html[data-theme='dark'] .markdown table tr:nth-child(2n) {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+html[data-theme='dark'] .markdown table th,
+html[data-theme='dark'] .markdown table td {
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+/* 优化暗模式下的滚动条 */
+html[data-theme='dark'] ::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+html[data-theme='dark'] ::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+html[data-theme='dark'] ::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+/* 阅读体验优化 - 字体大小设置 */
+html.font-size-small .theme-doc-markdown,
+html.font-size-small .blog-post-content {
+  font-size: 0.95rem;
+  line-height: 1.7;
+}
+
+html.font-size-medium .theme-doc-markdown,
+html.font-size-medium .blog-post-content {
+  font-size: 1.05rem;
+  line-height: 1.8;
+}
+
+html.font-size-large .theme-doc-markdown,
+html.font-size-large .blog-post-content {
+  font-size: 1.2rem;
+  line-height: 1.85;
+}
+
+html.font-size-xl .theme-doc-markdown,
+html.font-size-xl .blog-post-content {
+  font-size: 1.35rem;
+  line-height: 1.9;
+}
+
+/* 文章排版优化 */
+.theme-doc-markdown p,
+.blog-post-content p {
+  margin-bottom: 1.5em;
+  line-height: 1.8;
+}
+
+.theme-doc-markdown h1, .blog-post-content h1 {
+  margin-top: 2em;
+  margin-bottom: 0.8em;
+  font-weight: 700;
+}
+
+.theme-doc-markdown h2, .blog-post-content h2 {
+  margin-top: 1.8em;
+  margin-bottom: 0.8em;
+  border-bottom: 1px solid var(--ifm-border-color);
+  padding-bottom: 0.3em;
+}
+
+.theme-doc-markdown h3, .blog-post-content h3 {
+  margin-top: 1.5em;
+  margin-bottom: 0.6em;
+}
+
+.theme-doc-markdown blockquote, .blog-post-content blockquote {
+  border-left: 3px solid var(--ifm-color-primary);
+  background-color: rgba(127, 127, 127, 0.05);
+  padding: 0.8em 1em;
+  margin: 1.5em 0;
+  border-radius: 0 0.5em 0.5em 0;
+}
+
+.theme-doc-markdown blockquote p, .blog-post-content blockquote p {
+  margin-bottom: 0;
+}
+
+.theme-doc-markdown img, .blog-post-content img {
+  margin: 2em auto;
+  display: block;
+  max-width: 100%;
+  border-radius: 0.5em;
+}
+
+.theme-doc-markdown pre, .blog-post-content pre {
+  margin: 1.5em 0;
+  border-radius: 0.5em;
+}
+
+/* 优化表格显示 */
+.theme-doc-markdown table, .blog-post-content table {
+  display: block;
+  overflow-x: auto;
+  margin: 1.5em 0;
+}
+
+/* 优化列表间距 */
+.theme-doc-markdown ul, .blog-post-content ul,
+.theme-doc-markdown ol, .blog-post-content ol {
+  margin-bottom: 1.5em;
+  padding-left: 1.5em;
+}
+
+.theme-doc-markdown li, .blog-post-content li {
+  margin-bottom: 0.5em;
+}
+
+/* 暗模式优化 */
+html[data-theme='dark'] .theme-doc-markdown blockquote,
+html[data-theme='dark'] .blog-post-content blockquote {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+/* 文章内容最大宽度限制 */
+.theme-doc-markdown,
+.blog-post-content {
+  max-width: 780px;
+  margin: 0 auto;
+}
+
+/* 移动端优化 */
+@media (max-width: 768px) {
+  .theme-doc-markdown,
+  .blog-post-content {
+    padding: 0 1rem;
+  }
+
+  .theme-doc-markdown h1, .blog-post-content h1 {
+    font-size: 1.75rem;
+  }
+
+  .theme-doc-markdown h2, .blog-post-content h2 {
+    font-size: 1.5rem;
+  }
+
+  .theme-doc-markdown h3, .blog-post-content h3 {
+    font-size: 1.25rem;
+  }
+}
+
+/* 阅读辅助 - 当前段落高亮效果 */
+p:target {
+  animation: highlight 2s ease;
+}
+
+@keyframes highlight {
+  0% {
+    background-color: rgba(var(--ifm-color-primary-rgb), 0.2);
+  }
+  100% {
+    background-color: transparent;
+  }
+}
+
+/* 功能按钮组样式 - 增强版 */
+#feature-buttons-group {
+  visibility: visible !important;
+  opacity: 1 !important;
+  display: flex !important;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  background-color: rgba(255, 255, 255, 0.9) !important;
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+  border-radius: 12px !important;
+  padding: 0.75rem !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15) !important;
+  border: 1px solid rgba(0, 0, 0, 0.05) !important;
+  transition: transform 0.3s ease, opacity 0.3s ease, box-shadow 0.3s ease !important;
+  z-index: 9999 !important;
+  animation: feature-buttons-fade-in 0.5s ease-out;
+}
+
+@keyframes feature-buttons-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+#feature-buttons-group:hover {
+  transform: scale(1.02);
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.2) !important;
+}
+
+html[data-theme='dark'] #feature-buttons-group {
+  background-color: rgba(30, 41, 59, 0.9) !important;
+  border: 1px solid rgba(255, 255, 255, 0.05) !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3) !important;
+}
+
+@media (max-width: 768px) {
+  #feature-buttons-group {
+    bottom: 1rem !important;
+    right: 1rem !important;
+    padding: 0.5rem !important;
+    gap: 0.5rem;
+  }
+
+  /* 避免与侧边栏冲突 */
+  .navbar-sidebar + #feature-buttons-group {
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+  }
+}
+
+/* 左侧沉浸式阅读按钮样式 - 增强版 */
+#immersive-toggle-container {
+  visibility: visible !important;
+  opacity: 1 !important;
+  display: flex !important;
+  transition: transform 0.3s ease, opacity 0.3s ease, box-shadow 0.3s ease !important;
+  z-index: 9999 !important;
+}
+
+/* 脉冲动画效果 */
+@keyframes pulse-border {
+  0% {
+    box-shadow: 0 0 0 0 rgba(var(--ifm-color-primary-rgb), 0.4);
+  }
+  100% {
+    box-shadow: 0 0 0 10px rgba(var(--ifm-color-primary-rgb), 0);
+  }
+}
+
+#immersive-toggle-container:hover {
+  transform: scale(1.05) !important;
+}
+
+/* 暗模式下的样式 */
+html[data-theme='dark'] #immersive-toggle-container {
+  opacity: 0.9 !important;
+}
+
+/* 移动设备适配 */
+@media (max-width: 768px) {
+  #immersive-toggle-container {
+    padding: 0 !important;
+  }
 }
