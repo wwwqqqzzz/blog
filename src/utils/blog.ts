@@ -41,7 +41,7 @@ export function transformBlogItems(items: BlogPostItemsProps['items']): BlogPost
     }
 
     const { metadata, frontMatter } = BlogPostContent
-    const { title = '', sticky = 0, featured = false, image = '' } = frontMatter as ExtendedBlogPostFrontMatter
+    const { title = '', sticky = 0, featured = false, pinned = false, image = '' } = frontMatter as ExtendedBlogPostFrontMatter
     const { permalink = '', date = new Date().toISOString(), tags = [], description = '' } = metadata
 
     // Safely create date string
@@ -73,6 +73,7 @@ export function transformBlogItems(items: BlogPostItemsProps['items']): BlogPost
       description: description || '',
       sticky,
       featured,
+      pinned,
       image,
     }
   })

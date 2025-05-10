@@ -24,6 +24,7 @@ export interface ExtendedBlogPostFrontMatter {
   image?: string
   sticky?: number
   featured?: boolean
+  pinned?: boolean
   hide_table_of_contents?: boolean
   toc_min_heading_level?: number
   toc_max_heading_level?: number
@@ -64,6 +65,10 @@ export interface BlogPostData {
    * 是否为特色文章
    */
   featured?: boolean
+  /**
+   * 是否置顶文章
+   */
+  pinned?: boolean
   /**
    * 封面图片
    */
