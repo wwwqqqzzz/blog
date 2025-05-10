@@ -13,7 +13,8 @@ export function useViewType() {
     if (savedViewType === 'list' || !['grid', 'timeline'].includes(savedViewType)) {
       setViewType('timeline')
       localStorage.setItem('viewType', 'timeline')
-    } else {
+    }
+    else {
       setViewType(savedViewType)
     }
   }, [])

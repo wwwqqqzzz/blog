@@ -23,7 +23,7 @@ export default function BlogPostTimelineItems({ items }: Props): JSX.Element {
   const groupedItems = useMemo(() => {
     const groups = {}
 
-    items.forEach(item => {
+    items.forEach((item) => {
       const date = new Date(item.content.metadata.date)
       const year = date.getFullYear()
       const month = date.getMonth()
@@ -62,7 +62,7 @@ export default function BlogPostTimelineItems({ items }: Props): JSX.Element {
 
       // 默认展开最近一年的所有月份
       const initialExpandedMonths = {}
-      groupedItems[0].months.forEach(month => {
+      groupedItems[0].months.forEach((month) => {
         initialExpandedMonths[`${groupedItems[0].year}-${month.month}`] = true
       })
 
@@ -94,7 +94,7 @@ export default function BlogPostTimelineItems({ items }: Props): JSX.Element {
       year: 'numeric',
       month: 'long',
       day: 'numeric',
-      weekday: 'long'
+      weekday: 'long',
     })
   }
 
@@ -112,7 +112,7 @@ export default function BlogPostTimelineItems({ items }: Props): JSX.Element {
     // 更新年份展开状态
     setExpandedYears(prev => ({
       ...prev,
-      [year]: !isCurrentlyExpanded
+      [year]: !isCurrentlyExpanded,
     }))
 
     // 如果是展开操作，确保至少展开第一个月份
@@ -122,7 +122,7 @@ export default function BlogPostTimelineItems({ items }: Props): JSX.Element {
         const firstMonthKey = `${year}-${yearMonths[0].month}`
         setExpandedMonths(prev => ({
           ...prev,
-          [firstMonthKey]: true
+          [firstMonthKey]: true,
         }))
       }
     }
@@ -132,7 +132,7 @@ export default function BlogPostTimelineItems({ items }: Props): JSX.Element {
   const toggleMonth = (yearMonth: string) => {
     setExpandedMonths(prev => ({
       ...prev,
-      [yearMonth]: !prev[yearMonth]
+      [yearMonth]: !prev[yearMonth],
     }))
   }
 
@@ -140,7 +140,7 @@ export default function BlogPostTimelineItems({ items }: Props): JSX.Element {
   const scrollToYear = (year: number) => {
     // 创建新的展开状态对象
     const newExpandedYears = {}
-    groupedItems.forEach(group => {
+    groupedItems.forEach((group) => {
       newExpandedYears[group.year] = group.year === year
     })
 
@@ -173,10 +173,10 @@ export default function BlogPostTimelineItems({ items }: Props): JSX.Element {
     const allYears = {}
     const allMonths = {}
 
-    groupedItems.forEach(yearGroup => {
+    groupedItems.forEach((yearGroup) => {
       allYears[yearGroup.year] = true
 
-      yearGroup.months.forEach(monthGroup => {
+      yearGroup.months.forEach((monthGroup) => {
         allMonths[`${yearGroup.year}-${monthGroup.month}`] = true
       })
     })
@@ -218,7 +218,9 @@ export default function BlogPostTimelineItems({ items }: Props): JSX.Element {
             <div className="flex items-center">
               <Icon icon="ri:information-line" className="mr-2 text-xl" />
               <p className="text-sm">
-                <strong>时间线视图使用提示：</strong> 点击年份或月份可以展开/折叠内容，点击上方的年份按钮可以快速筛选特定年份的文章。
+                <strong>时间线视图使用提示：</strong>
+                {' '}
+                点击年份或月份可以展开/折叠内容，点击上方的年份按钮可以快速筛选特定年份的文章。
               </p>
             </div>
             <button
@@ -239,17 +241,19 @@ export default function BlogPostTimelineItems({ items }: Props): JSX.Element {
             <button
               key={`nav-${yearGroup.year}`}
               className={cn(
-                "rounded-full border px-3 py-1 text-sm font-medium transition-all",
+                'rounded-full border px-3 py-1 text-sm font-medium transition-all',
                 expandedYears[yearGroup.year]
-                  ? "border-primary-500 bg-primary-50 text-primary-700 dark:border-primary-400 dark:bg-gray-800 dark:text-primary-300"
-                  : "border-gray-200 text-gray-600 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-800"
+                  ? 'border-primary-500 bg-primary-50 text-primary-700 dark:border-primary-400 dark:bg-gray-800 dark:text-primary-300'
+                  : 'border-gray-200 text-gray-600 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-800',
               )}
               onClick={() => scrollToYear(yearGroup.year)}
               aria-label={`显示${yearGroup.year}年的文章`}
             >
               {yearGroup.year}
               <span className="ml-1 text-xs text-gray-500">
-                ({yearGroup.months.reduce((acc, month) => acc + month.items.length, 0)})
+                (
+                {yearGroup.months.reduce((acc, month) => acc + month.items.length, 0)}
+                )
               </span>
             </button>
           ))}
@@ -257,14 +261,14 @@ export default function BlogPostTimelineItems({ items }: Props): JSX.Element {
 
         <button
           className={cn(
-            "ml-2 flex items-center gap-1 rounded-md border px-3 py-1 text-sm font-medium transition-all",
-            "border-gray-200 text-gray-600 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-800"
+            'ml-2 flex items-center gap-1 rounded-md border px-3 py-1 text-sm font-medium transition-all',
+            'border-gray-200 text-gray-600 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-800',
           )}
           onClick={isAllExpanded ? collapseAll : expandAll}
-          aria-label={isAllExpanded ? "折叠所有年份" : "展开所有年份"}
+          aria-label={isAllExpanded ? '折叠所有年份' : '展开所有年份'}
         >
-          <Icon icon={isAllExpanded ? "ri:contract-up-down-line" : "ri:expand-up-down-line"} className="text-lg" />
-          <span>{isAllExpanded ? "折叠全部" : "展开全部"}</span>
+          <Icon icon={isAllExpanded ? 'ri:contract-up-down-line' : 'ri:expand-up-down-line'} className="text-lg" />
+          <span>{isAllExpanded ? '折叠全部' : '展开全部'}</span>
         </button>
       </div>
 
@@ -272,7 +276,7 @@ export default function BlogPostTimelineItems({ items }: Props): JSX.Element {
         <div
           key={yearGroup.year}
           id={`year-${yearGroup.year}`}
-          className={cn("mb-8", expandedYears[yearGroup.year] ? "" : "cursor-pointer")}
+          className={cn('mb-8', expandedYears[yearGroup.year] ? '' : 'cursor-pointer')}
           onClick={() => !expandedYears[yearGroup.year] && toggleYear(yearGroup.year)}
         >
           <h2
@@ -284,36 +288,39 @@ export default function BlogPostTimelineItems({ items }: Props): JSX.Element {
             tabIndex={0}
             onKeyDown={(e) => {
               if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                toggleYear(yearGroup.year);
+                e.preventDefault()
+                toggleYear(yearGroup.year)
               }
             }}
           >
             <div className="flex items-center">
               {yearGroup.year}
               <Icon
-                icon={expandedYears[yearGroup.year] ? "ri:arrow-down-s-line" : "ri:arrow-right-s-line"}
+                icon={expandedYears[yearGroup.year] ? 'ri:arrow-down-s-line' : 'ri:arrow-right-s-line'}
                 className="ml-2 text-xl transition-transform"
                 aria-hidden="true"
               />
               <span className="ml-2 text-base font-normal text-gray-500">
-                ({yearGroup.months.reduce((acc, month) => acc + month.items.length, 0)} 篇文章)
+                (
+                {yearGroup.months.reduce((acc, month) => acc + month.items.length, 0)}
+                {' '}
+                篇文章)
               </span>
             </div>
           </h2>
 
           {expandedYears[yearGroup.year] && yearGroup.months.map((monthGroup, monthIndex) => {
-            const yearMonthKey = `${yearGroup.year}-${monthGroup.month}`;
-            const isMonthExpanded = expandedMonths[yearMonthKey];
+            const yearMonthKey = `${yearGroup.year}-${monthGroup.month}`
+            const isMonthExpanded = expandedMonths[yearMonthKey]
 
             return (
               <div
                 key={yearMonthKey}
-                className={cn("mb-6", isMonthExpanded ? "" : "cursor-pointer")}
+                className={cn('mb-6', isMonthExpanded ? '' : 'cursor-pointer')}
                 onClick={(e) => {
                   // 防止事件冒泡
                   if (e.target === e.currentTarget && !isMonthExpanded) {
-                    toggleMonth(yearMonthKey);
+                    toggleMonth(yearMonthKey)
                   }
                 }}
               >
@@ -326,8 +333,8 @@ export default function BlogPostTimelineItems({ items }: Props): JSX.Element {
                   tabIndex={0}
                   onKeyDown={(e) => {
                     if (e.key === 'Enter' || e.key === ' ') {
-                      e.preventDefault();
-                      toggleMonth(yearMonthKey);
+                      e.preventDefault()
+                      toggleMonth(yearMonthKey)
                     }
                   }}
                   id={`month-${yearMonthKey}`}
@@ -335,101 +342,108 @@ export default function BlogPostTimelineItems({ items }: Props): JSX.Element {
                   <div className="flex items-center">
                     {getMonthName(monthGroup.month)}
                     <Icon
-                      icon={isMonthExpanded ? "ri:arrow-down-s-line" : "ri:arrow-right-s-line"}
+                      icon={isMonthExpanded ? 'ri:arrow-down-s-line' : 'ri:arrow-right-s-line'}
                       className="ml-2 text-lg transition-transform"
                       aria-hidden="true"
                     />
                     <span className="ml-2 text-sm font-normal text-gray-500">
-                      ({monthGroup.items.length} 篇文章)
+                      (
+                      {monthGroup.items.length}
+                      {' '}
+                      篇文章)
                     </span>
                   </div>
                 </h3>
 
                 {isMonthExpanded && (
-                    <div className={styles.timelineItems}>
-                      {monthGroup.items.map(({ content: BlogPostContent }, i) => {
-                        const { metadata } = BlogPostContent
-                        const { title, permalink, date, tags, description, readingTime } = metadata
-                        const isHovered = hoveredItem === permalink;
+                  <div className={styles.timelineItems}>
+                    {monthGroup.items.map(({ content: BlogPostContent }, i) => {
+                      const { metadata } = BlogPostContent
+                      const { title, permalink, date, tags, description, readingTime } = metadata
+                      const isHovered = hoveredItem === permalink
 
-                        return (
-                          <BlogPostProvider key={permalink} content={BlogPostContent}>
-                            <div
-                              className={styles.timelineItem}
-                              onMouseEnter={() => setHoveredItem(permalink)}
-                              onMouseLeave={() => setHoveredItem(null)}
-                            >
-                              {/* 时间线节点 */}
-                              <div className={styles.timelineNode}>
-                                <span className="text-xs font-medium">{formatDate(date)}</span>
-                              </div>
+                      return (
+                        <BlogPostProvider key={permalink} content={BlogPostContent}>
+                          <div
+                            className={styles.timelineItem}
+                            onMouseEnter={() => setHoveredItem(permalink)}
+                            onMouseLeave={() => setHoveredItem(null)}
+                          >
+                            {/* 时间线节点 */}
+                            <div className={styles.timelineNode}>
+                              <span className="text-xs font-medium">{formatDate(date)}</span>
+                            </div>
 
-                              {/* 文章卡片 */}
-                              <div className={styles.timelineCard}>
-                                <div className={styles.cardContent}>
-                                  {/* 日期和阅读时间 */}
-                                  <div className="mb-2 flex items-center text-sm text-gray-500 dark:text-gray-400">
-                                    <Icon icon="ri:calendar-line" className="mr-1" />
-                                    <span className="mr-3">{formatFullDate(date)}</span>
+                            {/* 文章卡片 */}
+                            <div className={styles.timelineCard}>
+                              <div className={styles.cardContent}>
+                                {/* 日期和阅读时间 */}
+                                <div className="mb-2 flex items-center text-sm text-gray-500 dark:text-gray-400">
+                                  <Icon icon="ri:calendar-line" className="mr-1" />
+                                  <span className="mr-3">{formatFullDate(date)}</span>
 
-                                    {readingTime && (
-                                      <>
-                                        <Icon icon="ri:time-line" className="mr-1" />
-                                        <span>{Math.ceil(readingTime)} 分钟阅读</span>
-                                      </>
-                                    )}
-                                  </div>
-
-                                  {/* 标题 */}
-                                  <Link
-                                    to={permalink}
-                                    className={styles.articleTitle}
-                                  >
-                                    {BlogPostContent.frontMatter?.pinned && (
-                                      <span className="mr-2 inline-flex items-center rounded-md bg-primary-50 px-2 py-1 text-xs font-medium text-primary-700 dark:bg-primary-900/30 dark:text-primary-300">
-                                        <Icon icon="ri:pushpin-fill" className="mr-1 text-xs" />
-                                        置顶
+                                  {readingTime && (
+                                    <>
+                                      <Icon icon="ri:time-line" className="mr-1" />
+                                      <span>
+                                        {Math.ceil(readingTime)}
+                                        {' '}
+                                        分钟阅读
                                       </span>
-                                    )}
-                                    {title}
-                                  </Link>
-
-                                  {/* 描述 */}
-                                  {description && (
-                                    <p className={styles.articleDescription}>
-                                      {description}
-                                    </p>
+                                    </>
                                   )}
-
-                                  {/* 标签 */}
-                                  {tags && tags.length > 0 && (
-                                    <div className={styles.tagsContainer}>
-                                      {tags.map((tag) => (
-                                        <Tag
-                                          key={tag.permalink}
-                                          label={tag.label}
-                                          permalink={tag.permalink}
-                                        />
-                                      ))}
-                                    </div>
-                                  )}
-
-                                  {/* 阅读更多链接 */}
-                                  <Link
-                                    to={permalink}
-                                    className={styles.readMoreLink}
-                                  >
-                                    阅读更多
-                                    <Icon icon="ri:arrow-right-line" />
-                                  </Link>
                                 </div>
+
+                                {/* 标题 */}
+                                <Link
+                                  to={permalink}
+                                  className={styles.articleTitle}
+                                >
+                                  {BlogPostContent.frontMatter?.pinned && (
+                                    <span className="mr-2 inline-flex items-center rounded-md bg-primary-50 px-2 py-1 text-xs font-medium text-primary-700 dark:bg-primary-900/30 dark:text-primary-300">
+                                      <Icon icon="ri:pushpin-fill" className="mr-1 text-xs" />
+                                      置顶
+                                    </span>
+                                  )}
+                                  {title}
+                                </Link>
+
+                                {/* 描述 */}
+                                {description && (
+                                  <p className={styles.articleDescription}>
+                                    {description}
+                                  </p>
+                                )}
+
+                                {/* 标签 */}
+                                {tags && tags.length > 0 && (
+                                  <div className={styles.tagsContainer}>
+                                    {tags.map(tag => (
+                                      <Tag
+                                        key={tag.permalink}
+                                        label={tag.label}
+                                        permalink={tag.permalink}
+                                      />
+                                    ))}
+                                  </div>
+                                )}
+
+                                {/* 阅读更多链接 */}
+                                <Link
+                                  to={permalink}
+                                  className={styles.readMoreLink}
+                                >
+                                  阅读更多
+                                  <Icon icon="ri:arrow-right-line" />
+                                </Link>
                               </div>
                             </div>
-                          </BlogPostProvider>
-                        )
-                      })}
-                    </div>
-                  )}
+                          </div>
+                        </BlogPostProvider>
+                      )
+                    })}
+                  </div>
+                )}
               </div>
             )
           })}

@@ -107,7 +107,11 @@ export default function SimplifiedTagsFilter({ tags, maxTags = 8 }: SimplifiedTa
               onClick={() => handleTagClick(tag.label)}
             >
               {tag.label}
-              <span className="ml-1 text-xs text-gray-500">({tag.count})</span>
+              <span className="ml-1 text-xs text-gray-500">
+                (
+                {tag.count}
+                )
+              </span>
             </motion.button>
           ))}
         </AnimatePresence>
@@ -120,7 +124,7 @@ export default function SimplifiedTagsFilter({ tags, maxTags = 8 }: SimplifiedTa
           className="mt-3 flex items-center text-sm font-medium text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300"
         >
           <Icon
-            icon={showAllTags ? "ri:arrow-up-s-line" : "ri:arrow-down-s-line"}
+            icon={showAllTags ? 'ri:arrow-up-s-line' : 'ri:arrow-down-s-line'}
             className="mr-1"
           />
           {showAllTags ? '收起标签' : `显示全部 ${tags.length} 个标签`}
