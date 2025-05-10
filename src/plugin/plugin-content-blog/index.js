@@ -22,6 +22,13 @@ async function blogPluginEnhanced(context, options) {
         page.items = groupedPosts[i] ? groupedPosts[i].items : []
       })
 
+      // Log private posts for debugging
+      const privatePosts = content.blogPosts.filter(post => post.metadata?.frontMatter?.private === true)
+      console.log('Plugin found private posts:', privatePosts.length)
+      if (privatePosts.length > 0) {
+        console.log('Private post titles:', privatePosts.map(post => post.metadata.title))
+      }
+
       // Create default plugin pages
       await blogPluginInstance.contentLoaded({ content, allContent, actions })
 
@@ -29,11 +36,20 @@ async function blogPluginEnhanced(context, options) {
       const { blogTags } = content
       const { setGlobalData } = actions
 
+      // Store all blog posts in global data
+      // For homepage we only need a few, but for private blog we need all
       setGlobalData({
-        posts: content.blogPosts.slice(0, 10), // Only store 10 posts
+        posts: content.blogPosts.slice(0, 10), // Only store 10 posts for homepage
+        blogPosts: content.blogPosts, // Store all blog posts for other pages like private blog
         postNum: content.blogPosts.length,
         tagNum: Object.keys(blogTags).length,
       })
+
+      // Log what we're storing in global data
+      console.log('Storing in global data:')
+      console.log('- Total posts:', content.blogPosts.length)
+      console.log('- Posts for homepage:', content.blogPosts.slice(0, 10).length)
+      console.log('- All posts for private blog:', content.blogPosts.length)
     },
   }
 }

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import { Icon } from '@iconify/react'
 import { cn } from '@site/src/lib/utils'
+import { useLocation } from '@docusaurus/router'
 import './styles.css'
 
 /**
@@ -10,19 +11,27 @@ import './styles.css'
  */
 export default function BackToTopButton(): React.ReactElement {
   const [shown, setShown] = useState(false)
+  const location = useLocation()
+  const [isPrivatePage, setIsPrivatePage] = useState(false)
+
+  // 检查是否为私密博客页面
+  useEffect(() => {
+    setIsPrivatePage(location.pathname.includes('/private'))
+  }, [location])
 
   // 监听滚动事件，控制按钮显示/隐藏
   useEffect(() => {
     const handleScroll = () => {
       // 只要页面滚动超过300px就显示按钮，不管滚动方向
-      setShown(window.scrollY > 300)
+      // 但在私密博客页面上不显示
+      setShown(window.scrollY > 300 && !isPrivatePage)
     }
 
     window.addEventListener('scroll', handleScroll)
     handleScroll() // 初始检查
 
     return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
+  }, [isPrivatePage])
 
   // 回到顶部
   const scrollToTop = () => {

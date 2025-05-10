@@ -745,6 +745,13 @@ html[data-theme='dark'] .blog-post-content blockquote {
   margin: 0 auto;
 }
 
+/* 页面布局容器 */
+.main-wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
 /* 移动端优化 */
 @media (max-width: 768px) {
   .theme-doc-markdown,
