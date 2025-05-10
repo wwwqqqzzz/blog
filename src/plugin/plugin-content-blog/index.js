@@ -9,8 +9,18 @@ async function blogPluginEnhanced(context, options) {
   return {
     ...blogPluginInstance,
     async contentLoaded({ content, allContent, actions }) {
-      // Sort blog with sticky
-      content.blogPosts.sort((a, b) => (b.metadata.frontMatter.sticky || 0) - (a.metadata.frontMatter.sticky || 0))
+      // Sort blog with pinned and sticky
+      content.blogPosts.sort((a, b) => {
+        // 首先按照 pinned 字段排序
+        const isPinnedA = a.metadata.frontMatter.pinned === true
+        const isPinnedB = b.metadata.frontMatter.pinned === true
+
+        if (isPinnedA && !isPinnedB) return -1
+        if (!isPinnedA && isPinnedB) return 1
+
+        // 如果 pinned 状态相同，则按照 sticky 字段排序
+        return (b.metadata.frontMatter.sticky || 0) - (a.metadata.frontMatter.sticky || 0)
+      })
 
       // Group posts by postsPerPage
       const groupedPosts = Array.from({ length: Math.ceil(content.blogPosts.length / postsPerPage) }, (_, i) => ({
@@ -27,6 +37,13 @@ async function blogPluginEnhanced(context, options) {
       console.log('Plugin found private posts:', privatePosts.length)
       if (privatePosts.length > 0) {
         console.log('Private post titles:', privatePosts.map(post => post.metadata.title))
+      }
+
+      // Log pinned posts for debugging
+      const pinnedPosts = content.blogPosts.filter(post => post.metadata?.frontMatter?.pinned === true)
+      console.log('Plugin found pinned posts:', pinnedPosts.length)
+      if (pinnedPosts.length > 0) {
+        console.log('Pinned post titles:', pinnedPosts.map(post => post.metadata.title))
       }
 
       // Create default plugin pages

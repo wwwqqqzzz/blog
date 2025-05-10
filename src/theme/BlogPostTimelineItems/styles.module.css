@@ -1,0 +1,382 @@
+/* 时间线视图样式 - 增强版 */
+.timelineContainer {
+  position: relative;
+  padding-left: 1.5rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* 年份标题 - 增强粘性效果和视觉层次 */
+.yearHeading {
+  position: sticky;
+  top: 4rem;
+  z-index: 10;
+  margin-bottom: 1.5rem;
+  padding: 0.75rem 1rem;
+  font-size: 2rem;
+  font-weight: 800;
+  background: linear-gradient(to right, var(--ifm-color-primary), var(--ifm-color-primary-dark));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  border-radius: 0.5rem;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  background-color: rgba(255, 255, 255, 0.7);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+  letter-spacing: -0.02em;
+  display: flex;
+  align-items: center;
+  user-select: none;
+}
+
+.yearHeading:hover {
+  transform: translateX(4px);
+  background-color: rgba(255, 255, 255, 0.85);
+}
+
+html[data-theme='dark'] .yearHeading {
+  background-color: rgba(30, 41, 59, 0.7);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* 月份标题 - 增强视觉区分 */
+.monthHeading {
+  margin-bottom: 1rem;
+  margin-left: 1.5rem;
+  padding: 0.5rem 0;
+  font-size: 1.35rem;
+  font-weight: 600;
+  color: var(--ifm-color-emphasis-800);
+  border-bottom: 2px solid var(--ifm-color-emphasis-200);
+  display: inline-block;
+  position: relative;
+  transition: all 0.2s ease;
+  user-select: none;
+  cursor: pointer;
+}
+
+.monthHeading:hover {
+  transform: translateX(4px);
+  color: var(--ifm-color-primary);
+}
+
+.monthHeading::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 50%;
+  height: 2px;
+  background-color: var(--ifm-color-primary);
+  transition: width 0.3s ease;
+}
+
+.monthHeading:hover::after {
+  width: 100%;
+}
+
+html[data-theme='dark'] .monthHeading {
+  color: var(--ifm-color-emphasis-600);
+  border-bottom-color: var(--ifm-color-emphasis-300);
+}
+
+/* 时间线 */
+.timelineItems {
+  position: relative;
+  margin-left: 1.5rem;
+  padding-left: 2rem;
+  border-left: 3px solid var(--ifm-color-emphasis-200);
+  margin-bottom: 2.5rem;
+}
+
+html[data-theme='dark'] .timelineItems {
+  border-left-color: var(--ifm-color-emphasis-300);
+}
+
+/* 时间线渐变效果 */
+.timelineItems::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -3px;
+  width: 3px;
+  height: 100px;
+  background: linear-gradient(to bottom, transparent, var(--ifm-color-emphasis-200));
+  z-index: 1;
+}
+
+html[data-theme='dark'] .timelineItems::before {
+  background: linear-gradient(to bottom, transparent, var(--ifm-color-emphasis-300));
+}
+
+.timelineItems::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: -3px;
+  width: 3px;
+  height: 50px;
+  background: linear-gradient(to top, transparent, var(--ifm-color-emphasis-200));
+  z-index: 1;
+}
+
+html[data-theme='dark'] .timelineItems::after {
+  background: linear-gradient(to top, transparent, var(--ifm-color-emphasis-300));
+}
+
+/* 时间线项目 */
+.timelineItem {
+  position: relative;
+  margin-bottom: 2.5rem;
+  transition: transform 0.3s ease;
+}
+
+.timelineItem:hover {
+  transform: translateX(4px);
+}
+
+/* 时间线节点 - 增强设计 */
+.timelineNode {
+  position: absolute;
+  left: -3.125rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 50%;
+  background-color: var(--ifm-color-primary-lightest);
+  color: var(--ifm-color-primary-dark);
+  box-shadow: 0 0 0 4px var(--ifm-background-color), 0 4px 8px rgba(0, 0, 0, 0.1);
+  font-weight: 700;
+  font-size: 0.875rem;
+  z-index: 2;
+  transition: all 0.3s ease;
+  border: 2px solid var(--ifm-color-primary-light);
+}
+
+.timelineItem:hover .timelineNode {
+  transform: scale(1.1);
+  background-color: var(--ifm-color-primary-light);
+  color: white;
+}
+
+html[data-theme='dark'] .timelineNode {
+  background-color: var(--ifm-color-primary-darkest);
+  color: var(--ifm-color-primary-lighter);
+  box-shadow: 0 0 0 4px var(--ifm-background-surface-color), 0 4px 8px rgba(0, 0, 0, 0.3);
+  border-color: var(--ifm-color-primary-dark);
+}
+
+html[data-theme='dark'] .timelineItem:hover .timelineNode {
+  background-color: var(--ifm-color-primary-dark);
+  color: white;
+}
+
+/* 文章卡片 - 增强设计 */
+.timelineCard {
+  overflow: hidden;
+  border-radius: 0.75rem;
+  border: 1px solid var(--ifm-color-emphasis-200);
+  background-color: var(--ifm-card-background-color);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.timelineCard:hover {
+  border-color: var(--ifm-color-primary-lighter);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  transform: translateY(-4px);
+}
+
+html[data-theme='dark'] .timelineCard {
+  border-color: var(--ifm-color-emphasis-300);
+}
+
+html[data-theme='dark'] .timelineCard:hover {
+  border-color: var(--ifm-color-primary-darker);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+}
+
+/* 卡片内容容器 */
+.cardContent {
+  padding: 1.5rem;
+}
+
+/* 文章标题 */
+.articleTitle {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 0.75rem;
+  line-height: 1.3;
+  color: var(--ifm-color-emphasis-900);
+  transition: color 0.2s ease;
+}
+
+.timelineCard:hover .articleTitle {
+  color: var(--ifm-color-primary);
+}
+
+html[data-theme='dark'] .articleTitle {
+  color: var(--ifm-color-emphasis-800);
+}
+
+/* 文章描述 */
+.articleDescription {
+  font-size: 1rem;
+  line-height: 1.6;
+  margin-bottom: 1rem;
+  color: var(--ifm-color-emphasis-700);
+}
+
+html[data-theme='dark'] .articleDescription {
+  color: var(--ifm-color-emphasis-600);
+}
+
+/* 标签容器 */
+.tagsContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+/* 阅读更多链接 */
+.readMoreLink {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.25rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--ifm-color-primary);
+  opacity: 0;
+  transition: all 0.3s ease;
+  margin-top: 0.75rem;
+}
+
+.timelineCard:hover .readMoreLink {
+  opacity: 1;
+}
+
+/* 响应式调整 */
+@media (max-width: 996px) {
+  .timelineContainer {
+    padding-left: 0.5rem;
+  }
+
+  .yearHeading {
+    font-size: 1.75rem;
+    padding: 0.5rem 0.75rem;
+  }
+
+  .monthHeading {
+    margin-left: 1rem;
+    font-size: 1.25rem;
+  }
+
+  .timelineItems {
+    margin-left: 1rem;
+    padding-left: 1.5rem;
+  }
+
+  .timelineNode {
+    left: -2.5rem;
+    width: 2rem;
+    height: 2rem;
+  }
+
+  .cardContent {
+    padding: 1.25rem;
+  }
+
+  .articleTitle {
+    font-size: 1.35rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .timelineContainer {
+    padding-left: 0;
+  }
+
+  .yearHeading {
+    font-size: 1.5rem;
+    padding: 0.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .monthHeading {
+    margin-left: 0.5rem;
+    font-size: 1.1rem;
+  }
+
+  .timelineItems {
+    margin-left: 0.5rem;
+    padding-left: 1.25rem;
+    border-left-width: 2px;
+  }
+
+  .timelineNode {
+    left: -2rem;
+    width: 1.75rem;
+    height: 1.75rem;
+    font-size: 0.75rem;
+  }
+
+  .cardContent {
+    padding: 1rem;
+  }
+
+  .articleTitle {
+    font-size: 1.25rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .articleDescription {
+    font-size: 0.9rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .readMoreLink {
+    font-size: 0.8rem;
+    opacity: 1;
+  }
+}
+
+@media (max-width: 480px) {
+  .yearHeading {
+    font-size: 1.35rem;
+    position: relative;
+    top: 0;
+    margin-bottom: 0.75rem;
+  }
+
+  .monthHeading {
+    font-size: 1rem;
+    margin-left: 0.25rem;
+  }
+
+  .timelineItems {
+    padding-left: 1rem;
+    margin-left: 0.25rem;
+  }
+
+  .timelineNode {
+    left: -1.75rem;
+    width: 1.5rem;
+    height: 1.5rem;
+    font-size: 0.7rem;
+  }
+
+  .articleTitle {
+    font-size: 1.1rem;
+  }
+
+  .articleDescription {
+    font-size: 0.85rem;
+  }
+}

@@ -43,7 +43,7 @@ export function BlogCard({
   className,
 }: BlogCardProps): React.ReactElement {
   const [isHovered, setIsHovered] = useState(false)
-  const { title, link, date, tags, description, image } = post
+  const { title, link, date, tags, description, image, pinned } = post
 
   // 处理日期格式
   const formattedDate = new Date(date).toLocaleDateString('zh-CN', {
@@ -99,6 +99,14 @@ export function BlogCard({
         {/* 文章内容 */}
         <div className="flex flex-1 flex-col justify-between p-4">
           <div>
+            {pinned && (
+              <div className="mb-2 flex items-center">
+                <span className="inline-flex items-center rounded-md bg-primary-50 px-2 py-1 text-xs font-medium text-primary-700 dark:bg-primary-900/30 dark:text-primary-300">
+                  <Icon icon="ri:pushpin-fill" className="mr-1 text-xs" />
+                  置顶
+                </span>
+              </div>
+            )}
             <h4 className="mb-2 line-clamp-1 text-base font-medium">
               <Link href={link} className="text-card-foreground transition-colors hover:text-primary hover:no-underline">
                 {title}
@@ -141,11 +149,19 @@ export function BlogCard({
         whileHover={{ x: 3, transition: { duration: 0.2 } }}
       >
         <div className="flex items-center justify-between">
-          <h4 className="line-clamp-1 text-base font-medium">
-            <Link href={link} className="text-card-foreground transition-colors hover:text-primary hover:no-underline">
-              {title}
-            </Link>
-          </h4>
+          <div className="flex items-center">
+            {pinned && (
+              <span className="mr-2 inline-flex items-center rounded-md bg-primary-50 px-2 py-1 text-xs font-medium text-primary-700 dark:bg-primary-900/30 dark:text-primary-300">
+                <Icon icon="ri:pushpin-fill" className="mr-1 text-xs" />
+                置顶
+              </span>
+            )}
+            <h4 className="line-clamp-1 text-base font-medium">
+              <Link href={link} className="text-card-foreground transition-colors hover:text-primary hover:no-underline">
+                {title}
+              </Link>
+            </h4>
+          </div>
           <span className="text-muted-foreground ml-4 shrink-0 text-xs">
             {formattedDate}
           </span>
@@ -198,6 +214,14 @@ export function BlogCard({
 
       {/* 文章内容 */}
       <div className="p-4">
+        {pinned && (
+          <div className="mb-2 flex items-center">
+            <span className="inline-flex items-center rounded-md bg-primary-50 px-2 py-1 text-xs font-medium text-primary-700 dark:bg-primary-900/30 dark:text-primary-300">
+              <Icon icon="ri:pushpin-fill" className="mr-1 text-xs" />
+              置顶
+            </span>
+          </div>
+        )}
         <h4 className={`mb-2 line-clamp-2 ${featured ? 'text-xl font-bold' : 'text-base font-medium'}`}>
           <Link href={link} className="text-card-foreground transition-colors hover:text-primary hover:no-underline">
             {title}

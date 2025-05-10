@@ -3,18 +3,20 @@ import { cn } from '@site/src/lib/utils'
 import BackToTopButton from '@theme/BackToTopButton'
 import type { Props } from '@theme/BlogListPage'
 import BlogListPaginator from '@theme/BlogListPaginator'
-import BlogPostItems from '@theme/BlogPostItems'
+
 import SearchMetadata from '@theme/SearchMetadata'
 
 import Translate from '@docusaurus/Translate'
 import { Icon } from '@iconify/react'
 import { type ViewType, useViewType } from '@site/src/hooks/useViewType'
 import BlogPostGridItems from '../BlogPostGridItems'
+import BlogPostTimelineItems from '../BlogPostTimelineItems'
 import MyLayout from '../MyLayout'
 import { useLocation, useHistory } from '@docusaurus/router'
 import { transformBlogItems, extractAllTags, filterPostsByTag } from '@site/src/utils/blog'
 import FeaturedArticles from '@site/src/components/FeaturedArticles'
-import TagsFilter from '@site/src/components/TagsFilter'
+import PinnedArticles from '@site/src/components/PinnedArticles'
+import SimplifiedTagsFilter from '@site/src/components/SimplifiedTagsFilter'
 import SearchBox from '@site/src/components/SearchBox'
 import BlogSortControls from '@site/src/components/blog/BlogSortControls'
 import { getArticleViewData } from '@site/src/utils/article-view-tracker'
@@ -52,16 +54,16 @@ function ViewTypeSwitch({
       <motion.button
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
-        onClick={() => toggleViewType('list')}
+        onClick={() => toggleViewType('timeline')}
         className={cn(
           'flex items-center gap-1 rounded-md border px-3 py-1.5 text-sm font-medium transition-colors',
-          viewType === 'list'
+          viewType === 'timeline'
             ? 'border-primary-500 bg-primary-50 text-primary-700 dark:bg-gray-800 dark:text-primary-400'
             : 'border-gray-200 text-gray-600 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-800',
         )}
       >
-        <Icon icon="ph:list" width="18" height="18" />
-        <span>列表视图</span>
+        <Icon icon="ph:clock-countdown" width="18" height="18" />
+        <span>时间线视图</span>
       </motion.button>
 
       <motion.button
@@ -92,8 +94,8 @@ function BlogListPageContent(props: Props) {
   const sortBy = queryParams.get('sort') || 'newest'
 
   const { viewType, toggleViewType } = useViewType()
-  const isListView = viewType === 'list'
   const isGridView = viewType === 'grid'
+  const isTimelineView = viewType === 'timeline'
 
   // 转换和处理博客数据
   const blogItems = transformBlogItems(items)
@@ -155,7 +157,9 @@ function BlogListPageContent(props: Props) {
 
   // 当筛选结果或排序方式变化时，排序文章
   useEffect(() => {
-    const itemsToSort = [...filteredItems]
+    // 过滤掉置顶文章，因为它们已经在顶部单独显示了
+    const nonPinnedItems = filteredItems.filter(item => item.content.frontMatter?.pinned !== true)
+    const itemsToSort = [...nonPinnedItems]
 
     // 应用不同的排序方式
     switch (sortBy) {
@@ -199,6 +203,7 @@ function BlogListPageContent(props: Props) {
         })
     }
 
+    // 更新排序后的结果
     setSortedItems(itemsToSort)
   }, [filteredItems, sortBy, viewData])
 
@@ -221,13 +226,20 @@ function BlogListPageContent(props: Props) {
         />
       </div>
 
-      {/* 精选文章区域 */}
+      {/* 置顶文章区域 - 始终显示，优先级最高，不受标签筛选影响 */}
+      <PinnedArticles
+        items={blogItems}
+        currentTag={currentTag}
+        searchQuery={searchQuery}
+      />
+
+      {/* 标签筛选器 - 放在置顶文章下方，精选文章上方 */}
+      <SimplifiedTagsFilter tags={allTags} maxTags={8} />
+
+      {/* 精选文章区域 - 仅在没有搜索和标签筛选时显示 */}
       {!searchQuery && !currentTag && (
         <FeaturedArticles items={blogItems} />
       )}
-
-      {/* 标签筛选器 */}
-      <TagsFilter tags={allTags} />
 
       {/* 排序和过滤控制 */}
       <BlogSortControls
@@ -271,14 +283,14 @@ function BlogListPageContent(props: Props) {
           {sortedItems.length > 0
             ? (
                 <>
-                  {isListView && (
+                  {isTimelineView && (
                     <motion.div
                       className="mb-8"
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       transition={{ duration: 0.5 }}
                     >
-                      <BlogPostItems items={sortedItems} />
+                      <BlogPostTimelineItems items={sortedItems} />
                     </motion.div>
                   )}
                   {isGridView && (
