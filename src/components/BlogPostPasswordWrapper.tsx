@@ -12,7 +12,7 @@ const BlogPostPasswordWrapper: React.FC<BlogPostPasswordWrapperProps> = ({ child
   const {
     private: isPrivate,
     password: customPassword,
-    passwordHint: customPasswordHint
+    passwordHint: customPasswordHint,
   } = frontMatter
 
   const [isAuthenticated, setIsAuthenticated] = useState(false)
@@ -136,14 +136,18 @@ const BlogPostPasswordWrapper: React.FC<BlogPostPasswordWrapperProps> = ({ child
           {error && <p className={styles.errorMessage}>密码错误，请重试</p>}
           {customPasswordHint && (
             <p className={styles.passwordHint}>
-              <strong>💡 密码提示:</strong> {customPasswordHint}
+              <strong>💡 密码提示:</strong>
+              {' '}
+              {customPasswordHint}
             </p>
           )}
-          {customPassword ? (
-            <p className={styles.passwordType}>此文章使用自定义密码</p>
-          ) : (
-            <p className={styles.passwordType}>此文章使用默认密码</p>
-          )}
+          {customPassword
+            ? (
+                <p className={styles.passwordType}>此文章使用自定义密码</p>
+              )
+            : (
+                <p className={styles.passwordType}>此文章使用默认密码</p>
+              )}
         </form>
       </div>
     </div>

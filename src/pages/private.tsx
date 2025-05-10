@@ -26,7 +26,9 @@ export default function PrivateBlogPage() {
   let privateBlogs: BlogPost[] = []
   try {
     const globalData = useGlobalData()
+    /* eslint-disable @typescript-eslint/ban-ts-comment */
     // @ts-ignore - 忽略类型检查，因为Docusaurus API结构可能会变化
+    /* eslint-enable @typescript-eslint/ban-ts-comment */
     const blogPluginData = globalData['docusaurus-plugin-content-blog']?.default
 
     if (blogPluginData?.blogPosts) {
