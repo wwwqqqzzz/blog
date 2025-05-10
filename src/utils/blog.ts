@@ -6,10 +6,10 @@ import type { BlogTag, BlogPostData, ExtendedBlogPostFrontMatter } from '../type
  */
 export function transformBlogItems(items: BlogPostItemsProps['items']): BlogPostData[] {
   if (!items || !Array.isArray(items)) {
-    return [];
+    return []
   }
 
-  return items.map(item => {
+  return items.map((item) => {
     // Check if content exists
     if (!item || !item.content) {
       return {
@@ -21,10 +21,10 @@ export function transformBlogItems(items: BlogPostItemsProps['items']): BlogPost
         sticky: 0,
         featured: false,
         image: '',
-      };
+      }
     }
 
-    const BlogPostContent = item.content;
+    const BlogPostContent = item.content
 
     // Check if metadata and frontMatter exist
     if (!BlogPostContent.metadata || !BlogPostContent.frontMatter) {
@@ -37,23 +37,24 @@ export function transformBlogItems(items: BlogPostItemsProps['items']): BlogPost
         sticky: 0,
         featured: false,
         image: '',
-      };
+      }
     }
 
-    const { metadata, frontMatter } = BlogPostContent;
-    const { title = '', sticky = 0, featured = false, image = '' } = frontMatter as ExtendedBlogPostFrontMatter;
-    const { permalink = '', date = new Date().toISOString(), tags = [], description = '' } = metadata;
+    const { metadata, frontMatter } = BlogPostContent
+    const { title = '', sticky = 0, featured = false, image = '' } = frontMatter as ExtendedBlogPostFrontMatter
+    const { permalink = '', date = new Date().toISOString(), tags = [], description = '' } = metadata
 
     // Safely create date string
-    let dateString = '';
+    let dateString = ''
     try {
-      const dateObj = new Date(date);
+      const dateObj = new Date(date)
       dateString = `${dateObj.getFullYear()}-${`0${dateObj.getMonth() + 1}`.slice(
         -2,
-      )}-${`0${dateObj.getDate()}`.slice(-2)}`;
-    } catch (e) {
-      console.error('Error parsing date:', e);
-      dateString = '';
+      )}-${`0${dateObj.getDate()}`.slice(-2)}`
+    }
+    catch (e) {
+      console.error('Error parsing date:', e)
+      dateString = ''
     }
 
     // 为标签添加count初始值，真实值会在extractAllTags中计算
@@ -62,7 +63,7 @@ export function transformBlogItems(items: BlogPostItemsProps['items']): BlogPost
           ...tag,
           count: 1, // 初始值会在extractAllTags中被重新计算
         }))
-      : [];
+      : []
 
     return {
       title: title || '',
@@ -73,7 +74,7 @@ export function transformBlogItems(items: BlogPostItemsProps['items']): BlogPost
       sticky,
       featured,
       image,
-    };
+    }
   })
 }
 
@@ -82,16 +83,16 @@ export function transformBlogItems(items: BlogPostItemsProps['items']): BlogPost
  */
 export function extractAllTags(items: BlogPostData[]): BlogTag[] {
   if (!items || !Array.isArray(items)) {
-    return [];
+    return []
   }
 
   const tagsMap = new Map<string, { tag: BlogTag, count: number }>()
 
   items.forEach((item) => {
-    if (!item || !item.tags) return;
+    if (!item || !item.tags) return
 
     item.tags.forEach((tag) => {
-      if (!tag || !tag.label) return;
+      if (!tag || !tag.label) return
 
       if (!tagsMap.has(tag.label)) {
         tagsMap.set(tag.label, {
@@ -120,14 +121,14 @@ export function extractAllTags(items: BlogPostData[]): BlogTag[] {
  */
 export function filterPostsByTag(items: BlogPostData[], tagName: string): BlogPostData[] {
   if (!items || !Array.isArray(items)) {
-    return [];
+    return []
   }
 
   if (!tagName) return items
 
   return items.filter((item) => {
     if (!item || !item.tags || !Array.isArray(item.tags)) {
-      return false;
+      return false
     }
     return item.tags.some(tag => tag && tag.label === tagName)
   })

@@ -34,79 +34,80 @@ export default function RelatedArticles({ maxArticles = 3 }: RelatedArticlesProp
     // 过滤掉无效的博客文章
     const validPosts = blogData.blogPosts
       .filter(post => post && post.content)
-      .map(post => ({ content: post.content }));
+      .map(post => ({ content: post.content }))
 
-    return transformBlogItems(validPosts);
+    return transformBlogItems(validPosts)
   }, [blogData?.blogPosts])
 
   // 寻找相关文章，使用改进的算法
   const relatedArticles = useMemo(() => {
     // 安全检查
     if (!tags || !Array.isArray(tags) || !title || !date) {
-      return [];
+      return []
     }
 
     // 获取当前文章的标签和其他数据
     const currentTags = tags.map(tag => (tag && tag.label ? tag.label.toLowerCase() : ''))
-                            .filter(label => label !== ''); // 过滤掉空标签
-    const currentDate = new Date(date);
-    const currentTitle = (title || '').toLowerCase();
-    const currentDesc = (description || '').toLowerCase();
+      .filter(label => label !== '') // 过滤掉空标签
+    const currentDate = new Date(date)
+    const currentTitle = (title || '').toLowerCase()
+    const currentDesc = (description || '').toLowerCase()
     const currentKeywords = [...currentTitle.split(' '), ...currentDesc.split(' ')]
       .filter(word => word && word.length > 2) // 忽略太短的词
-      .map(word => word.replace(/[,.?!;:'"()\[\]{}]/g, '')); // 移除标点符号
+      .map(word => word.replace(/[,.?!;:'"()\[\]{}]/g, '')) // 移除标点符号
 
     // 筛选掉当前文章和无效文章
-    const otherPosts = allPosts.filter(post => post && post.title && post.title !== title);
+    const otherPosts = allPosts.filter(post => post && post.title && post.title !== title)
 
     // 计算每篇文章与当前文章的相关性分数
     const postsWithScore = otherPosts.map((post) => {
-      let score = 0;
+      let score = 0
 
       // 1. 标签匹配度 (0-5分)
       const postTags = post.tags && Array.isArray(post.tags)
         ? post.tags
             .filter(tag => tag && tag.label)
             .map(tag => tag.label.toLowerCase())
-        : [];
-      const matchingTags = postTags.filter(tag => currentTags.includes(tag));
-      const tagScore = Math.min(5, matchingTags.length * 2);
-      score += tagScore;
+        : []
+      const matchingTags = postTags.filter(tag => currentTags.includes(tag))
+      const tagScore = Math.min(5, matchingTags.length * 2)
+      score += tagScore
 
       // 2. 标题相似度 (0-3分)
-      const postTitle = (post.title || '').toLowerCase();
+      const postTitle = (post.title || '').toLowerCase()
       const titleWords = postTitle.split(' ')
         .filter(word => word)
-        .map(word => word.replace(/[,.?!;:'"()\[\]{}]/g, ''));
+        .map(word => word.replace(/[,.?!;:'"()\[\]{}]/g, ''))
       const matchingTitleWords = titleWords.filter(word =>
         word && word.length > 2 && currentTitle.includes(word),
-      );
-      const titleScore = Math.min(3, matchingTitleWords.length);
-      score += titleScore;
+      )
+      const titleScore = Math.min(3, matchingTitleWords.length)
+      score += titleScore
 
       // 3. 内容关键词匹配 (0-3分)
-      const postDesc = (post.description || '').toLowerCase();
+      const postDesc = (post.description || '').toLowerCase()
       const postKeywords = [...postTitle.split(' '), ...postDesc.split(' ')]
         .filter(word => word && word.length > 2)
-        .map(word => word.replace(/[,.?!;:'"()\[\]{}]/g, ''));
+        .map(word => word.replace(/[,.?!;:'"()\[\]{}]/g, ''))
 
-      const matchingKeywords = postKeywords.filter(word => currentKeywords.includes(word));
-      const keywordScore = Math.min(3, matchingKeywords.length * 0.5);
-      score += keywordScore;
+      const matchingKeywords = postKeywords.filter(word => currentKeywords.includes(word))
+      const keywordScore = Math.min(3, matchingKeywords.length * 0.5)
+      score += keywordScore
 
       // 4. 时间接近度 (0-2分)
-      let daysDiff = 365; // 默认值
+      let daysDiff = 365 // 默认值
       try {
-        const postDate = new Date(post.date || Date.now());
-        const timeDiff = Math.abs(postDate.getTime() - currentDate.getTime());
-        daysDiff = timeDiff / (1000 * 3600 * 24);
-      } catch (e) {
-        console.error('Error calculating date difference:', e);
+        const postDate = new Date(post.date || Date.now())
+        const timeDiff = Math.abs(postDate.getTime() - currentDate.getTime())
+        daysDiff = timeDiff / (1000 * 3600 * 24)
+      }
+      catch (e) {
+        console.error('Error calculating date difference:', e)
       }
 
       // 发布时间在90天内的文章得分更高
-      const timeScore = daysDiff <= 90 ? 2 : daysDiff <= 180 ? 1 : 0;
-      score += timeScore;
+      const timeScore = daysDiff <= 90 ? 2 : daysDiff <= 180 ? 1 : 0
+      score += timeScore
 
       return {
         post,
@@ -117,14 +118,14 @@ export default function RelatedArticles({ maxArticles = 3 }: RelatedArticlesProp
           keywordMatches: matchingKeywords.length,
           daysDiff,
         },
-      };
-    });
+      }
+    })
 
     // 按总分排序，并限制数量
     return postsWithScore
       .sort((a, b) => b.score - a.score)
       .slice(0, maxArticles)
-      .map(item => item.post);
+      .map(item => item.post)
   }, [tags, title, description, date, allPosts, maxArticles])
 
   // 如果没有相关文章，返回 null
@@ -156,16 +157,16 @@ interface RelatedArticleCardProps {
 function RelatedArticleCard({ article, index }: RelatedArticleCardProps): React.ReactNode {
   // Safety check
   if (!article) {
-    return null;
+    return null
   }
 
-  const [isHovered, setIsHovered] = React.useState(false);
-  const title = article.title || '无标题';
-  const link = article.link || '#';
-  const description = article.description || '';
-  const date = article.date || '';
-  const image = article.image || '';
-  const tags = article.tags && Array.isArray(article.tags) ? article.tags : [];
+  const [isHovered, setIsHovered] = React.useState(false)
+  const title = article.title || '无标题'
+  const link = article.link || '#'
+  const description = article.description || ''
+  const date = article.date || ''
+  const image = article.image || ''
+  const tags = article.tags && Array.isArray(article.tags) ? article.tags : []
 
   return (
     <motion.div
@@ -194,14 +195,16 @@ function RelatedArticleCard({ article, index }: RelatedArticleCardProps): React.
                   {/* 标签 */}
                   {tags.length > 0 && (
                     <div className="absolute bottom-3 left-3 flex gap-2">
-                      {tags.slice(0, 1).map(tag => tag && tag.label && tag.permalink ? (
-                        <span
-                          key={tag.permalink}
-                          className="rounded-full bg-primary-500/80 px-2.5 py-0.5 text-xs font-medium text-white"
-                        >
-                          {tag.label}
-                        </span>
-                      ) : null)}
+                      {tags.slice(0, 1).map(tag => tag && tag.label && tag.permalink
+                        ? (
+                            <span
+                              key={tag.permalink}
+                              className="rounded-full bg-primary-500/80 px-2.5 py-0.5 text-xs font-medium text-white"
+                            >
+                              {tag.label}
+                            </span>
+                          )
+                        : null)}
                     </div>
                   )}
                 </>
@@ -240,5 +243,5 @@ function RelatedArticleCard({ article, index }: RelatedArticleCardProps): React.
         </div>
       </Link>
     </motion.div>
-  );
+  )
 }
