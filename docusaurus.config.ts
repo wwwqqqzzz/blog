@@ -62,6 +62,7 @@ const config: Config = {
           items: [
             { label: '归档', to: 'blog/archive' },
             { label: '技术笔记', to: 'docs/docusaurus-guides' },
+            { label: '私密博客', to: 'private' },
           ],
         },
         // {

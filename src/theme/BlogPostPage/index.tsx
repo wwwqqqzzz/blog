@@ -1,6 +1,7 @@
 import { type BlogSidebar } from '@docusaurus/plugin-content-blog'
 import { BlogPostProvider, useBlogPost } from '@docusaurus/plugin-content-blog/client'
 import { HtmlClassNameProvider, ThemeClassNames } from '@docusaurus/theme-common'
+import BlogPostPasswordWrapper from '@site/src/components/BlogPostPasswordWrapper'
 import Comment from '@site/src/components/Comment'
 import ReadingProgress from '@site/src/components/ReadingProgress'
 import RelatedArticles from '@site/src/components/RelatedArticles'
@@ -53,7 +54,11 @@ function BlogPostPageContent({
           : undefined
       }
     >
-      <BlogPostItem>{children}</BlogPostItem>
+      <BlogPostItem>
+        <BlogPostPasswordWrapper>
+          {children}
+        </BlogPostPasswordWrapper>
+      </BlogPostItem>
 
       {/* 社交分享按钮 */}
       {!hideSocialShare && <SocialShare />}
