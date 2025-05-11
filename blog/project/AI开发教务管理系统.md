@@ -13,28 +13,9 @@ image: https://cdn.jsdelivr.net/gh/wwwqqqzzz/Image/img/1746226378643-9bb523eaa05
 
 # AI开发教务管理系统
 
-## 起因
+## 项目背景
 
-### 原因
-
-老师给我们布置大作业,于是我想到结合ai的方式进行开发
-
-| Prompt                                                       | Image                                                        |
-| ------------------------------------------------------------ | ------------------------------------------------------------ |
-| 本课程期末考核采用大作业的形式，旨在考核同学们对重点知识内容的理解情况以及实践动手操作能力，同时考察同学们的编程思想和通过编程解决问题的能力，重点考察Spring框架技术和Mybatis框架技术，如控制反转的基本思想、依赖注入、面向切面编程、SpringMVC技术的应用、持久层设计和实现等br/>一、作业题目及要求如下<br/>1.作业的基本要求每位同学设计并实现一个基于SSM框架（Spring+SpringMVC+MyBatis）或SpringBoot的教务信息管理系统br/>2.技术要求：数据库最好为MySQL，也可以是其他关系型数据库，编程语言为Java，web服务器软件为Tomcat，必须使用Spring框架和Mybatis框架（允许使用SpringBoot）br/>3.工作量要求：该系统包含三个角色：老师，学生，管理员。管理员的业务有br/>）添加，删除，修改，查看学生的信br/>）添加，删除，修改，查看老师的信br/>）添加，删除，修改，查看管理员的信息<br/>）添加，删除，修改，查看课程的信br/>）登br/>老师的业务有br/>）登br/>）录入，修改，查看选了自己教的课程的学生的成绩信息<br/>）查看自己的个人信息，其中包括自己教的课br/>学生的业务有br/>）登br/>）选择课程<br/>）查看自己的个人信息，包括所选课程的成绩<br/>系统数据库的各个数据库表（老师表，学生表，管理员表等）的信息字段自行设计，但不能因为多字段或少字段影响上述功能。数据库对象（例如主键，外键等）的使用也是考察的重点。数据库表和字段的命名必须有意义，不能出现毫无意义的字段名或表名br/>系统的界面要求整洁美观，并且能清晰地展示信息。使用HTML+CSS+JavaScript结合JSP完成前端页面的设计和实现，也可以用其他高级前端技术实现br/>系统的后端要求代码结构合理，对应的方法和类有相应的注释，类名使用帕斯卡命名法，变量名和方法名用驼峰命名法，能够正确实现上文要求的业务br/>4.提交内容：使用金山表单在线提交作业，要求提交数据库脚本、源代码和系统运行讲解视频，具体内容见金山表单br/>二、考核时间安排<br/>20242日下点前完成大作业，提交到收作业的金山表单br/>三、考核说明<br/>要求同学开卷独立完成大作业，不得相互抄袭。否则，一旦发现全部按0分处理。逾期不交者，按缺考处理！！！<br/>四、评分标br/>1. 总成绩由平时成绩和大作业成绩组成，其中平时成绩占30％，平时成绩主要由学生平时考勤情况和课后作业完成情况组成，课程结束后缺勤次数少于总课时的三分之一，在确认无记录错误情况后，提醒学生确认其考勤情况，确认缺课次数达到总课时的三分之一后取消其考试成绩br/>2. 大作业成绩总分00分，构成如下br/>1）使用HTML+CSS+JavaScript结合JSP完成前端页面的设计和实现，也可以用其他高级前端技术实现。（20分）<br/>2）使用SSM框架（Spring+SpringMVC+MyBatis）或SpringBoot实现后端。（60分）<br/>3）使用MySQL或其他关系型数据库完成数据库的设计和实现。（20分） | ![作业提交](https://cdn.jsdelivr.net/gh/wwwqqqzzz/Image/img/%E4%BD%9C%E4%B8%9A%E6%8F%90%E4%BA%A4.png) |
-
-### 选择
-
-前提:发送同样的Prompt
-
-| AI原型       | 优点                                                         | 缺点                                                         | 图片实例                                                     |
-| ------------ | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ |
-| ChatGPT      | 有针对不同领域的机器生成步骤具体且整是按阶段帮你实现,更像一个老师在一步一步教所以更适合用于交流 | 稳定性不可能是受限于文字长度,导致回答质量时好时坏         | ![image-20241111050736217](https://cdn.jsdelivr.net/gh/wwwqqqzzz/Image/img/image-20241111050736217.png) |
-| Claude       | Code神器,直接生成代码,而且质量很高.                          | 对于问答,有时候会一直重还非常免费回答长度有限,我只问了6个问他就不给再问| ![image-20241111050650100](https://cdn.jsdelivr.net/gh/wwwqqqzzz/Image/img/image-20241111050650100.png) |
-| Gemini       | 动画不错,看着很流发出来的话都是网上可以参考得到的,生成的话还有草稿,还是很不错的 | 创造性不不够灵活,我要问的详细一点才给出好一点的结果       | ![image-20241111051207899](https://cdn.jsdelivr.net/gh/wwwqqqzzz/Image/img/image-20241111051207899.png) |
-| Bing copilot | 动画和界面是我最喜欢的一让我感觉很舒生成的内容还是中英文都有也是可以引用网上资料| 内容中规中矩,就是想找历史记录一开始没找到.还有,我问着问着,服务器突然就维护| ![image-20241111051641500](https://cdn.jsdelivr.net/gh/wwwqqqzzz/Image/img/image-20241111051641500.png) |
-| 通义千问     | 有个指令中心,我不知道这么问的时可以在里面找,中文交流更适合交流,所以我还是喜欢把一些中文文档发给他,帮我讲解 | 写的内容有点简并不能很好的实现                            | ![image-20241111052310401](https://cdn.jsdelivr.net/gh/wwwqqqzzz/Image/img/image-20241111052310401.png) |
-| 文心一言     | 表格化的不错,会先帮你整理内容,才能具体实现,有个百宝箱功可以切到更合适的场景 | 最傻的一可以更适合日常的交                             | ![image-20241111052110883](https://cdn.jsdelivr.net/gh/wwwqqqzzz/Image/img/image-20241111052110883.png) |
+本项目是基于SSM框架（Spring+SpringMVC+MyBatis）或SpringBoot的教务信息管理系统，作为课程期末大作业。项目开发过程中，我采用了AI辅助开发的方式，提高开发效率和代码质量。
 
 ### 结果
 
@@ -603,12 +584,644 @@ public interface CourseSelectionMapper {
 
 #### 9. Service实现
 
-接下来我们实现服务层的逻辑
-
-在服务层,我们实现了各个实体的CRUD操作
+接下来我们实现服务层的逻辑，在服务层中实现各个实体的CRUD操作和业务逻辑处理：
 
 ```Java
 // AdminService.java
 @Service
 @Transactional
 public class AdminService {
+    @Autowired
+    private AdminMapper adminMapper;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    public Admin getAdminByUsername(String username) {
+        return adminMapper.getAdminByUsername(username);
+    }
+
+    public List<Admin> listAdmins() {
+        return adminMapper.listAdmins();
+    }
+
+    public int createAdmin(Admin admin) {
+        // 对密码进行加密
+        admin.setPassword(passwordEncoder.encode(admin.getPassword()));
+        return adminMapper.insertAdmin(admin);
+    }
+
+    public int updateAdmin(Admin admin) {
+        // 如果密码不为空，则进行加密
+        if (StringUtils.hasText(admin.getPassword())) {
+            admin.setPassword(passwordEncoder.encode(admin.getPassword()));
+        }
+        return adminMapper.updateAdmin(admin);
+    }
+
+    public int deleteAdmin(Long id) {
+        return adminMapper.deleteAdminById(id);
+    }
+}
+
+// StudentService.java
+@Service
+@Transactional
+public class StudentService {
+    @Autowired
+    private StudentMapper studentMapper;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private CourseSelectionMapper courseSelectionMapper;
+
+    public Student getStudentByUsername(String username) {
+        return studentMapper.getStudentByUsername(username);
+    }
+
+    public List<Student> listStudents() {
+        return studentMapper.listStudents();
+    }
+
+    public int createStudent(Student student) {
+        student.setPassword(passwordEncoder.encode(student.getPassword()));
+        return studentMapper.insertStudent(student);
+    }
+
+    public int updateStudent(Student student) {
+        if (StringUtils.hasText(student.getPassword())) {
+            student.setPassword(passwordEncoder.encode(student.getPassword()));
+        }
+        return studentMapper.updateStudent(student);
+    }
+
+    public int deleteStudent(Long id) {
+        return studentMapper.deleteStudentById(id);
+    }
+
+    // 选课业务逻辑
+    public int selectCourse(Long studentId, Long courseId) {
+        // 检查是否已经选过该课程
+        List<CourseSelection> selections = courseSelectionMapper.listCourseSelectionsByStudentId(studentId);
+        for (CourseSelection selection : selections) {
+            if (selection.getCourseId().equals(courseId)) {
+                throw new RuntimeException("已经选过该课程");
+            }
+        }
+
+        // 创建选课记录
+        CourseSelection courseSelection = new CourseSelection();
+        courseSelection.setStudentId(studentId);
+        courseSelection.setCourseId(courseId);
+        return courseSelectionMapper.insertCourseSelection(courseSelection);
+    }
+}
+```
+
+#### 10. Controller实现
+
+控制器层负责处理HTTP请求，实现RESTful API接口：
+
+```java
+// AdminController.java
+@RestController
+@RequestMapping("/admin")
+public class AdminController {
+    @Autowired
+    private AdminService adminService;
+
+    @GetMapping("/list")
+    public ResponseEntity<List<Admin>> listAdmins() {
+        return ResponseEntity.ok(adminService.listAdmins());
+    }
+
+    @PostMapping("/create")
+    public ResponseEntity<String> createAdmin(@RequestBody Admin admin) {
+        int result = adminService.createAdmin(admin);
+        return result > 0 ?
+            ResponseEntity.ok("管理员创建成功") :
+            ResponseEntity.badRequest().body("管理员创建失败");
+    }
+
+    @PutMapping("/update")
+    public ResponseEntity<String> updateAdmin(@RequestBody Admin admin) {
+        int result = adminService.updateAdmin(admin);
+        return result > 0 ?
+            ResponseEntity.ok("管理员更新成功") :
+            ResponseEntity.badRequest().body("管理员更新失败");
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<String> deleteAdmin(@PathVariable Long id) {
+        int result = adminService.deleteAdmin(id);
+        return result > 0 ?
+            ResponseEntity.ok("管理员删除成功") :
+            ResponseEntity.badRequest().body("管理员删除失败");
+    }
+}
+
+// StudentController.java
+@RestController
+@RequestMapping("/student")
+public class StudentController {
+    @Autowired
+    private StudentService studentService;
+
+    @GetMapping("/list")
+    public ResponseEntity<List<Student>> listStudents() {
+        return ResponseEntity.ok(studentService.listStudents());
+    }
+
+    @PostMapping("/create")
+    public ResponseEntity<String> createStudent(@RequestBody Student student) {
+        int result = studentService.createStudent(student);
+        return result > 0 ?
+            ResponseEntity.ok("学生创建成功") :
+            ResponseEntity.badRequest().body("学生创建失败");
+    }
+
+    @PutMapping("/update")
+    public ResponseEntity<String> updateStudent(@RequestBody Student student) {
+        int result = studentService.updateStudent(student);
+        return result > 0 ?
+            ResponseEntity.ok("学生更新成功") :
+            ResponseEntity.badRequest().body("学生更新失败");
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<String> deleteStudent(@PathVariable Long id) {
+        int result = studentService.deleteStudent(id);
+        return result > 0 ?
+            ResponseEntity.ok("学生删除成功") :
+            ResponseEntity.badRequest().body("学生删除失败");
+    }
+
+    @PostMapping("/select-course")
+    public ResponseEntity<String> selectCourse(@RequestParam Long studentId, @RequestParam Long courseId) {
+        try {
+            int result = studentService.selectCourse(studentId, courseId);
+            return result > 0 ?
+                ResponseEntity.ok("选课成功") :
+                ResponseEntity.badRequest().body("选课失败");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+}
+```
+
+#### 11. 安全配置
+
+实现Spring Security配置，处理用户认证和授权：
+
+```java
+@Configuration
+@EnableWebSecurity
+public class SecurityConfig extends WebSecurityConfigurerAdapter {
+
+    @Autowired
+    private CustomUserDetailsService userDetailsService;
+
+    @Autowired
+    private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+
+    @Autowired
+    private JwtRequestFilter jwtRequestFilter;
+
+    @Override
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    @Override
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        return super.authenticationManagerBean();
+    }
+
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        http.csrf().disable()
+            .authorizeRequests()
+            .antMatchers("/api/auth/**").permitAll()
+            .antMatchers("/api/admin/**").hasRole("ADMIN")
+            .antMatchers("/api/teacher/**").hasRole("TEACHER")
+            .antMatchers("/api/student/**").hasRole("STUDENT")
+            .anyRequest().authenticated()
+            .and()
+            .exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint)
+            .and()
+            .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+
+        http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
+    }
+}
+```
+
+#### 12. 前端实现
+
+前端使用Vue3框架实现，下面是一些关键组件的实现：
+
+##### 登录组件
+
+```vue
+<!-- Login.vue -->
+<template>
+  <div class="login-container">
+    <div class="login-form">
+      <h2>教务管理系统登录</h2>
+      <el-form :model="loginForm" :rules="rules" ref="loginFormRef">
+        <el-form-item prop="username">
+          <el-input v-model="loginForm.username" placeholder="用户名" prefix-icon="el-icon-user"></el-input>
+        </el-form-item>
+        <el-form-item prop="password">
+          <el-input v-model="loginForm.password" type="password" placeholder="密码" prefix-icon="el-icon-lock"></el-input>
+        </el-form-item>
+        <el-form-item prop="role">
+          <el-select v-model="loginForm.role" placeholder="请选择角色" style="width: 100%">
+            <el-option label="管理员" value="admin"></el-option>
+            <el-option label="教师" value="teacher"></el-option>
+            <el-option label="学生" value="student"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" @click="handleLogin" style="width: 100%">登录</el-button>
+        </el-form-item>
+      </el-form>
+    </div>
+  </div>
+</template>
+
+<script>
+import { reactive, ref } from 'vue'
+import { useRouter } from 'vue-router'
+import { ElMessage } from 'element-plus'
+import axios from 'axios'
+
+export default {
+  name: 'Login',
+  setup() {
+    const router = useRouter()
+    const loginFormRef = ref(null)
+
+    const loginForm = reactive({
+      username: '',
+      password: '',
+      role: ''
+    })
+
+    const rules = {
+      username: [{ required: true, message: '请输入用户名', trigger: 'blur' }],
+      password: [{ required: true, message: '请输入密码', trigger: 'blur' }],
+      role: [{ required: true, message: '请选择角色', trigger: 'change' }]
+    }
+
+    const handleLogin = () => {
+      loginFormRef.value.validate(async (valid) => {
+        if (valid) {
+          try {
+            const response = await axios.post('/api/auth/login', loginForm)
+            localStorage.setItem('token', response.data.token)
+            localStorage.setItem('role', loginForm.role)
+
+            ElMessage.success('登录成功')
+
+            // 根据角色跳转到不同的页面
+            if (loginForm.role === 'admin') {
+              router.push('/admin')
+            } else if (loginForm.role === 'teacher') {
+              router.push('/teacher')
+            } else {
+              router.push('/student')
+            }
+          } catch (error) {
+            ElMessage.error('登录失败：' + (error.response?.data?.message || '未知错误'))
+          }
+        }
+      })
+    }
+
+    return {
+      loginForm,
+      loginFormRef,
+      rules,
+      handleLogin
+    }
+  }
+}
+</script>
+
+<style scoped>
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #f5f7fa;
+}
+
+.login-form {
+  width: 400px;
+  padding: 30px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+  text-align: center;
+  margin-bottom: 30px;
+  color: #409EFF;
+}
+</style>
+```
+
+##### 学生管理组件
+
+```vue
+<!-- AdminDashboard.vue -->
+<template>
+  <div class="admin-dashboard">
+    <el-card class="box-card">
+      <template #header>
+        <div class="card-header">
+          <span>学生管理</span>
+          <el-button type="primary" @click="handleAddStudent">添加学生</el-button>
+        </div>
+      </template>
+
+      <el-table :data="students" style="width: 100%" border>
+        <el-table-column prop="id" label="ID" width="80"></el-table-column>
+        <el-table-column prop="username" label="用户名" width="120"></el-table-column>
+        <el-table-column prop="name" label="姓名" width="120"></el-table-column>
+        <el-table-column prop="studentNo" label="学号" width="120"></el-table-column>
+        <el-table-column prop="className" label="班级" width="120"></el-table-column>
+        <el-table-column prop="major" label="专业" width="150"></el-table-column>
+        <el-table-column prop="phone" label="联系电话" width="150"></el-table-column>
+        <el-table-column prop="email" label="邮箱" width="180"></el-table-column>
+        <el-table-column label="操作" width="180">
+          <template #default="scope">
+            <el-button size="small" @click="handleEditStudent(scope.row)">编辑</el-button>
+            <el-button size="small" type="danger" @click="handleDeleteStudent(scope.row)">删除</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+    </el-card>
+
+    <!-- 添加/编辑学生对话框 -->
+    <el-dialog :title="dialogTitle" v-model="dialogVisible" width="500px">
+      <el-form :model="studentForm" :rules="rules" ref="studentFormRef" label-width="100px">
+        <el-form-item label="用户名" prop="username">
+          <el-input v-model="studentForm.username"></el-input>
+        </el-form-item>
+        <el-form-item label="密码" prop="password" v-if="isAdd">
+          <el-input v-model="studentForm.password" type="password"></el-input>
+        </el-form-item>
+        <el-form-item label="姓名" prop="name">
+          <el-input v-model="studentForm.name"></el-input>
+        </el-form-item>
+        <el-form-item label="学号" prop="studentNo">
+          <el-input v-model="studentForm.studentNo"></el-input>
+        </el-form-item>
+        <el-form-item label="班级" prop="className">
+          <el-input v-model="studentForm.className"></el-input>
+        </el-form-item>
+        <el-form-item label="专业" prop="major">
+          <el-input v-model="studentForm.major"></el-input>
+        </el-form-item>
+        <el-form-item label="联系电话" prop="phone">
+          <el-input v-model="studentForm.phone"></el-input>
+        </el-form-item>
+        <el-form-item label="邮箱" prop="email">
+          <el-input v-model="studentForm.email"></el-input>
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button @click="dialogVisible = false">取消</el-button>
+          <el-button type="primary" @click="submitForm">确定</el-button>
+        </span>
+      </template>
+    </el-dialog>
+  </div>
+</template>
+
+<script>
+import { ref, reactive, onMounted } from 'vue'
+import { ElMessage, ElMessageBox } from 'element-plus'
+import axios from 'axios'
+
+export default {
+  name: 'AdminDashboard',
+  setup() {
+    const students = ref([])
+    const dialogVisible = ref(false)
+    const dialogTitle = ref('')
+    const isAdd = ref(true)
+    const studentFormRef = ref(null)
+
+    const studentForm = reactive({
+      id: null,
+      username: '',
+      password: '',
+      name: '',
+      studentNo: '',
+      className: '',
+      major: '',
+      phone: '',
+      email: ''
+    })
+
+    const rules = {
+      username: [{ required: true, message: '请输入用户名', trigger: 'blur' }],
+      password: [{ required: true, message: '请输入密码', trigger: 'blur' }],
+      name: [{ required: true, message: '请输入姓名', trigger: 'blur' }],
+      studentNo: [{ required: true, message: '请输入学号', trigger: 'blur' }]
+    }
+
+    // 获取学生列表
+    const fetchStudents = async () => {
+      try {
+        const response = await axios.get('/api/student/list', {
+          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+        })
+        students.value = response.data
+      } catch (error) {
+        ElMessage.error('获取学生列表失败')
+      }
+    }
+
+    // 添加学生
+    const handleAddStudent = () => {
+      isAdd.value = true
+      dialogTitle.value = '添加学生'
+      Object.keys(studentForm).forEach(key => {
+        studentForm[key] = ''
+      })
+      studentForm.id = null
+      dialogVisible.value = true
+    }
+
+    // 编辑学生
+    const handleEditStudent = (row) => {
+      isAdd.value = false
+      dialogTitle.value = '编辑学生'
+      Object.keys(studentForm).forEach(key => {
+        studentForm[key] = row[key]
+      })
+      studentForm.password = '' // 不回显密码
+      dialogVisible.value = true
+    }
+
+    // 删除学生
+    const handleDeleteStudent = (row) => {
+      ElMessageBox.confirm('确定要删除该学生吗？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(async () => {
+        try {
+          await axios.delete(`/api/student/delete/${row.id}`, {
+            headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+          })
+          ElMessage.success('删除成功')
+          fetchStudents()
+        } catch (error) {
+          ElMessage.error('删除失败')
+        }
+      }).catch(() => {})
+    }
+
+    // 提交表单
+    const submitForm = () => {
+      studentFormRef.value.validate(async (valid) => {
+        if (valid) {
+          try {
+            if (isAdd.value) {
+              await axios.post('/api/student/create', studentForm, {
+                headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+              })
+              ElMessage.success('添加成功')
+            } else {
+              await axios.put('/api/student/update', studentForm, {
+                headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+              })
+              ElMessage.success('更新成功')
+            }
+            dialogVisible.value = false
+            fetchStudents()
+          } catch (error) {
+            ElMessage.error(isAdd.value ? '添加失败' : '更新失败')
+          }
+        }
+      })
+    }
+
+    onMounted(() => {
+      fetchStudents()
+    })
+
+    return {
+      students,
+      dialogVisible,
+      dialogTitle,
+      isAdd,
+      studentForm,
+      studentFormRef,
+      rules,
+      handleAddStudent,
+      handleEditStudent,
+      handleDeleteStudent,
+      submitForm
+    }
+  }
+}
+</script>
+
+<style scoped>
+.admin-dashboard {
+  padding: 20px;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+</style>
+```
+
+### 系统界面展示
+
+#### 登录界面
+
+![登录界面](https://cdn.jsdelivr.net/gh/wwwqqqzzz/Image/img/1746979375456-c86cf4ab024c0a58a447c8b8d3be5906.png)
+
+#### 管理员界面 - 学生管理
+
+![学生管理](https://cdn.jsdelivr.net/gh/wwwqqqzzz/Image/img/1746979426666-5c2c9c0ef2135bf54484182faab66a76.png)
+
+#### 管理员界面 - 课程管理
+
+![课程管理](https://cdn.jsdelivr.net/gh/wwwqqqzzz/Image/img/1746979570161-76a39d387445b4f73091a0365c1c16f6.png)
+
+#### 教师界面 - 成绩管理
+
+![成绩管理](https://cdn.jsdelivr.net/gh/wwwqqqzzz/Image/img/1746979810534-0b6c71f26205be41472ec06941c8f036.png)
+
+#### 学生界面 - 选课
+
+![学生选课](https://cdn.jsdelivr.net/gh/wwwqqqzzz/Image/img/1746979852207-ed79d27f9edc5311b509e7e297446636.png)
+
+## 项目总结
+
+### 技术亮点
+
+1. **前后端分离架构**：采用Spring Boot + Vue3的前后端分离架构，提高了开发效率和系统可维护性。
+2. **RESTful API设计**：遵循RESTful设计规范，接口清晰易用。
+3. **安全认证**：使用JWT实现无状态的用户认证，提高系统安全性。
+4. **数据库设计**：遵循第三范式，合理设计表结构和关系，保证数据完整性。
+5. **响应式UI**：使用Element Plus组件库，实现响应式界面，提升用户体验。
+
+### 开发过程中的挑战与解决方案
+
+1. **权限控制**：不同角色（管理员、教师、学生）需要不同的权限。解决方案是使用Spring Security结合JWT实现基于角色的权限控制。
+2. **数据关联**：选课表与学生表、课程表的关联关系处理。解决方案是使用外键约束和联合唯一索引确保数据一致性。
+3. **前端状态管理**：用户登录状态和权限信息的管理。解决方案是使用Vuex进行集中式状态管理，结合本地存储实现持久化。
+
+### AI辅助开发的经验
+
+1. **代码生成**：使用Claude生成基础代码框架，大大提高了开发效率。
+2. **问题解决**：遇到技术难题时，ChatGPT能够提供多种解决方案和思路。
+3. **文档编写**：AI工具帮助编写和优化项目文档，使文档更加专业和完整。
+4. **最佳实践**：AI工具提供了大量的最佳实践和设计模式建议，提高了代码质量。
+
+### 未来改进方向
+
+1. **功能扩展**：
+   - 添加考勤管理功能
+   - 实现在线考试系统
+   - 增加教学评价功能
+
+2. **技术优化**：
+   - 引入Redis缓存提高系统性能
+   - 实现分布式部署支持高并发
+   - 添加日志监控和系统告警功能
+
+3. **用户体验提升**：
+   - 优化移动端适配
+   - 增加数据可视化展示
+   - 实现消息通知功能
+
+## 结语
+
+通过本次教务管理系统的开发，我不仅掌握了Spring Boot和Vue3的开发技能，还学习了如何利用AI工具提高开发效率。AI辅助开发已经成为现代软件工程中不可或缺的一部分，它不仅能够加速开发过程，还能提供更多创新的解决方案。
+
+在未来的项目中，我将继续探索AI辅助开发的更多可能性，并将这些经验应用到更复杂的系统开发中。

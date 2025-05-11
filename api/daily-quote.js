@@ -1,6 +1,5 @@
-// Vercel Serverless Function for QWeather API
-// This function proxies requests to the QWeather API to avoid CORS issues
-// and to keep the API key secure
+// Vercel Serverless Function for 金山词霸每日一句 API
+// This function proxies requests to the 金山词霸 API to avoid CORS issues
 
 export default async function handler(req, res) {
   // Set CORS headers
@@ -24,23 +23,22 @@ export default async function handler(req, res) {
   }
 
   try {
-    // QWeather API key
-    const apiKey = '80ce7424f8d34974af05d092792c123a'; // 和风天气API key
+    // 金山词霸每日一句 API URL
+    const apiUrl = 'https://open.iciba.com/dsapi/';
     
-    // Get location from query parameters or use default (Beijing)
-    const location = req.query.location || '101010100'; // Default to Beijing
-    
-    // Build the API URL
-    const apiUrl = `https://devapi.qweather.com/v7/weather/now?location=${location}&key=${apiKey}`;
-    
-    // Fetch data from QWeather API
+    // Fetch data from 金山词霸 API
     const response = await fetch(apiUrl);
     const data = await response.json();
     
     // Return the data
-    return res.status(200).json(data);
+    return res.status(200).json({
+      content: data.content,
+      translation: data.note,
+      author: data.author || 'Daily English',
+      picture: data.picture
+    });
   } catch (error) {
-    console.error('Error fetching weather data:', error);
-    return res.status(500).json({ error: 'Failed to fetch weather data' });
+    console.error('Error fetching daily quote:', error);
+    return res.status(500).json({ error: 'Failed to fetch daily quote' });
   }
 }

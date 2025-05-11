@@ -46,28 +46,28 @@ export default function PinnedArticles({
       </h3>
 
       {hasFilters
-        ? (
-            <div className="mb-6 rounded-lg bg-gray-50 p-4 text-center dark:bg-gray-800">
-              <p className="text-sm text-gray-600 dark:text-gray-400">
-                {currentTag && (
-                  <>
-                    <span className="font-medium text-primary-600 dark:text-primary-400">置顶文章</span>
-                    {' '}
-                    始终显示，不受标签筛选影响。
-                    {searchQuery && ' 同时，'}
-                  </>
-                )}
-                {searchQuery && (
-                  <>
-                    <span className="font-medium text-primary-600 dark:text-primary-400">置顶文章</span>
-                    {' '}
-                    始终显示，不受搜索查询影响。
-                  </>
-                )}
-              </p>
-            </div>
-          )
-        : null}
+    ? (
+        <div className="mb-6 rounded-lg bg-gray-50 p-4 text-center dark:bg-gray-800">
+          <p className="text-sm text-gray-600 dark:text-gray-400">
+            {currentTag && (
+              <>
+                <span className="font-medium text-primary-600 dark:text-primary-400">置顶文章</span>
+                {' '}
+                始终显示，不受标签筛选影响。
+                {searchQuery && ' 同时，'}
+              </>
+            )}
+            {searchQuery && (
+              <>
+                <span className="font-medium text-primary-600 dark:text-primary-400">置顶文章</span>
+                {' '}
+                始终显示，不受搜索查询影响。
+              </>
+            )}
+          </p>
+        </div>
+      )
+    : null}
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         {pinnedItems.map((item, index) => (
