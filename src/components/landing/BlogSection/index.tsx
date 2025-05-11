@@ -8,6 +8,7 @@ import { motion } from 'framer-motion'
 import React, { useState, useEffect } from 'react'
 import { Section } from '../Section'
 import { Icon } from '@iconify/react'
+import { ModernSidebar } from '../ModernSidebar'
 
 const BLOG_POSTS_COUNT = 6
 const TAGS = ['全部', '前端', '后端', 'AI', '随笔']
@@ -20,6 +21,9 @@ export function BlogSidebar({
   years,
   searchTerm,
   setSearchTerm,
+  activeYear,
+  setActiveYear,
+  filteredPosts,
 }: {
   activeTag: string
   setActiveTag: (tag: string) => void
@@ -27,31 +31,64 @@ export function BlogSidebar({
   years: string[]
   searchTerm: string
   setSearchTerm: (term: string) => void
+  activeYear: string
+  setActiveYear: (year: string) => void
+  filteredPosts: BlogPost[]
 }) {
+  // 清除所有筛选
+  const clearAllFilters = () => {
+    setActiveTag('全部')
+    setActiveYear('')
+    setSearchTerm('')
+  }
+
+  // 检查是否有活动的筛选器
+  const hasActiveFilters = activeTag !== '全部' || activeYear !== '' || searchTerm !== ''
+
+  // 只显示最常用的5个标签
+  const topTags = tags.slice(0, 5)
+
+  // 获取博客统计数据
+  const blogStats = {
+    posts: filteredPosts.length,
+    years: years.length,
+    tags: tags.length,
+  }
+
   return (
     <motion.div
-      className="bg-card/50 flex h-full flex-col gap-6 rounded-xl p-4 shadow-sm"
+      className="bg-card/50 flex h-full flex-col gap-6 rounded-xl p-5 shadow-sm"
       initial={{ opacity: 0, x: -20 }}
       whileInView={{ opacity: 1, x: 0 }}
       transition={{ duration: 0.5 }}
       viewport={{ once: true }}
     >
-      {/* 分类导航 */}
-      <div className="flex flex-wrap gap-2">
-        {TAGS.map(tag => (
-          <button
-            key={tag}
-            onClick={() => setActiveTag(tag)}
-            className={cn(
-              'px-3 py-1.5 text-sm font-medium rounded-full transition-colors',
-              activeTag === tag
-                ? 'bg-primary text-white'
-                : 'bg-card hover:bg-card/80 text-card-foreground',
-            )}
-          >
-            {tag}
-          </button>
-        ))}
+      {/* 博客统计卡片 */}
+      <div className="relative mb-2 overflow-hidden rounded-lg bg-gradient-to-br from-primary-500/80 to-primary-700 p-4 text-white shadow-md">
+        <div className="relative z-10">
+          <h3 className="mb-1 text-lg font-bold">博客精选</h3>
+          <p className="mb-3 text-xs text-white/80">发现更多精彩内容</p>
+
+          <div className="flex items-center gap-4 text-sm">
+            <div>
+              <div className="text-xl font-bold">{blogStats.posts}</div>
+              <div className="text-xs text-white/80">文章</div>
+            </div>
+            <div>
+              <div className="text-xl font-bold">{blogStats.years}</div>
+              <div className="text-xs text-white/80">年度</div>
+            </div>
+            <div>
+              <div className="text-xl font-bold">{blogStats.tags}</div>
+              <div className="text-xs text-white/80">标签</div>
+            </div>
+          </div>
+        </div>
+
+        {/* 装饰图形 */}
+        <div className="absolute -right-6 -top-6 size-24 rounded-full bg-white/10"></div>
+        <div className="absolute -bottom-8 -left-8 size-24 rounded-full bg-white/10"></div>
+        <div className="absolute bottom-2 right-2 size-8 rounded-full bg-white/20"></div>
       </div>
 
       {/* 搜索框 */}
@@ -68,40 +105,243 @@ export function BlogSidebar({
         />
       </div>
 
-      {/* 标签云 */}
+      {/* 活动筛选器指示器 */}
+      {hasActiveFilters && (
+        <div className="rounded-lg bg-primary-50 p-2 text-xs text-primary-700 dark:bg-primary-900/30 dark:text-primary-300">
+          <div className="flex items-center justify-between">
+            <div className="flex flex-wrap gap-1">
+              <span className="font-medium">当前筛选:</span>
+              {activeTag !== '全部' && <span className="ml-1">{activeTag}</span>}
+              {activeYear && (
+                <span className="ml-1">
+                  {activeYear}
+                  年
+                </span>
+              )}
+              {searchTerm && (
+                <span className="ml-1">
+                  "
+                  {searchTerm}
+                  "
+                </span>
+              )}
+            </div>
+            <button
+              onClick={clearAllFilters}
+              className="ml-2 rounded-full p-1 hover:bg-primary-100 dark:hover:bg-primary-800/50"
+              aria-label="清除筛选"
+            >
+              <Icon icon="ri:close-line" className="text-sm" />
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* 分类导航 - 使用图标按钮 */}
       <div>
-        <h3 className="mb-2 flex items-center text-sm font-medium">
-          <Icon icon="ri:price-tag-3-line" className="mr-1" />
-          热门标签
+        <h3 className="mb-3 flex items-center text-sm font-medium">
+          <Icon icon="ri:apps-line" className="mr-1" />
+          分类导航
         </h3>
-        <div className="flex flex-wrap gap-2">
-          {tags.map(tag => (
+        <div className="grid grid-cols-3 gap-2">
+          {TAGS.map(tag => (
             <button
               key={tag}
               onClick={() => setActiveTag(tag)}
-              className="rounded-full bg-primary/10 px-2 py-1 text-xs text-primary transition-colors hover:bg-primary/20"
+              className={cn(
+                'flex flex-col items-center justify-center rounded-lg p-2 transition-colors',
+                activeTag === tag
+                  ? 'bg-primary/10 text-primary'
+                  : 'bg-card hover:bg-card/80 text-card-foreground',
+              )}
             >
-              {tag}
+              <Icon
+                icon={
+                  tag === '全部'
+                    ? 'ri:apps-fill'
+                    : tag === '前端'
+                      ? 'ri:code-s-slash-line'
+                      : tag === '后端'
+                        ? 'ri:terminal-box-line'
+                        : tag === 'AI'
+                          ? 'ri:robot-line'
+                          : 'ri:book-2-line'
+                }
+                className="mb-1 text-xl"
+              />
+              <span className="text-xs">{tag}</span>
             </button>
           ))}
         </div>
       </div>
 
-      {/* 日期归档 */}
-      <div>
-        <h3 className="mb-2 flex items-center text-sm font-medium">
-          <Icon icon="ri:calendar-line" className="mr-1" />
-          日期归档
+      {/* 分类统计可视化 */}
+      <div className="rounded-lg bg-gray-50 p-3 dark:bg-gray-800/50">
+        <h3 className="mb-3 flex items-center text-sm font-medium">
+          <Icon icon="ri:pie-chart-line" className="mr-1" />
+          内容分布
         </h3>
-        <div className="flex flex-col space-y-1">
-          {years.map(year => (
-            <button
-              key={year}
-              className="text-card-foreground text-left text-sm transition-colors hover:text-primary"
+        <div className="space-y-2">
+          {TAGS.filter(tag => tag !== '全部').map((tag) => {
+            // 计算每个分类的文章数量
+            const count = filteredPosts.filter(post =>
+              post.metadata.frontMatter.tags?.some((t) => {
+                const tagLabel = typeof t === 'string' ? t : (t as any).label
+                return tagLabel === tag
+              }),
+            ).length
+
+            // 计算百分比 (避免除以零)
+            const percentage = filteredPosts.length > 0
+              ? Math.round((count / filteredPosts.length) * 100)
+              : 0
+
+            return (
+              <div key={tag} className="group">
+                <div className="mb-1 flex items-center justify-between text-xs">
+                  <button
+                    onClick={() => setActiveTag(tag)}
+                    className="flex items-center font-medium text-gray-700 hover:text-primary dark:text-gray-300"
+                  >
+                    <Icon
+                      icon={
+                        tag === '前端'
+                          ? 'ri:code-s-slash-line'
+                          : tag === '后端'
+                            ? 'ri:terminal-box-line'
+                            : tag === 'AI'
+                              ? 'ri:robot-line'
+                              : 'ri:book-2-line'
+                      }
+                      className="mr-1"
+                    />
+                    {tag}
+                  </button>
+                  <span className="text-gray-500 dark:text-gray-400">
+                    {count}
+                    {' '}
+                    篇
+                  </span>
+                </div>
+                <div className="h-2 w-full overflow-hidden rounded-full bg-gray-200 dark:bg-gray-700">
+                  <div
+                    className={cn(
+                      'h-full rounded-full transition-all group-hover:opacity-80',
+                      tag === '前端'
+                        ? 'bg-blue-500'
+                        : tag === '后端'
+                          ? 'bg-green-500'
+                          : tag === 'AI'
+                            ? 'bg-purple-500'
+                            : 'bg-amber-500',
+                    )}
+                    style={{ width: `${percentage}%` }}
+                  >
+                  </div>
+                </div>
+              </div>
+            )
+          })}
+        </div>
+      </div>
+
+      {/* 热门文章 */}
+      <div className="rounded-lg bg-gray-50 p-3 dark:bg-gray-800/50">
+        <h3 className="mb-3 flex items-center text-sm font-medium">
+          <Icon icon="ri:fire-line" className="mr-1" />
+          热门推荐
+        </h3>
+        <div className="space-y-3">
+          {filteredPosts.slice(0, 3).map(post => (
+            <Link
+              key={post.metadata.permalink}
+              href={post.metadata.permalink}
+              className="group flex items-start gap-2 rounded-md p-1 transition-colors hover:bg-gray-100 dark:hover:bg-gray-700"
             >
-              {year}
+              <div className="flex size-10 shrink-0 items-center justify-center rounded-md bg-primary/10 text-primary">
+                <Icon
+                  icon={
+                    post.metadata.frontMatter.tags?.some((t) => {
+                      const tagLabel = typeof t === 'string' ? t : (t as any).label
+                      return tagLabel === '前端'
+                    })
+                      ? 'ri:code-s-slash-line'
+                      : post.metadata.frontMatter.tags?.some((t) => {
+                        const tagLabel = typeof t === 'string' ? t : (t as any).label
+                        return tagLabel === '后端'
+                      })
+                        ? 'ri:terminal-box-line'
+                        : post.metadata.frontMatter.tags?.some((t) => {
+                          const tagLabel = typeof t === 'string' ? t : (t as any).label
+                          return tagLabel === 'AI'
+                        })
+                          ? 'ri:robot-line'
+                          : 'ri:article-line'
+                  }
+                  className="text-lg"
+                />
+              </div>
+              <div className="flex-1 overflow-hidden">
+                <h4 className="truncate text-sm font-medium group-hover:text-primary">
+                  {post.metadata.title}
+                </h4>
+                <p className="mt-0.5 truncate text-xs text-gray-500 dark:text-gray-400">
+                  {new Date(post.metadata.date).toLocaleDateString('zh-CN', { month: 'short', day: 'numeric' })}
+                  {post.metadata.readingTime && ` · ${Math.ceil(post.metadata.readingTime)} 分钟阅读`}
+                </p>
+              </div>
+            </Link>
+          ))}
+        </div>
+      </div>
+
+      {/* 热门标签 - 视觉改进 */}
+      <div>
+        <h3 className="mb-3 flex items-center text-sm font-medium">
+          <Icon icon="ri:price-tag-3-line" className="mr-1" />
+          热门标签
+        </h3>
+        <div className="flex flex-wrap gap-2">
+          {topTags.map(tag => (
+            <button
+              key={tag}
+              onClick={() => setActiveTag(tag)}
+              className={cn(
+                'rounded-full px-3 py-1 text-xs transition-colors',
+                activeTag === tag
+                  ? 'bg-primary text-white'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600',
+              )}
+            >
+              {tag}
             </button>
           ))}
+          {tags.length > 5 && (
+            <Link
+              href="/blog/tags"
+              className="rounded-full bg-white px-2 py-1 text-xs text-gray-500 hover:bg-gray-50 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700"
+            >
+              +
+              {tags.length - 5}
+            </Link>
+          )}
+        </div>
+      </div>
+
+      {/* 装饰图形 */}
+      <div className="relative mt-2 h-32 overflow-hidden rounded-lg bg-gradient-to-r from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-700">
+        <div className="absolute inset-0 flex items-center justify-center opacity-10">
+          <Icon icon="ri:quill-pen-line" className="text-8xl text-primary" />
+        </div>
+        <div className="relative z-10 flex h-full flex-col items-center justify-center p-4 text-center">
+          <p className="mb-2 text-sm font-medium">探索更多内容</p>
+          <Link
+            href="/blog"
+            className="inline-flex items-center rounded-full bg-primary px-4 py-1.5 text-xs font-medium text-white transition-colors hover:bg-primary-600"
+          >
+            <Icon icon="ri:article-line" className="mr-1" />
+            浏览全部博客
+          </Link>
         </div>
       </div>
     </motion.div>
@@ -316,31 +556,6 @@ export function BlogListPanel({ posts, filteredPosts }: { posts: BlogPost[], fil
   )
 }
 
-// 提取标签和年份数据的辅助函数
-function extractMetadata(posts: BlogPost[]) {
-  const allTags = new Set<string>()
-  const allYears = new Set<string>()
-
-  posts.forEach((post) => {
-    // 提取标签
-    post.metadata.frontMatter.tags?.forEach((tag) => {
-      const tagLabel = typeof tag === 'string' ? tag : (tag as any).label
-      allTags.add(tagLabel)
-    })
-
-    // 提取年份
-    if (post.metadata.date) {
-      const year = new Date(post.metadata.date).getFullYear().toString()
-      allYears.add(year)
-    }
-  })
-
-  return {
-    tags: Array.from(allTags),
-    years: Array.from(allYears).sort((a, b) => parseInt(b) - parseInt(a)), // 降序排列年份
-  }
-}
-
 // 主博客区组件
 export default function BlogSection(): React.ReactNode {
   const blogData = usePluginData('docusaurus-plugin-content-blog') as {
@@ -349,38 +564,14 @@ export default function BlogSection(): React.ReactNode {
     tagNum: number
   }
 
-  const [activeTag, setActiveTag] = useState('全部')
-  const [searchTerm, setSearchTerm] = useState('')
   const [filteredPosts, setFilteredPosts] = useState<BlogPost[]>([])
 
-  // 提取标签和年份数据
-  const { tags, years } = extractMetadata(blogData.posts)
-
-  // 过滤文章
+  // 初始化文章列表
   useEffect(() => {
-    let result = blogData.posts
-
-    // 根据标签过滤
-    if (activeTag !== '全部') {
-      result = result.filter(post =>
-        post.metadata.frontMatter.tags?.some((tag) => {
-          const tagLabel = typeof tag === 'string' ? tag : (tag as any).label
-          return tagLabel === activeTag
-        }),
-      )
-    }
-
-    // 根据搜索词过滤
-    if (searchTerm) {
-      const term = searchTerm.toLowerCase()
-      result = result.filter(post =>
-        post.metadata.title.toLowerCase().includes(term)
-        || post.metadata.description?.toLowerCase().includes(term),
-      )
-    }
-
+    // 限制显示的文章数量
+    const result = blogData.posts.slice(0, BLOG_POSTS_COUNT)
     setFilteredPosts(result)
-  }, [activeTag, searchTerm, blogData.posts])
+  }, [blogData.posts])
 
   if (blogData.postNum === 0) {
     return <>作者还没开始写博文哦...</>
@@ -393,20 +584,23 @@ export default function BlogSection(): React.ReactNode {
       href="/blog"
     >
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
-        {/* 左侧博客分类导航 */}
+        {/* 左侧现代化侧边栏 */}
         <div className="lg:col-span-3">
-          <BlogSidebar
-            activeTag={activeTag}
-            setActiveTag={setActiveTag}
-            tags={tags}
-            years={years}
-            searchTerm={searchTerm}
-            setSearchTerm={setSearchTerm}
+          <ModernSidebar
+            filteredPosts={filteredPosts}
           />
         </div>
 
         {/* 右侧博客内容展示区 */}
         <div className="lg:col-span-9">
+          {/* 博客标题 */}
+          <div className="mb-6">
+            <h2 className="text-card-foreground text-2xl font-bold tracking-tight">最新文章</h2>
+            <p className="text-muted-foreground mt-1 text-sm">
+              探索我的最新博客文章，了解前沿技术和见解
+            </p>
+          </div>
+
           <BlogListPanel
             posts={blogData.posts}
             filteredPosts={filteredPosts}
