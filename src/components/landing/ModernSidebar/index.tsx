@@ -250,7 +250,7 @@ export function ModernSidebar({
       {/* 1. 图片展示区 - 移动端优化 */}
       <div className="overflow-hidden rounded-xl shadow-md sm:max-h-[120px] md:max-h-[150px] lg:max-h-none">
         <img
-          src="https://cdn.jsdelivr.net/gh/wwwqqqzzz/Image/img/1746965731775-25471357192b80de47e28cd7ed93327c.gif"
+          src="https://cdn.jsdelivr.net/gh/wwwqqqzzz/Image/img/1747142036772-a21c8a72400e04f4d03d63bf48f59951.gif"
           alt="动态展示"
           className="h-auto w-full object-cover sm:object-contain md:object-cover"
           loading="lazy"
