@@ -108,7 +108,7 @@ export default function SimplifiedTagsFilter({ tags, maxTags = 8 }: SimplifiedTa
             >
               {tag.label}
               <span className="ml-1 text-xs text-gray-500">
-                ({tag.count})
+                {`(${tag.count})`}
               </span>
             </motion.button>
           ))}

@@ -29,15 +29,16 @@ export async function fetchWeatherData() {
           icon: '100',
           windDir: '东南风',
           windScale: '3',
-          humidity: '65'
-        }
+          humidity: '65',
+        },
       }
     }
-    
+
     // In production, call the actual API
     const response = await fetch(`${getApiBaseUrl()}/api/weather`)
     return await response.json()
-  } catch (error) {
+  }
+  catch (error) {
     console.error('Error fetching weather data:', error)
     throw error
   }
@@ -56,14 +57,15 @@ export async function fetchLocationData() {
         region: '北京市',
         country: '中国',
         latitude: 39.9042,
-        longitude: 116.4074
+        longitude: 116.4074,
       }
     }
-    
+
     // In production, call the actual API
     const response = await fetch(`${getApiBaseUrl()}/api/location`)
     return await response.json()
-  } catch (error) {
+  }
+  catch (error) {
     console.error('Error fetching location data:', error)
     throw error
   }
@@ -81,14 +83,15 @@ export async function fetchDailyQuote() {
         content: 'The best way to predict the future is to invent it.',
         translation: '预测未来的最好方法就是创造未来。',
         author: 'Alan Kay',
-        picture: 'https://cdn.iciba.com/www/img/daily-pic.jpg'
+        picture: 'https://cdn.iciba.com/www/img/daily-pic.jpg',
       }
     }
-    
+
     // In production, call the actual API
     const response = await fetch(`${getApiBaseUrl()}/api/daily-quote`)
     return await response.json()
-  } catch (error) {
+  }
+  catch (error) {
     console.error('Error fetching daily quote:', error)
     throw error
   }
