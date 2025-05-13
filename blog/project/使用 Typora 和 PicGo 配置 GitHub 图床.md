@@ -1,16 +1,16 @@
 ---
-slug: build-blog-with-docsify-and-github
-title: 使用 Docsify 和 GitHub 搭建个人博客
+slug: typora-picgo-github-image-hosting
+title: 使用 Typora 和 PicGo 配置 GitHub 图床
 date: 2024-10-13
 authors: wqz
-tags: [前端, 静态站点, 教程]
-keywords: [个人博客, Docsify, GitHub Pages, Netlify, Cloudflare, 图床, Typora, PicGo, 域名绑定, 静态网站]
-description: 本文详细介绍了使用 Docsify 搭建个人博客的完整流程，包括准备工具、配置 GitHub 图床、部署到 Netlify，以及可选的自定义域名配置。
+tags: [前端, 工具, 教程]
+keywords: [Typora, PicGo, GitHub, 图床, Markdown, 图片上传]
+description: 本文详细介绍了如何使用 Typora 编辑器结合 PicGo 工具配置 GitHub 图床，实现 Markdown 文档中图片的自动上传和管理。
 ---
 
 <!-- truncate -->
 
-# 搭建个人博客
+# 使用 Typora 和 PicGo 配置 GitHub 图床
 
 ```plantuml
 @startuml
@@ -57,15 +57,6 @@ package "Cloudflare (Optional)" {
 
 - GitHub
 
-- Node.js
-
-- Docsify
-
-- Netlify
-
-- Cloudflare
-
-- 一个自己的域名
 
 ## Typora
 

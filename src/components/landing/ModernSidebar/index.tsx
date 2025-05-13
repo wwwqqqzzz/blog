@@ -3,6 +3,7 @@ import type { BlogPost } from '@docusaurus/plugin-content-blog'
 import { motion } from 'framer-motion'
 import React, { useState, useEffect } from 'react'
 import { Icon } from '@iconify/react'
+import { fetchWeatherData, fetchLocationData, fetchDailyQuote } from '../../../utils/api-helpers'
 
 // 简化版侧边栏组件
 export function ModernSidebar({
@@ -19,10 +20,19 @@ export function ModernSidebar({
     loading: boolean
   }
 
+  interface LocationData {
+    city: string
+    region: string
+    country: string
+    latitude: number
+    longitude: number
+  }
+
   interface QuoteData {
     content: string
     translation: string
     author: string
+    picture?: string
     loading: boolean
   }
 
@@ -53,71 +63,101 @@ export function ModernSidebar({
     return () => clearInterval(timer)
   }, [])
 
-  // 使用Vercel Serverless Functions代理获取真实的和风天气API数据
+  // 使用和风天气API获取实时天气数据
   useEffect(() => {
-    const fetchRealWeather = async () => {
+    const getWeatherData = async () => {
       try {
-        // 使用默认城市（北京）
-        const defaultCity = '北京'
+        // 设置加载状态
+        setWeather(prev => ({ ...prev, loading: true }))
 
-        // 使用我们的Vercel API代理
-        // 注意：在开发环境中使用相对路径，在生产环境中使用绝对路径
-        const isProduction = process.env.NODE_ENV === 'production'
-        const baseUrl = isProduction ? 'https://wwwqqqzzz.cn' : ''
+        // 获取天气数据
+        const data = await fetchWeatherData()
 
-        // 使用城市名称获取城市ID
-        const cityUrl = `${baseUrl}/api/city?location=${encodeURIComponent(defaultCity)}`
-        const cityResponse = await fetch(cityUrl)
-        const cityData = await cityResponse.json()
-
-        if (cityData.code === '200' && cityData.location && cityData.location.length > 0) {
-          const locationId = cityData.location[0].id
-          const cityName = cityData.location[0].name
-
-          // 使用城市ID获取天气数据
-          const weatherUrl = `${baseUrl}/api/weather?location=${locationId}`
-          const weatherResponse = await fetch(weatherUrl)
-          const weatherData = await weatherResponse.json()
-
-          if (weatherData.code === '200') {
-            // 根据天气状况选择图标
-            let icon = 'ri:sun-line'
-            const iconMap = {
-              晴: 'ri:sun-line',
-              多云: 'ri:cloudy-line',
-              阴: 'ri:cloudy-2-line',
-              雨: 'ri:rainy-line',
-              雪: 'ri:snowy-line',
-              雾: 'ri:mist-line',
-              霾: 'ri:haze-line',
-              风: 'ri:windy-line',
-              雷: 'ri:thunderstorms-line',
+        if (data.code === '200' && data.now) {
+          // 获取天气图标
+          const getWeatherIcon = (iconCode: string): string => {
+            switch (iconCode) {
+              case '100': return 'ri:sun-line' // 晴
+              case '101': return 'ri:sun-cloudy-line' // 多云
+              case '102': return 'ri:cloudy-line' // 少云
+              case '103': return 'ri:cloudy-line' // 晴间多云
+              case '104': return 'ri:cloudy-2-line' // 阴
+              case '300': return 'ri:drizzle-line' // 阵雨
+              case '301': return 'ri:rainy-line' // 强阵雨
+              case '302': return 'ri:thunderstorms-line' // 雷阵雨
+              case '303': return 'ri:thunderstorms-line' // 强雷阵雨
+              case '304': return 'ri:hail-line' // 雷阵雨伴有冰雹
+              case '305': return 'ri:rainy-line' // 小雨
+              case '306': return 'ri:rainy-line' // 中雨
+              case '307': return 'ri:heavy-showers-line' // 大雨
+              case '308': return 'ri:heavy-showers-line' // 极端降雨
+              case '309': return 'ri:drizzle-line' // 毛毛雨/细雨
+              case '310': return 'ri:rainy-line' // 暴雨
+              case '311': return 'ri:heavy-showers-line' // 大暴雨
+              case '312': return 'ri:heavy-showers-line' // 特大暴雨
+              case '313': return 'ri:snowy-line' // 冻雨
+              case '314': return 'ri:rainy-line' // 小到中雨
+              case '315': return 'ri:rainy-line' // 中到大雨
+              case '316': return 'ri:heavy-showers-line' // 大到暴雨
+              case '317': return 'ri:heavy-showers-line' // 暴雨到大暴雨
+              case '318': return 'ri:heavy-showers-line' // 大暴雨到特大暴雨
+              case '399': return 'ri:rainy-line' // 雨
+              case '400': return 'ri:snowy-line' // 小雪
+              case '401': return 'ri:snowy-line' // 中雪
+              case '402': return 'ri:heavy-snow-line' // 大雪
+              case '403': return 'ri:heavy-snow-line' // 暴雪
+              case '404': return 'ri:snowy-line' // 雨夹雪
+              case '405': return 'ri:snowy-line' // 雨雪天气
+              case '406': return 'ri:snowy-line' // 阵雨夹雪
+              case '407': return 'ri:snowy-line' // 阵雪
+              case '408': return 'ri:snowy-line' // 小到中雪
+              case '409': return 'ri:heavy-snow-line' // 中到大雪
+              case '410': return 'ri:heavy-snow-line' // 大到暴雪
+              case '499': return 'ri:snowy-line' // 雪
+              case '500': return 'ri:mist-line' // 薄雾
+              case '501': return 'ri:mist-line' // 雾
+              case '502': return 'ri:haze-line' // 霾
+              case '503': return 'ri:haze-line' // 扬沙
+              case '504': return 'ri:haze-line' // 浮尘
+              case '507': return 'ri:haze-line' // 沙尘暴
+              case '508': return 'ri:haze-line' // 强沙尘暴
+              case '509': return 'ri:haze-line' // 浓雾
+              case '510': return 'ri:haze-line' // 强浓雾
+              case '511': return 'ri:haze-line' // 中度霾
+              case '512': return 'ri:haze-line' // 重度霾
+              case '513': return 'ri:haze-line' // 严重霾
+              case '514': return 'ri:mist-line' // 大雾
+              case '515': return 'ri:mist-line' // 特强浓雾
+              case '900': return 'ri:sun-line' // 热
+              case '901': return 'ri:snowy-line' // 冷
+              default: return 'ri:question-line' // 未知
             }
+          }
 
-            // 尝试匹配天气文本中的关键词
-            for (const [key, value] of Object.entries(iconMap)) {
-              if (weatherData.now.text.includes(key)) {
-                icon = value
-                break
-              }
+          // 获取城市名称
+          let locationName = '未知位置'
+          try {
+            const locationData = await fetchLocationData()
+            if (locationData && locationData.city) {
+              locationName = locationData.city
             }
-
-            setWeather({
-              temp: `${weatherData.now.temp}°C`,
-              condition: weatherData.now.text,
-              icon,
-              location: cityName,
-              loading: false,
-            })
-
-            console.log('天气数据获取成功:', weatherData)
           }
-          else {
-            throw new Error(`获取天气数据失败: ${weatherData.code}`)
+          catch (locationError) {
+            console.error('获取位置信息失败:', locationError)
           }
+
+          // 更新天气状态
+          const weatherIcon = data.now.icon ? getWeatherIcon(data.now.icon) : 'ri:question-line'
+          setWeather({
+            temp: `${data.now.temp}°C`,
+            condition: data.now.text,
+            icon: weatherIcon,
+            location: locationName,
+            loading: false,
+          })
         }
         else {
-          throw new Error(`获取城市ID失败: ${cityData.code}`)
+          throw new Error('天气数据格式错误')
         }
       }
       catch (error) {
@@ -133,24 +173,39 @@ export function ModernSidebar({
       }
     }
 
-    // 调用真实天气API
-    fetchRealWeather()
-
-    // 设置定时刷新（每小时更新一次天气）
-    const weatherTimer = setInterval(fetchRealWeather, 60 * 60 * 1000)
-
-    return () => {
-      clearInterval(weatherTimer)
-    }
+    // 调用天气API
+    getWeatherData()
   }, [])
 
-  // 使用本地每日一句数据（解决CORS问题）
+  // 使用金山词霸每日一句API
   useEffect(() => {
-    // 模拟API调用延迟
-    const fetchQuote = async () => {
+    const getQuoteData = async () => {
       try {
-        // 本地每日一句数据
-        const dailyQuotes: QuoteData[] = [
+        // 设置加载状态
+        setQuote(prev => ({ ...prev, loading: true }))
+
+        // 获取每日一句数据
+        const data = await fetchDailyQuote()
+
+        if (data && data.content) {
+          // 更新每日一句状态
+          setQuote({
+            content: data.content,
+            translation: data.translation,
+            author: data.author || 'Daily English',
+            picture: data.picture,
+            loading: false,
+          })
+        }
+        else {
+          throw new Error('每日一句数据格式错误')
+        }
+      }
+      catch (error) {
+        console.error('获取每日一句失败:', error)
+
+        // 出错时使用默认数据
+        const fallbackQuotes: QuoteData[] = [
           {
             content: 'The best way to predict the future is to invent it.',
             translation: '预测未来的最好方法就是创造未来。',
@@ -183,47 +238,14 @@ export function ModernSidebar({
           },
         ]
 
-        // 随机选择一条每日一句
-        const randomIndex = Math.floor(Math.random() * dailyQuotes.length)
-        // 使用非空断言，因为我们确定数组不为空
-        const randomQuote = dailyQuotes[randomIndex]!
-
-        // 模拟网络延迟
-        setTimeout(() => {
-          setQuote(randomQuote)
-        }, 800)
-      }
-      catch (error) {
-        console.error('获取每日一句失败:', error)
-        setQuote(prev => ({ ...prev, loading: false }))
+        // 随机选择一条备用每日一句
+        const randomIndex = Math.floor(Math.random() * fallbackQuotes.length)
+        setQuote(fallbackQuotes[randomIndex]!)
       }
     }
 
-    fetchQuote()
-
-    // 注释掉的金山词霸API调用（需要代理解决CORS问题）
-    /*
-    const fetchQuoteWithProxy = async () => {
-      try {
-        // 使用CORS代理
-        const corsProxy = 'https://cors-anywhere.herokuapp.com/';
-        const apiUrl = 'https://open.iciba.com/dsapi/';
-        const response = await fetch(corsProxy + apiUrl);
-        const data = await response.json();
-
-        setQuote({
-          content: data.content,
-          translation: data.note,
-          author: data.author || 'Daily English',
-          loading: false,
-        });
-      }
-      catch (error) {
-        console.error('获取每日一句失败:', error);
-        setQuote(prev => ({ ...prev, loading: false }));
-      }
-    };
-    */
+    // 调用每日一句API
+    getQuoteData()
   }, [])
 
   // 格式化时间和日期
