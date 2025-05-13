@@ -6,6 +6,9 @@ authors: wqz
 tags: [前端, 工具, 教程]
 keywords: [Typora, PicGo, GitHub, 图床, Markdown, 图片上传]
 description: 本文详细介绍了如何使用 Typora 编辑器结合 PicGo 工具配置 GitHub 图床，实现 Markdown 文档中图片的自动上传和管理。
+image: https://cdn.jsdelivr.net/gh/wwwqqqzzz/Image/img/1746997024082-8301886a8650b077efa97a7ae9c4a2a6.png
+collection: blog-development
+collection_order: 2
 ---
 
 <!-- truncate -->

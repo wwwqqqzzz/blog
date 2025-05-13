@@ -6,6 +6,8 @@ authors: wqz
 tags: [后端, 大数据, 教程]
 keywords: [Flink, Windows 7, 开发环境搭建, IDEA, Scala, Maven, 大数据, 教程]
 description: 本文记录了在 Windows 7 系统上搭建 Flink 开发环境并运行第一个 demo 的详细步骤，包括 Flink 的安装配置、IDEA 的配置以及 Scala 和 Maven 插件的安装。
+image: https://cdn.jsdelivr.net/gh/wwwqqqzzz/Image/img/1746994826732-e5ef92480b6a1b5e2dfff63cff215a06.png
+
 ---
 
 <!-- truncate -->
