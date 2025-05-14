@@ -121,8 +121,7 @@ export default function SearchBox({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     if (searchTerm.trim()) {
-      // 重定向到高级搜索页面
-      history.push(`/search?q=${encodeURIComponent(searchTerm)}`)
+      history.push(`/blog?q=${encodeURIComponent(searchTerm)}`)
       setIsResultsVisible(false)
     }
   }
@@ -231,18 +230,8 @@ export default function SearchBox({
               ))}
             </ul>
 
-            <div className="border-t border-gray-100 px-4 py-2 flex justify-between items-center">
-              <span className="text-xs text-gray-500 dark:text-gray-400">
-                按回车键搜索全部结果
-              </span>
-              <Link
-                to={`/search${searchTerm ? `?q=${encodeURIComponent(searchTerm)}` : ''}`}
-                className="text-xs text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300 flex items-center gap-1"
-                onClick={() => setIsResultsVisible(false)}
-              >
-                <Icon icon="ri:filter-line" className="text-xs" />
-                高级搜索
-              </Link>
+            <div className="border-t border-gray-100 px-4 py-2 text-xs text-gray-500 dark:border-gray-700 dark:text-gray-400">
+              按回车键搜索全部结果
             </div>
           </motion.div>
         )}
