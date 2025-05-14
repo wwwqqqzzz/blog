@@ -2,7 +2,7 @@ import type { BlogPost } from '@docusaurus/plugin-content-blog'
 import { motion } from 'framer-motion'
 import React, { useState, useEffect, useCallback } from 'react'
 import { Icon } from '@iconify/react'
-import { fetchWeatherData, fetchLocationData, fetchDailyQuote } from '../../../utils/api-helpers'
+import { fetchWeatherData, fetchLocationData, fetchDailyQuote, clearApiCache } from '../../../utils/api-helpers'
 
 /**
  * 现代化侧边栏组件
@@ -133,6 +133,10 @@ export function ModernSidebar({
         // 设置加载状态
         setWeather(prev => ({ ...prev, loading: true }))
 
+        // 清除缓存，确保获取最新数据
+        clearApiCache('cached_weather_data')
+        clearApiCache('cached_location_data')
+
         // 获取天气数据
         const data = await fetchWeatherData()
 
@@ -147,7 +151,7 @@ export function ModernSidebar({
           }
           catch (locationError) {
             // 位置获取失败时使用默认位置
-            locationName = '北京'
+            locationName = '南京'
           }
 
           // 更新天气状态
@@ -167,10 +171,10 @@ export function ModernSidebar({
       catch (error) {
         // 出错时使用默认数据
         setWeather({
-          temp: '23°C',
+          temp: '25°C',
           condition: '晴朗',
           icon: 'ri:sun-line',
-          location: '北京',
+          location: '南京',
           loading: false,
         })
       }
@@ -186,6 +190,9 @@ export function ModernSidebar({
       try {
         // 设置加载状态
         setQuote(prev => ({ ...prev, loading: true }))
+
+        // 清除缓存，确保获取最新数据
+        clearApiCache('cached_daily_quote')
 
         // 获取每日一句数据
         const data = await fetchDailyQuote()
