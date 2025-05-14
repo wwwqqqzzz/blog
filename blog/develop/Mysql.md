@@ -6,6 +6,7 @@ authors: wqz
 tags: [MySQL, 教程, 常用函数]
 keywords: [MySQL, 数据库, SQL, 多表查询, 聚合函数, 子查询, 分页, 字符串函数, 数值函数, 日期函数, 教程]
 description: 本文是 MySQL 数据库的入门教程，涵盖多表查询、聚合函数、子查询、分页查询和常用函数等内容，适合初学者学习。
+image: https://cdn.jsdelivr.net/gh/wwwqqqzzz/Image/img/1747234454872-da49115a11c15192c9737f3f1882f04d.png
 ---
 
 <!-- truncate -->

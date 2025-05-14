@@ -6,7 +6,7 @@ authors: wqz
 tags: [工具, Git, 教程, 工作流, 分支管理]
 keywords: [Git, 版本控制, 工作流, 分支策略, Git Flow, GitHub Flow, GitLab Flow, 主干开发]
 description: 详细介绍主流Git工作流模型与分支策略，包括Git Flow、GitHub Flow、GitLab Flow和主干开发模型，以及它们的优缺点、适用场景和最佳实践。
-image: https://cdn.jsdelivr.net/gh/wwwqqqzzz/Image/img/git-workflow-banner.jpg
+image: https://cdn.jsdelivr.net/gh/wwwqqqzzz/Image/img/1747252105234-42d43924ad3cae7ca395a29ae5022471.png
 collection: Git教程
 collection_order: 3
 ---

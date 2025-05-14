@@ -4,6 +4,7 @@ description: 这是一篇只有输入正确密码才能看到的私密博客文�
 authors: [wqz]
 tags: [private]
 date: 2024-05-15T10:00
+image: https://cdn.jsdelivr.net/gh/wwwqqqzzz/Image/img/1747251691136-899503aa5a8448660b7493714fa305b2.png
 private: true
 password: "private_post_password"
 passwordHint: "这是第一篇私密博客的密码提示，密码是'private_post_password'"

@@ -6,7 +6,7 @@ authors: wqz
 tags: [工具, Git, 教程, 进阶, 版本控制, 高级技巧]
 keywords: [Git, 版本控制, 高级技巧, 工作流, 最佳实践, 交互式变基, 子模块, 钩子, 二分查找]
 description: 深入探讨Git的高级功能和技巧，包括交互式变基、子模块、钩子、多远程仓库管理、工作流模型等进阶知识。
-image: https://cdn.jsdelivr.net/gh/wwwqqqzzz/Image/img/git-advanced.jpg
+image: https://cdn.jsdelivr.net/gh/wwwqqqzzz/Image/img/1747252129916-425cbf59e5faa9ed64418f5ac8b434b9.png
 collection: Git教程
 collection_order: 2
 ---

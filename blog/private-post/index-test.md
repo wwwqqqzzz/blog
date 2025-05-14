@@ -7,6 +7,7 @@ date: 2024-11-15
 private: true
 password: "test_password"
 passwordHint: "这是测试文章的密码提示，密码是'test_password'"
+image: https://cdn.jsdelivr.net/gh/wwwqqqzzz/Image/img/1747251573113-9d18f168d980b55ecb54dff95b24edfb.png
 ---
 
 # 测试私密博客功能

@@ -6,7 +6,7 @@ authors: wqz
 tags: [工具, Git, 教程, 基础]
 keywords: [Git, 版本控制, 基础教程, 问题解决]
 description: 全面详细介绍Git的基本概念、常用命令和操作流程，并提供推送失败等常见问题的解决方案，帮助开发者快速掌握Git版本控制系统。
-image: https://cdn.jsdelivr.net/gh/wwwqqqzzz/Image/img/git-banner.jpg
+image: https://cdn.jsdelivr.net/gh/wwwqqqzzz/Image/img/1747251915126-6aff710e50466d780502ad3617f4d1fe.png
 collection: Git教程
 collection_order: 1
 ---

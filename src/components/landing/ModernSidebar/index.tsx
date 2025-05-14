@@ -305,15 +305,6 @@ export function ModernSidebar({
       transition={{ duration: 0.5 }}
       viewport={{ once: true }}
     >
-      {/* 1. 图片展示区 */}
-      <div className="overflow-hidden rounded-xl shadow-md sm:max-h-[120px] md:max-h-[150px] lg:max-h-none">
-        <img
-          src="https://cdn.jsdelivr.net/gh/wwwqqqzzz/Image/img/1747239144143-b1c7aaf6f537f7b5778c0535d50941b5.gif"
-          alt="动态展示"
-          className="h-auto w-full object-cover sm:object-contain md:object-cover"
-          loading="lazy"
-        />
-      </div>
 
       {/* 2. 日期和天气卡片 */}
       <div className="relative overflow-hidden rounded-xl bg-gradient-to-br from-primary-500 to-primary-700 p-4 text-white shadow-md backdrop-blur-sm sm:p-3 md:p-4">
@@ -336,6 +327,16 @@ export function ModernSidebar({
         {/* 装饰元素 */}
         <div className="absolute -right-4 -top-4 size-16 rounded-full bg-white/10 sm:size-12 md:size-14 lg:size-16"></div>
         <div className="absolute -bottom-4 -left-4 size-16 rounded-full bg-white/10 sm:size-12 md:size-14 lg:size-16"></div>
+      </div>
+
+      {/* 1. 图片展示区 */}
+      <div className="overflow-hidden rounded-xl shadow-md sm:max-h-[120px] md:max-h-[150px] lg:max-h-none">
+        <img
+          src="https://cdn.jsdelivr.net/gh/wwwqqqzzz/Image/img/1747239144143-b1c7aaf6f537f7b5778c0535d50941b5.gif"
+          alt="动态展示"
+          className="h-auto w-full object-cover sm:object-contain md:object-cover"
+          loading="lazy"
+        />
       </div>
 
       {/* 3. 每日英语区块 */}
