@@ -17,6 +17,9 @@ const getApiBaseUrl = () => {
 const QWEATHER_API_KEY = '80ce7424f8d34974af05d092792c123a'
 const QWEATHER_API_BASE_URL = 'https://devapi.qweather.com/v7'
 
+// 金山词霸API配置
+const ICIBA_API_URL = 'https://open.iciba.com/dsapi/'
+
 /**
  * Cache configuration
  */
@@ -50,6 +53,13 @@ function isCacheValid<T>(cachedData: CachedData<T> | null, expiryTime: number): 
   const isExpired = now - cachedData.timestamp > expiryTime
 
   return !isExpired
+}
+
+/**
+ * Safely get data from cache with null check
+ */
+function safeGetCachedData<T>(cachedData: CachedData<T> | null): T | null {
+  return cachedData ? cachedData.data : null
 }
 
 /**
@@ -138,7 +148,8 @@ export async function fetchWeatherData(): Promise<WeatherData> {
     const cachedData = getFromCache<WeatherData>(CACHE_KEYS.WEATHER)
 
     if (isCacheValid(cachedData, CACHE_EXPIRY.WEATHER)) {
-      return cachedData.data
+      const data = safeGetCachedData(cachedData)
+      if (data) return data
     }
 
     // If no valid cache, fetch new data
@@ -159,13 +170,25 @@ export async function fetchWeatherData(): Promise<WeatherData> {
       console.warn('Error fetching from primary source, trying fallback:', fetchError)
 
       // If direct API call fails in development, try the API proxy as fallback
-      if (isDevelopment) {
+      try {
         const response = await fetch(`${getApiBaseUrl()}/api/weather`)
         weatherData = await response.json()
       }
-      else {
-        // If we're in production and the API proxy failed, rethrow the error
-        throw fetchError
+      catch (fallbackError) {
+        console.warn('Fallback also failed, using default data:', fallbackError)
+
+        // If all API calls fail, use fallback data
+        weatherData = {
+          code: '200',
+          now: {
+            temp: '23',
+            text: '晴朗',
+            icon: '100',
+            windDir: '东南风',
+            windScale: '3',
+            humidity: '65',
+          },
+        }
       }
     }
 
@@ -181,9 +204,8 @@ export async function fetchWeatherData(): Promise<WeatherData> {
 
     // Try to return cached data even if expired
     const cachedData = getFromCache<WeatherData>(CACHE_KEYS.WEATHER)
-    if (cachedData) {
-      return cachedData.data
-    }
+    const data = safeGetCachedData(cachedData)
+    if (data) return data
 
     // If no cached data available, return fallback data
     return {
@@ -218,7 +240,8 @@ export async function fetchLocationData(): Promise<LocationData> {
     const cachedData = getFromCache<LocationData>(CACHE_KEYS.LOCATION)
 
     if (isCacheValid(cachedData, CACHE_EXPIRY.LOCATION)) {
-      return cachedData.data
+      const data = safeGetCachedData(cachedData)
+      if (data) return data
     }
 
     // If no valid cache, fetch new data
@@ -254,9 +277,8 @@ export async function fetchLocationData(): Promise<LocationData> {
 
     // Try to return cached data even if expired
     const cachedData = getFromCache<LocationData>(CACHE_KEYS.LOCATION)
-    if (cachedData) {
-      return cachedData.data
-    }
+    const data = safeGetCachedData(cachedData)
+    if (data) return data
 
     // If no cached data available, return fallback data
     return {
@@ -276,8 +298,33 @@ interface DailyQuote {
 }
 
 /**
+ * Directly fetch daily quote from 金山词霸 API
+ */
+async function fetchIcibaQuoteDirectly(): Promise<DailyQuote> {
+  try {
+    const response = await fetch(ICIBA_API_URL)
+    if (!response.ok) {
+      throw new Error(`Iciba API responded with status: ${response.status}`)
+    }
+
+    const data = await response.json()
+
+    return {
+      content: data.content,
+      translation: data.note,
+      author: data.author || 'Daily English',
+      picture: data.picture,
+    }
+  }
+  catch (error) {
+    console.warn('Error directly fetching Iciba quote data:', error)
+    throw error
+  }
+}
+
+/**
  * Fetch daily quote from 金山词霸 API with caching
- * Uses real data in both development and production
+ * Uses real-time data in both development and production
  */
 export async function fetchDailyQuote(): Promise<DailyQuote> {
   try {
@@ -285,26 +332,42 @@ export async function fetchDailyQuote(): Promise<DailyQuote> {
     const cachedData = getFromCache<DailyQuote>(CACHE_KEYS.DAILY_QUOTE)
 
     if (isCacheValid(cachedData, CACHE_EXPIRY.DAILY_QUOTE)) {
-      return cachedData.data
+      const data = safeGetCachedData(cachedData)
+      if (data) return data
     }
 
     // If no valid cache, fetch new data
     let quoteData: DailyQuote
 
     try {
-      // Call the actual API in both development and production
-      const response = await fetch(`${getApiBaseUrl()}/api/daily-quote`)
-      quoteData = await response.json()
+      if (isDevelopment) {
+        // In development, call the 金山词霸 API directly
+        quoteData = await fetchIcibaQuoteDirectly()
+      }
+      else {
+        // In production, call through our API proxy
+        const response = await fetch(`${getApiBaseUrl()}/api/daily-quote`)
+        quoteData = await response.json()
+      }
     }
     catch (fetchError) {
-      console.warn('Error fetching daily quote, using fallback:', fetchError)
+      console.warn('Error fetching from primary source, trying fallback:', fetchError)
 
-      // Use fallback data if API call fails
-      quoteData = {
-        content: 'The best way to predict the future is to invent it.',
-        translation: '预测未来的最好方法就是创造未来。',
-        author: 'Alan Kay',
-        picture: 'https://cdn.iciba.com/www/img/daily-pic.jpg',
+      // If direct API call fails in development, try the API proxy as fallback
+      try {
+        const response = await fetch(`${getApiBaseUrl()}/api/daily-quote`)
+        quoteData = await response.json()
+      }
+      catch (fallbackError) {
+        console.warn('Fallback also failed, using default data:', fallbackError)
+
+        // If all API calls fail, use fallback data
+        quoteData = {
+          content: 'The best way to predict the future is to invent it.',
+          translation: '预测未来的最好方法就是创造未来。',
+          author: 'Alan Kay',
+          picture: 'https://cdn.iciba.com/www/img/daily-pic.jpg',
+        }
       }
     }
 
@@ -320,9 +383,8 @@ export async function fetchDailyQuote(): Promise<DailyQuote> {
 
     // Try to return cached data even if expired
     const cachedData = getFromCache<DailyQuote>(CACHE_KEYS.DAILY_QUOTE)
-    if (cachedData) {
-      return cachedData.data
-    }
+    const data = safeGetCachedData(cachedData)
+    if (data) return data
 
     // If no cached data available, return fallback data
     return {
