@@ -1,11 +1,13 @@
-import Link from '@docusaurus/Link'
 import type { BlogPost } from '@docusaurus/plugin-content-blog'
 import { motion } from 'framer-motion'
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { Icon } from '@iconify/react'
 import { fetchWeatherData, fetchLocationData, fetchDailyQuote } from '../../../utils/api-helpers'
 
-// 简化版侧边栏组件
+/**
+ * 现代化侧边栏组件
+ * 显示时间、天气、每日一句和博客统计信息
+ */
 export function ModernSidebar({
   filteredPosts,
 }: {
@@ -18,14 +20,6 @@ export function ModernSidebar({
     icon: string
     location: string
     loading: boolean
-  }
-
-  interface LocationData {
-    city: string
-    region: string
-    country: string
-    latitude: number
-    longitude: number
   }
 
   interface QuoteData {
@@ -63,6 +57,75 @@ export function ModernSidebar({
     return () => clearInterval(timer)
   }, [])
 
+  /**
+   * 根据天气代码获取对应的图标
+   */
+  const getWeatherIcon = useCallback((iconCode: string): string => {
+    const iconMap: Record<string, string> = {
+      // 晴
+      '100': 'ri:sun-line',
+      // 多云
+      '101': 'ri:sun-cloudy-line',
+      '102': 'ri:cloudy-line',
+      '103': 'ri:cloudy-line',
+      '104': 'ri:cloudy-2-line',
+      // 雨
+      '300': 'ri:drizzle-line',
+      '301': 'ri:rainy-line',
+      '302': 'ri:thunderstorms-line',
+      '303': 'ri:thunderstorms-line',
+      '304': 'ri:hail-line',
+      '305': 'ri:rainy-line',
+      '306': 'ri:rainy-line',
+      '307': 'ri:heavy-showers-line',
+      '308': 'ri:heavy-showers-line',
+      '309': 'ri:drizzle-line',
+      '310': 'ri:rainy-line',
+      '311': 'ri:heavy-showers-line',
+      '312': 'ri:heavy-showers-line',
+      '313': 'ri:snowy-line',
+      '314': 'ri:rainy-line',
+      '315': 'ri:rainy-line',
+      '316': 'ri:heavy-showers-line',
+      '317': 'ri:heavy-showers-line',
+      '318': 'ri:heavy-showers-line',
+      '399': 'ri:rainy-line',
+      // 雪
+      '400': 'ri:snowy-line',
+      '401': 'ri:snowy-line',
+      '402': 'ri:heavy-snow-line',
+      '403': 'ri:heavy-snow-line',
+      '404': 'ri:snowy-line',
+      '405': 'ri:snowy-line',
+      '406': 'ri:snowy-line',
+      '407': 'ri:snowy-line',
+      '408': 'ri:snowy-line',
+      '409': 'ri:heavy-snow-line',
+      '410': 'ri:heavy-snow-line',
+      '499': 'ri:snowy-line',
+      // 雾霾
+      '500': 'ri:mist-line',
+      '501': 'ri:mist-line',
+      '502': 'ri:haze-line',
+      '503': 'ri:haze-line',
+      '504': 'ri:haze-line',
+      '507': 'ri:haze-line',
+      '508': 'ri:haze-line',
+      '509': 'ri:haze-line',
+      '510': 'ri:haze-line',
+      '511': 'ri:haze-line',
+      '512': 'ri:haze-line',
+      '513': 'ri:haze-line',
+      '514': 'ri:mist-line',
+      '515': 'ri:mist-line',
+      // 其他
+      '900': 'ri:sun-line',
+      '901': 'ri:snowy-line',
+    }
+
+    return iconMap[iconCode] || 'ri:question-line'
+  }, [])
+
   // 使用和风天气API获取实时天气数据
   useEffect(() => {
     const getWeatherData = async () => {
@@ -74,66 +137,6 @@ export function ModernSidebar({
         const data = await fetchWeatherData()
 
         if (data.code === '200' && data.now) {
-          // 获取天气图标
-          const getWeatherIcon = (iconCode: string): string => {
-            switch (iconCode) {
-              case '100': return 'ri:sun-line' // 晴
-              case '101': return 'ri:sun-cloudy-line' // 多云
-              case '102': return 'ri:cloudy-line' // 少云
-              case '103': return 'ri:cloudy-line' // 晴间多云
-              case '104': return 'ri:cloudy-2-line' // 阴
-              case '300': return 'ri:drizzle-line' // 阵雨
-              case '301': return 'ri:rainy-line' // 强阵雨
-              case '302': return 'ri:thunderstorms-line' // 雷阵雨
-              case '303': return 'ri:thunderstorms-line' // 强雷阵雨
-              case '304': return 'ri:hail-line' // 雷阵雨伴有冰雹
-              case '305': return 'ri:rainy-line' // 小雨
-              case '306': return 'ri:rainy-line' // 中雨
-              case '307': return 'ri:heavy-showers-line' // 大雨
-              case '308': return 'ri:heavy-showers-line' // 极端降雨
-              case '309': return 'ri:drizzle-line' // 毛毛雨/细雨
-              case '310': return 'ri:rainy-line' // 暴雨
-              case '311': return 'ri:heavy-showers-line' // 大暴雨
-              case '312': return 'ri:heavy-showers-line' // 特大暴雨
-              case '313': return 'ri:snowy-line' // 冻雨
-              case '314': return 'ri:rainy-line' // 小到中雨
-              case '315': return 'ri:rainy-line' // 中到大雨
-              case '316': return 'ri:heavy-showers-line' // 大到暴雨
-              case '317': return 'ri:heavy-showers-line' // 暴雨到大暴雨
-              case '318': return 'ri:heavy-showers-line' // 大暴雨到特大暴雨
-              case '399': return 'ri:rainy-line' // 雨
-              case '400': return 'ri:snowy-line' // 小雪
-              case '401': return 'ri:snowy-line' // 中雪
-              case '402': return 'ri:heavy-snow-line' // 大雪
-              case '403': return 'ri:heavy-snow-line' // 暴雪
-              case '404': return 'ri:snowy-line' // 雨夹雪
-              case '405': return 'ri:snowy-line' // 雨雪天气
-              case '406': return 'ri:snowy-line' // 阵雨夹雪
-              case '407': return 'ri:snowy-line' // 阵雪
-              case '408': return 'ri:snowy-line' // 小到中雪
-              case '409': return 'ri:heavy-snow-line' // 中到大雪
-              case '410': return 'ri:heavy-snow-line' // 大到暴雪
-              case '499': return 'ri:snowy-line' // 雪
-              case '500': return 'ri:mist-line' // 薄雾
-              case '501': return 'ri:mist-line' // 雾
-              case '502': return 'ri:haze-line' // 霾
-              case '503': return 'ri:haze-line' // 扬沙
-              case '504': return 'ri:haze-line' // 浮尘
-              case '507': return 'ri:haze-line' // 沙尘暴
-              case '508': return 'ri:haze-line' // 强沙尘暴
-              case '509': return 'ri:haze-line' // 浓雾
-              case '510': return 'ri:haze-line' // 强浓雾
-              case '511': return 'ri:haze-line' // 中度霾
-              case '512': return 'ri:haze-line' // 重度霾
-              case '513': return 'ri:haze-line' // 严重霾
-              case '514': return 'ri:mist-line' // 大雾
-              case '515': return 'ri:mist-line' // 特强浓雾
-              case '900': return 'ri:sun-line' // 热
-              case '901': return 'ri:snowy-line' // 冷
-              default: return 'ri:question-line' // 未知
-            }
-          }
-
           // 获取城市名称
           let locationName = '未知位置'
           try {
@@ -143,7 +146,8 @@ export function ModernSidebar({
             }
           }
           catch (locationError) {
-            console.error('获取位置信息失败:', locationError)
+            // 位置获取失败时使用默认位置
+            locationName = '北京'
           }
 
           // 更新天气状态
@@ -161,7 +165,6 @@ export function ModernSidebar({
         }
       }
       catch (error) {
-        console.error('获取天气数据失败:', error)
         // 出错时使用默认数据
         setWeather({
           temp: '23°C',
@@ -175,7 +178,7 @@ export function ModernSidebar({
 
     // 调用天气API
     getWeatherData()
-  }, [])
+  }, [getWeatherIcon])
 
   // 使用金山词霸每日一句API
   useEffect(() => {
@@ -202,8 +205,6 @@ export function ModernSidebar({
         }
       }
       catch (error) {
-        console.error('获取每日一句失败:', error)
-
         // 出错时使用默认数据
         const fallbackQuotes: QuoteData[] = [
           {
@@ -248,7 +249,9 @@ export function ModernSidebar({
     getQuoteData()
   }, [])
 
-  // 格式化时间和日期
+  /**
+   * 格式化时间和日期
+   */
   const formattedTime = currentTime.toLocaleTimeString('zh-CN', {
     hour: '2-digit',
     minute: '2-digit',
@@ -261,6 +264,32 @@ export function ModernSidebar({
     day: 'numeric',
   })
 
+  /**
+   * 播放文本语音
+   */
+  const speakText = (text: string) => {
+    if ('speechSynthesis' in window) {
+      const utterance = new SpeechSynthesisUtterance(text)
+      utterance.lang = 'en-US'
+      window.speechSynthesis.speak(utterance)
+    }
+  }
+
+  /**
+   * 计算博客统计数据
+   */
+  const blogStats = {
+    totalPosts: filteredPosts.length,
+    totalReadingTime: filteredPosts.reduce((acc, post) => acc + (post.metadata.readingTime || 0), 0).toFixed(0),
+    totalTags: new Set(
+      filteredPosts.flatMap(post =>
+        post.metadata.frontMatter.tags?.map(tag =>
+          typeof tag === 'string' ? tag : (tag as any).label,
+        ) || [],
+      )
+    ).size,
+  }
+
   return (
     <motion.div
       className="flex h-full flex-col gap-5 rounded-xl sm:gap-3 md:gap-4 lg:gap-5"
@@ -269,7 +298,7 @@ export function ModernSidebar({
       transition={{ duration: 0.5 }}
       viewport={{ once: true }}
     >
-      {/* 1. 图片展示区 - 移动端优化 */}
+      {/* 1. 图片展示区 */}
       <div className="overflow-hidden rounded-xl shadow-md sm:max-h-[120px] md:max-h-[150px] lg:max-h-none">
         <img
           src="https://cdn.jsdelivr.net/gh/wwwqqqzzz/Image/img/1747142036772-a21c8a72400e04f4d03d63bf48f59951.gif"
@@ -279,7 +308,7 @@ export function ModernSidebar({
         />
       </div>
 
-      {/* 2. 日期和天气卡片 - 移动端优化 */}
+      {/* 2. 日期和天气卡片 */}
       <div className="relative overflow-hidden rounded-xl bg-gradient-to-br from-primary-500 to-primary-700 p-4 text-white shadow-md backdrop-blur-sm sm:p-3 md:p-4">
         <div className="flex items-center justify-between">
           <div>
@@ -297,73 +326,61 @@ export function ModernSidebar({
           </div>
         </div>
 
-        {/* 装饰元素 - 在小屏幕上缩小或隐藏 */}
+        {/* 装饰元素 */}
         <div className="absolute -right-4 -top-4 size-16 rounded-full bg-white/10 sm:size-12 md:size-14 lg:size-16"></div>
         <div className="absolute -bottom-4 -left-4 size-16 rounded-full bg-white/10 sm:size-12 md:size-14 lg:size-16"></div>
       </div>
 
-      {/* 3. 每日英语区块 - 移动端优化 */}
+      {/* 3. 每日英语区块 */}
       <div className="rounded-xl bg-card p-4 shadow-sm sm:p-3 md:p-4">
         <h3 className="text-card-foreground mb-3 flex items-center text-sm font-medium sm:mb-2 sm:text-xs md:mb-3 md:text-sm">
           <Icon icon="ri:english-input" className="mr-1.5" />
           每日英语
         </h3>
         <div className="relative overflow-hidden rounded-lg bg-gradient-to-r from-gray-50 to-gray-100 p-4 dark:from-gray-800 dark:to-gray-700 sm:p-3 md:p-4">
-          {quote.loading
-            ? (
-                <div className="flex h-24 items-center justify-center sm:h-16 md:h-20 lg:h-24">
-                  <div className="size-5 animate-spin rounded-full border-2 border-primary border-t-transparent sm:size-4 md:size-5"></div>
-                </div>
-              )
-            : (
-                <>
-                  <div className="absolute -right-4 -top-4 text-6xl text-gray-200 opacity-30 dark:text-gray-600 sm:text-4xl md:text-5xl lg:text-6xl">
-                    <Icon icon="ri:double-quotes-r" />
+          {quote.loading ? (
+            <div className="flex h-24 items-center justify-center sm:h-16 md:h-20 lg:h-24">
+              <div className="size-5 animate-spin rounded-full border-2 border-primary border-t-transparent sm:size-4 md:size-5"></div>
+            </div>
+          ) : (
+            <>
+              <div className="absolute -right-4 -top-4 text-6xl text-gray-200 opacity-30 dark:text-gray-600 sm:text-4xl md:text-5xl lg:text-6xl">
+                <Icon icon="ri:double-quotes-r" />
+              </div>
+              <blockquote className="relative z-10">
+                <p className="text-sm font-medium text-gray-800 dark:text-gray-200 sm:text-xs md:text-sm">
+                  "{quote.content}"
+                </p>
+                <p className="mt-2 text-sm italic text-gray-600 dark:text-gray-400 sm:mt-1 sm:text-xs md:mt-2 md:text-sm">
+                  {quote.translation}
+                </p>
+                <footer className="mt-3 flex items-center justify-between sm:mt-2 md:mt-3">
+                  <div className="flex items-center">
+                    <Icon
+                      icon="ri:volume-up-line"
+                      className="mr-1 cursor-pointer text-primary hover:text-primary/80"
+                      onClick={() => speakText(quote.content)}
+                    />
+                    <span className="text-xs text-gray-500 sm:text-[10px] md:text-xs">朗读</span>
                   </div>
-                  <blockquote className="relative z-10">
-                    <p className="text-sm font-medium text-gray-800 dark:text-gray-200 sm:text-xs md:text-sm">
-                      "
-                      {quote.content}
-                      "
-                    </p>
-                    <p className="mt-2 text-sm italic text-gray-600 dark:text-gray-400 sm:mt-1 sm:text-xs md:mt-2 md:text-sm">
-                      {quote.translation}
-                    </p>
-                    <footer className="mt-3 flex items-center justify-between sm:mt-2 md:mt-3">
-                      <div className="flex items-center">
-                        <Icon
-                          icon="ri:volume-up-line"
-                          className="mr-1 cursor-pointer text-primary hover:text-primary/80"
-                          onClick={() => {
-                            const utterance = new SpeechSynthesisUtterance(quote.content)
-                            utterance.lang = 'en-US'
-                            window.speechSynthesis.speak(utterance)
-                          }}
-                        />
-                        <span className="text-xs text-gray-500 sm:text-[10px] md:text-xs">朗读</span>
-                      </div>
-                      <span className="text-right text-xs font-medium text-gray-500 dark:text-gray-400 sm:text-[10px] md:text-xs">
-                        —
-                        {' '}
-                        {quote.author}
-                      </span>
-                    </footer>
-                  </blockquote>
-                </>
-              )}
+                  <span className="text-right text-xs font-medium text-gray-500 dark:text-gray-400 sm:text-[10px] md:text-xs">
+                    — {quote.author}
+                  </span>
+                </footer>
+              </blockquote>
+            </>
+          )}
         </div>
       </div>
 
-      {/* 4. 推荐工具区域 (实际是广告) - 移动端优化 */}
+      {/* 4. 推荐工具区域 */}
       <div className="rounded-xl bg-card p-4 shadow-sm sm:p-3 md:p-4">
         <h3 className="text-card-foreground mb-3 flex items-center text-sm font-medium sm:mb-2 sm:text-xs md:mb-3 md:text-sm">
           <Icon icon="ri:tools-line" className="mr-1.5" />
           开发者工具推荐
         </h3>
         <div className="overflow-hidden rounded-lg">
-          {/* 这里是广告占位区域，但设计成推荐工具的样式 */}
           <div className="relative">
-            {/* 实际使用时这里放广告代码 */}
             <div className="flex flex-col gap-3 rounded-lg bg-gradient-to-br from-blue-50 to-indigo-50 p-4 dark:from-gray-800 dark:to-gray-700 sm:gap-2 sm:p-3 md:gap-3 md:p-4">
               <div className="flex items-center gap-3 sm:gap-2 md:gap-3">
                 <div className="flex size-12 shrink-0 items-center justify-center rounded-lg bg-blue-500/10 text-blue-500 sm:size-10 md:size-12">
@@ -387,7 +404,6 @@ export function ModernSidebar({
                 <Icon icon="ri:arrow-right-s-line" className="ml-1" />
               </a>
 
-              {/* 小标记表明这是赞助内容，但不明显 */}
               <div className="absolute right-2 top-2">
                 <span className="rounded-sm bg-gray-200/50 px-1 py-0.5 text-[10px] text-gray-500 dark:bg-gray-700/50 dark:text-gray-400 sm:text-[8px] md:text-[10px]">
                   推荐
@@ -398,38 +414,34 @@ export function ModernSidebar({
         </div>
       </div>
 
-      {/* 5. 查看全部区域 - 移动端优化 */}
+      {/* 5. 博客统计区域 */}
       <div className="mt-auto rounded-xl bg-card p-4 shadow-sm sm:p-3 md:p-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center">
             <Icon icon="ri:article-line" className="mr-2 text-lg text-primary sm:mr-1 sm:text-base md:mr-2 md:text-lg" />
             <span className="text-card-foreground text-sm font-medium sm:text-xs md:text-sm">博客统计</span>
           </div>
-          <Link
+          <a
             href="/blog"
             className="text-xs font-medium text-primary hover:underline sm:text-[10px] md:text-xs"
           >
             查看全部
-          </Link>
+          </a>
         </div>
         <div className="mt-3 flex items-center justify-around sm:mt-2 md:mt-3">
           <div className="text-center">
-            <div className="text-card-foreground text-xl font-bold sm:text-lg md:text-xl">{filteredPosts.length}</div>
+            <div className="text-card-foreground text-xl font-bold sm:text-lg md:text-xl">{blogStats.totalPosts}</div>
             <div className="text-muted-foreground text-xs sm:text-[10px] md:text-xs">文章</div>
           </div>
           <div className="text-center">
             <div className="text-card-foreground text-xl font-bold sm:text-lg md:text-xl">
-              {filteredPosts.reduce((acc, post) => acc + (post.metadata.readingTime || 0), 0).toFixed(0)}
+              {blogStats.totalReadingTime}
             </div>
             <div className="text-muted-foreground text-xs sm:text-[10px] md:text-xs">阅读分钟</div>
           </div>
           <div className="text-center">
             <div className="text-card-foreground text-xl font-bold sm:text-lg md:text-xl">
-              {new Set(filteredPosts.flatMap(post =>
-                post.metadata.frontMatter.tags?.map(tag =>
-                  typeof tag === 'string' ? tag : (tag as any).label,
-                ) || [],
-              )).size}
+              {blogStats.totalTags}
             </div>
             <div className="text-muted-foreground text-xs sm:text-[10px] md:text-xs">标签</div>
           </div>
