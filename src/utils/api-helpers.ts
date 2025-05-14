@@ -393,6 +393,11 @@ interface DailyQuote {
   translation: string
   author: string
   picture?: string
+  // 添加可选字段，用于调试
+  source?: string
+  dateline?: string
+  fallback?: boolean
+  timestamp?: string
 }
 
 /**
@@ -402,13 +407,16 @@ interface DailyQuote {
 async function fetchIcibaQuoteDirectly(): Promise<DailyQuote> {
   return new Promise((resolve, reject) => {
     try {
-      // Always use our server-side API proxy to avoid CORS issues
-      // This works in both development and production environments
+      // 使用服务器端API代理，避免CORS问题
+      // 这在开发环境和生产环境中都有效
       const apiUrl = `${getApiBaseUrl()}/api/daily-quote`
 
-      console.log('Fetching daily quote from server-side API proxy:', apiUrl)
+      console.log('正在从服务器端API代理获取每日一句:', apiUrl)
 
-      fetch(apiUrl, {
+      // 添加随机参数，避免缓存
+      const urlWithCache = `${apiUrl}?_t=${Date.now()}`
+
+      fetch(urlWithCache, {
         method: 'GET',
         headers: {
           'Accept': 'application/json',
@@ -416,6 +424,7 @@ async function fetchIcibaQuoteDirectly(): Promise<DailyQuote> {
           'Pragma': 'no-cache',
           'Expires': '0',
         },
+        // 使用same-origin凭据，确保请求包含cookies
         credentials: 'same-origin',
       })
         .then((response) => {
@@ -425,17 +434,23 @@ async function fetchIcibaQuoteDirectly(): Promise<DailyQuote> {
           return response.json()
         })
         .then((data) => {
-          // Log the data to see what we're getting
-          console.log('Daily quote data:', data)
+          // 打印完整的API响应，方便调试
+          console.log('收到每日一句数据:', data)
 
-          // Handle different API response formats
-          // Direct API call returns { content, note, ... }
-          // Our proxy returns { content, translation, ... }
+          // 检查是否是真实API数据
+          const isRealApiData = !data.fallback
+          console.log('是否是真实API数据:', isRealApiData)
+
+          // 处理不同的API响应格式
+          // 我们的代理返回统一格式: { content, translation, author, picture, fallback }
           resolve({
             content: data.content,
-            translation: data.translation || data.note,
-            author: data.author || 'Daily English',
-            picture: data.picture || data.fenxiang_img,
+            translation: data.translation,
+            author: data.author || '金山词霸',
+            picture: data.picture,
+            // 添加额外信息，方便调试
+            source: data.source,
+            dateline: data.dateline,
           })
         })
         .catch((error) => {
