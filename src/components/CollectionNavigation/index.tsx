@@ -41,19 +41,19 @@ export default function CollectionNavigation({
 }: CollectionNavigationProps): React.ReactNode {
   // 查找当前文章在系列中的索引
   const currentIndex = collectionPosts.findIndex(post => post.link === currentPost.link)
-  
+
   // 如果找不到当前文章或系列中只有一篇文章，不显示导航
   if (currentIndex === -1 || collectionPosts.length <= 1) {
     return null
   }
-  
+
   // 获取上一篇和下一篇文章
   const prevPost = currentIndex > 0 ? collectionPosts[currentIndex - 1] : null
   const nextPost = currentIndex < collectionPosts.length - 1 ? collectionPosts[currentIndex + 1] : null
-  
+
   // 计算当前进度
   const progress = Math.round(((currentIndex + 1) / collectionPosts.length) * 100)
-  
+
   return (
     <div className={cn('my-8 rounded-lg border border-gray-200 bg-gray-50 p-4 dark:border-gray-700 dark:bg-gray-800', className)}>
       {/* 系列标题和描述 */}
@@ -70,15 +70,24 @@ export default function CollectionNavigation({
           <p className="text-sm text-gray-600 dark:text-gray-400">{collectionDescription}</p>
         )}
       </div>
-      
+
       {/* 进度条 */}
       <div className="mb-4">
         <div className="mb-1 flex items-center justify-between">
           <span className="text-xs text-gray-600 dark:text-gray-400">
-            第 {currentIndex + 1} 篇，共 {collectionPosts.length} 篇
+            第
+            {' '}
+            {currentIndex + 1}
+            {' '}
+            篇，共
+            {' '}
+            {collectionPosts.length}
+            {' '}
+            篇
           </span>
           <span className="text-xs font-medium text-primary-600 dark:text-primary-400">
-            {progress}% 完成
+            {progress}
+            % 完成
           </span>
         </div>
         <div className="h-1.5 w-full overflow-hidden rounded-full bg-gray-200 dark:bg-gray-700">
@@ -88,7 +97,7 @@ export default function CollectionNavigation({
           />
         </div>
       </div>
-      
+
       {/* 导航链接 */}
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         {prevPost && (
@@ -103,7 +112,7 @@ export default function CollectionNavigation({
             </div>
           </Link>
         )}
-        
+
         {nextPost && (
           <Link
             to={nextPost.link}
@@ -117,7 +126,7 @@ export default function CollectionNavigation({
           </Link>
         )}
       </div>
-      
+
       {/* 系列文章列表 */}
       <div className="mt-4">
         <details className="group">
@@ -147,7 +156,10 @@ export default function CollectionNavigation({
                     : 'text-gray-600 dark:text-gray-400',
                 )}
               >
-                <span className="mr-2 inline-block w-5 text-right">{index + 1}.</span>
+                <span className="mr-2 inline-block w-5 text-right">
+                  {index + 1}
+                  .
+                </span>
                 {post.title}
               </Link>
             ))}

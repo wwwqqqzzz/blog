@@ -159,7 +159,7 @@ function BlogListPageContent(props: Props) {
         let tagMatch = false
         if (metadata.tags && Array.isArray(metadata.tags)) {
           // 直接遍历标签数组
-          tagMatch = metadata.tags.some(tag => {
+          tagMatch = metadata.tags.some((tag) => {
             // 标签可能是字符串或对象
             if (typeof tag === 'string') {
               return tag.toLowerCase().includes(term)

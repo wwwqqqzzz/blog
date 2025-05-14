@@ -54,7 +54,7 @@ export function transformBlogItems(items: BlogPostItemsProps['items']): BlogPost
       image = '',
       collection = '',
       collection_order = 0,
-      collection_description = ''
+      collection_description = '',
     } = frontMatter as ExtendedBlogPostFrontMatter
     const { permalink = '', date = new Date().toISOString(), tags = [], description = '' } = metadata
 
@@ -85,7 +85,7 @@ export function transformBlogItems(items: BlogPostItemsProps['items']): BlogPost
 
     // 为标签添加count初始值，真实值会在extractAllTags中计算
     const tagsWithCount = tags
-      ? tags.map(tag => {
+      ? tags.map((tag) => {
           // 检查标签格式
           if (typeof tag === 'string') {
             // 如果标签是字符串，转换为对象格式
@@ -228,35 +228,35 @@ export function extractCollections(items: BlogPostData[]): BlogCollection[] {
 
     // 特别检查Git教程系列
     if (post.collection === 'Git教程') {
-      console.log(`发现Git教程系列文章: "${post.title}", 顺序: ${post.collectionOrder}`);
+      console.log(`发现Git教程系列文章: "${post.title}", 顺序: ${post.collectionOrder}`)
     }
 
     // 如果系列不存在，创建新系列
     if (!collectionsMap.has(post.collection)) {
       // 简化系列路径生成逻辑
       // 1. 使用原始系列名称作为唯一标识符
-      const collectionId = post.collection;
+      const collectionId = post.collection
 
       // 2. 生成简单的slug（只用于显示，不用于匹配）
-      const slug = post.collection.toLowerCase().replace(/\s+/g, '-');
+      const slug = post.collection.toLowerCase().replace(/\s+/g, '-')
 
       // 3. 生成URL安全的编码版本
-      const encodedSlug = encodeURIComponent(post.collection);
+      const encodedSlug = encodeURIComponent(post.collection)
 
       // 4. 生成完整路径
-      const collectionPath = `/blog/collections/${encodedSlug}`;
+      const collectionPath = `/blog/collections/${encodedSlug}`
 
-      console.log(`创建新系列: "${post.collection}", 路径: "${collectionPath}", slug: "${slug}"`);
+      console.log(`创建新系列: "${post.collection}", 路径: "${collectionPath}", slug: "${slug}"`)
 
       collectionsMap.set(post.collection, {
-        name: post.collection,      // 原始系列名称（显示用）
-        id: collectionId,           // 系列唯一标识符（匹配用）
+        name: post.collection, // 原始系列名称（显示用）
+        id: collectionId, // 系列唯一标识符（匹配用）
         description: post.collectionDescription || `${post.collection}系列文章`,
         posts: [],
-        path: collectionPath,       // 完整URL路径
-        slug: slug,                 // URL友好的slug（显示用）
-        encodedSlug: encodedSlug,   // URL编码后的系列名（URL用）
-        image: '',                  // 默认为空，后面会尝试从文章中获取
+        path: collectionPath, // 完整URL路径
+        slug: slug, // URL友好的slug（显示用）
+        encodedSlug: encodedSlug, // URL编码后的系列名（URL用）
+        image: '', // 默认为空，后面会尝试从文章中获取
       })
     }
 
@@ -264,7 +264,7 @@ export function extractCollections(items: BlogPostData[]): BlogCollection[] {
     const collection = collectionsMap.get(post.collection)
     if (collection) {
       // 检查文章是否已经在系列中
-      const existingPost = collection.posts.find(p => p.title === post.title);
+      const existingPost = collection.posts.find(p => p.title === post.title)
       if (!existingPost) {
         // 确保文章对象是完整的
         const validPost = {
@@ -273,18 +273,19 @@ export function extractCollections(items: BlogPostData[]): BlogCollection[] {
           link: post.link || '#',
           description: post.description || '',
           date: post.date || new Date().toISOString(),
-          collectionOrder: typeof post.collectionOrder === 'number' ? post.collectionOrder : 0
-        };
+          collectionOrder: typeof post.collectionOrder === 'number' ? post.collectionOrder : 0,
+        }
 
         collection.posts.push(validPost)
         console.log(`添加文章 "${validPost.title}" 到系列 "${post.collection}", 当前文章数: ${collection.posts.length}`)
 
         // 特别检查Git教程系列
         if (post.collection === 'Git教程') {
-          console.log(`成功添加Git教程系列文章: "${validPost.title}", 当前文章数: ${collection.posts.length}`);
+          console.log(`成功添加Git教程系列文章: "${validPost.title}", 当前文章数: ${collection.posts.length}`)
         }
-      } else {
-        console.log(`文章 "${post.title}" 已经在系列 "${post.collection}" 中，跳过添加`);
+      }
+      else {
+        console.log(`文章 "${post.title}" 已经在系列 "${post.collection}" 中，跳过添加`)
       }
 
       // 如果文章有系列描述且系列描述为空，使用该文章的系列描述
@@ -298,8 +299,9 @@ export function extractCollections(items: BlogPostData[]): BlogCollection[] {
         collection.image = post.image
         console.log(`更新系列 "${post.collection}" 图片: "${post.image}"`)
       }
-    } else {
-      console.error(`错误: 无法找到系列 "${post.collection}" 的映射，无法添加文章 "${post.title}"`);
+    }
+    else {
+      console.error(`错误: 无法找到系列 "${post.collection}" 的映射，无法添加文章 "${post.title}"`)
     }
   })
 
@@ -308,27 +310,28 @@ export function extractCollections(items: BlogPostData[]): BlogCollection[] {
 
   console.log(`提取到 ${collections.length} 个系列`)
 
-  collections.forEach(collection => {
+  collections.forEach((collection) => {
     console.log(`系列 "${collection.name}" 包含 ${collection.posts.length} 篇文章，排序前:`,
       collection.posts.map(p => ({ title: p.title, order: p.collectionOrder })))
 
     collection.posts.sort((a, b) => {
       // 首先按照 collectionOrder 排序
-      const orderA = typeof a.collectionOrder === 'number' ? a.collectionOrder : 9999;
-      const orderB = typeof b.collectionOrder === 'number' ? b.collectionOrder : 9999;
+      const orderA = typeof a.collectionOrder === 'number' ? a.collectionOrder : 9999
+      const orderB = typeof b.collectionOrder === 'number' ? b.collectionOrder : 9999
 
       if (orderA !== orderB) {
-        return orderA - orderB;
+        return orderA - orderB
       }
 
       // 如果 collectionOrder 相同，按照日期排序
       try {
-        const dateA = new Date(a.date).getTime();
-        const dateB = new Date(b.date).getTime();
-        return dateB - dateA;
-      } catch (e) {
-        console.warn('排序时日期解析错误:', e);
-        return 0;
+        const dateA = new Date(a.date).getTime()
+        const dateB = new Date(b.date).getTime()
+        return dateB - dateA
+      }
+      catch (e) {
+        console.warn('排序时日期解析错误:', e)
+        return 0
       }
     })
 

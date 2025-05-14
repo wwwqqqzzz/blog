@@ -95,7 +95,7 @@ export default function SearchBox({
         // 标签匹配
         let tagMatch = false
         if (post.tags && Array.isArray(post.tags)) {
-          tagMatch = post.tags.some(tag => {
+          tagMatch = post.tags.some((tag) => {
             if (!tag) return false
             return tag.label && tag.label.toLowerCase().includes(term)
           })
@@ -193,7 +193,7 @@ export default function SearchBox({
                   console.log('搜索结果数:', searchResults.length)
                   console.log('前3篇文章标题:')
                   allPosts.slice(0, 3).forEach((post, i) => {
-                    console.log(`${i+1}. ${post.title}`)
+                    console.log(`${i + 1}. ${post.title}`)
                   })
                   console.log('========================')
                 }}
