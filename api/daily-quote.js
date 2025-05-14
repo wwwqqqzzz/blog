@@ -26,8 +26,20 @@ export default async function handler(req, res) {
     // 金山词霸每日一句 API URL
     const apiUrl = 'https://open.iciba.com/dsapi/'
 
-    // Fetch data from 金山词霸 API
-    const response = await fetch(apiUrl)
+    // Fetch data from 金山词霸 API with proper headers
+    const response = await fetch(apiUrl, {
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+      },
+      cache: 'no-store'
+    })
+
+    if (!response.ok) {
+      throw new Error(`API responded with status: ${response.status}`)
+    }
+
     const data = await response.json()
 
     // Validate the data
@@ -45,6 +57,14 @@ export default async function handler(req, res) {
   }
   catch (error) {
     console.error('Error fetching daily quote:', error)
-    return res.status(500).json({ error: 'Failed to fetch daily quote' })
+
+    // Return fallback data instead of error
+    return res.status(200).json({
+      content: 'Success is not final, failure is not fatal: It is the courage to continue that counts.',
+      translation: '成功不是终点，失败也不是致命的：重要的是继续前进的勇气。',
+      author: 'Winston Churchill',
+      picture: 'https://cdn.iciba.com/www/img/daily-pic.jpg',
+      fallback: true
+    })
   }
 }

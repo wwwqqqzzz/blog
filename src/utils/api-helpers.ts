@@ -396,7 +396,7 @@ interface DailyQuote {
 }
 
 /**
- * Directly fetch daily quote from 金山词霸 API using JSONP approach
+ * Fetch daily quote from API proxy
  * This avoids CORS issues with direct API calls
  */
 async function fetchIcibaQuoteDirectly(): Promise<DailyQuote> {
@@ -404,7 +404,13 @@ async function fetchIcibaQuoteDirectly(): Promise<DailyQuote> {
     try {
       // Always use the API proxy in both development and production
       // This is more reliable than direct API calls which may have CORS issues
-      fetch(`${getApiBaseUrl()}/api/daily-quote`)
+      fetch(`${getApiBaseUrl()}/api/daily-quote`, {
+        headers: {
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          'Pragma': 'no-cache',
+          'Expires': '0'
+        }
+      })
         .then((response) => {
           if (!response.ok) {
             throw new Error(`Daily quote API responded with status: ${response.status}`)
@@ -412,9 +418,12 @@ async function fetchIcibaQuoteDirectly(): Promise<DailyQuote> {
           return response.json()
         })
         .then((data) => {
+          // Log the data to see what we're getting
+          console.log('Daily quote data:', data)
+
           resolve({
             content: data.content,
-            translation: data.translation,
+            translation: data.translation || data.note,
             author: data.author || 'Daily English',
             picture: data.picture,
           })
@@ -437,17 +446,19 @@ async function fetchIcibaQuoteDirectly(): Promise<DailyQuote> {
  */
 export async function fetchDailyQuote(): Promise<DailyQuote> {
   try {
-    // Check for cached data
+    // Always clear cache to ensure we get fresh data
+    // This is temporary for debugging
+    clearApiCache(CACHE_KEYS.DAILY_QUOTE)
+
+    // Check for cached data (for future use)
     const cachedData = getFromCache<DailyQuote>(CACHE_KEYS.DAILY_QUOTE)
 
     // If cache is valid and not too old, use it
-    if (isCacheValid(cachedData, CACHE_EXPIRY.DAILY_QUOTE)) {
-      const data = safeGetCachedData(cachedData)
-      if (data) return data
-    }
-
-    // If cache is expired or doesn't exist, force clear it
-    clearApiCache(CACHE_KEYS.DAILY_QUOTE)
+    // Disabled for now to ensure we always get fresh data
+    // if (isCacheValid(cachedData, CACHE_EXPIRY.DAILY_QUOTE)) {
+    //   const data = safeGetCachedData(cachedData)
+    //   if (data) return data
+    // }
 
     // Fetch new data
     let quoteData: DailyQuote
