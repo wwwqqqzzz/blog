@@ -194,11 +194,11 @@
    - 实现更灵活的配置方式
    - 预计工作量: 1-2天
 
-2. **优化天气API集成**
-   - 完善错误处理
-   - 优化生产环境配置
-   - 添加数据缓存机制
-   - 预计工作量: 1-2天
+2. **优化天气API集成** (已完成)
+   - ✅ 已完成: 完善错误处理
+   - ✅ 已完成: 添加数据缓存机制
+   - ✅ 已完成: 优化降级策略
+   - ✅ 已完成: 添加类型定义
 
 3. **优化博客集合页面** (部分完成)
    - ✅ 已完成: 清理测试代码和调试日志
@@ -219,93 +219,138 @@
    - 优化响应式布局
    - 预计工作量: 1-2天
 
-3. **进一步优化博客侧边栏** (部分完成)
+3. **进一步优化博客侧边栏** (已完成)
    - ✅ 已完成: 优化代码结构和性能
    - ✅ 已完成: 改进错误处理和加载状态
    - ✅ 已完成: 提取公共函数和添加JSDoc注释
-   - 待完成: 添加数据缓存机制
-   - 预计剩余工作量: 0.5天
+   - ✅ 已完成: 添加数据缓存机制
 
 ## 技术实现指南
 
-### 1. 天气API集成优化
+### 1. 天气API集成优化 (已实现)
 
-```javascript
-// api/weather.js
-export default async function handler(req, res) {
-  // 设置CORS头
-  res.setHeader('Access-Control-Allow-Credentials', true);
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS');
-  res.setHeader(
-    'Access-Control-Allow-Headers',
-    'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version'
-  );
+以下是已实现的客户端缓存机制，使用localStorage存储API响应数据，减少API调用次数：
 
-  // 处理预检请求
-  if (req.method === 'OPTIONS') {
-    res.status(200).end();
-    return;
-  }
+```typescript
+// src/utils/api-helpers.ts
 
-  // 只允许GET请求
-  if (req.method !== 'GET') {
-    return res.status(405).json({ error: 'Method not allowed' });
-  }
+/**
+ * Cache configuration
+ */
+const CACHE_KEYS = {
+  WEATHER: 'cached_weather_data',
+  LOCATION: 'cached_location_data',
+  DAILY_QUOTE: 'cached_daily_quote',
+}
 
+const CACHE_EXPIRY = {
+  WEATHER: 30 * 60 * 1000, // 30 minutes in milliseconds
+  LOCATION: 24 * 60 * 60 * 1000, // 24 hours in milliseconds
+  DAILY_QUOTE: 12 * 60 * 60 * 1000, // 12 hours in milliseconds
+}
+
+/**
+ * Generic cache interface
+ */
+interface CachedData<T> {
+  data: T
+  timestamp: number
+}
+
+/**
+ * Check if cached data is still valid
+ */
+function isCacheValid<T>(cachedData: CachedData<T> | null, expiryTime: number): boolean {
+  if (!cachedData) return false
+
+  const now = Date.now()
+  const isExpired = now - cachedData.timestamp > expiryTime
+
+  return !isExpired
+}
+
+/**
+ * Get data from cache
+ */
+function getFromCache<T>(key: string): CachedData<T> | null {
   try {
-    // 获取请求参数
-    const { location = '101010100' } = req.query; // 默认北京
+    // Only run in browser environment
+    if (typeof window === 'undefined') return null
 
-    // 和风天气API密钥
-    const apiKey = process.env.QWEATHER_API_KEY || '80ce7424f8d34974af05d092792c123a';
-    const apiUrl = `https://devapi.qweather.com/v7/weather/now?location=${location}&key=${apiKey}`;
+    const cachedItem = localStorage.getItem(key)
+    if (!cachedItem) return null
 
-    // 添加缓存控制
-    const cacheKey = `weather_${location}`;
-    const cachedData = await getCachedData(cacheKey);
-
-    if (cachedData) {
-      return res.status(200).json(cachedData);
-    }
-
-    // 请求和风天气API
-    const response = await fetch(apiUrl, {
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    });
-
-    if (!response.ok) {
-      throw new Error(`Weather API responded with status: ${response.status}`);
-    }
-
-    const data = await response.json();
-
-    // 缓存数据（30分钟）
-    await cacheData(cacheKey, data, 30 * 60);
-
-    // 返回数据
-    return res.status(200).json(data);
-  } catch (error) {
-    console.error('Error fetching weather data:', error);
-    return res.status(500).json({
-      error: 'Failed to fetch weather data',
-      message: error.message
-    });
+    return JSON.parse(cachedItem) as CachedData<T>
+  }
+  catch (error) {
+    // If there's any error reading from cache, return null
+    return null
   }
 }
 
-// 模拟缓存函数
-async function getCachedData(key) {
-  // 实际实现中，这里应该使用Redis或其他缓存服务
-  return null;
+/**
+ * Save data to cache
+ */
+function saveToCache<T>(key: string, data: T): void {
+  try {
+    // Only run in browser environment
+    if (typeof window === 'undefined') return
+
+    const cacheItem: CachedData<T> = {
+      data,
+      timestamp: Date.now(),
+    }
+
+    localStorage.setItem(key, JSON.stringify(cacheItem))
+  }
+  catch (error) {
+    // Silently fail if we can't save to cache
+    console.warn('Failed to save data to cache:', error)
+  }
 }
 
-async function cacheData(key, data, ttlSeconds) {
-  // 实际实现中，这里应该使用Redis或其他缓存服务
+/**
+ * Fetch weather data from QWeather API with caching
+ */
+export async function fetchWeatherData(): Promise<WeatherData> {
+  try {
+    // Check if we have valid cached data
+    const cachedData = getFromCache<WeatherData>(CACHE_KEYS.WEATHER)
+
+    if (isCacheValid(cachedData, CACHE_EXPIRY.WEATHER)) {
+      return cachedData.data
+    }
+
+    // If no valid cache, fetch new data
+    // ... API call logic ...
+
+    // Save the new data to cache
+    if (weatherData && weatherData.code === '200') {
+      saveToCache(CACHE_KEYS.WEATHER, weatherData)
+    }
+
+    return weatherData
+  }
+  catch (error) {
+    // Try to return cached data even if expired
+    const cachedData = getFromCache<WeatherData>(CACHE_KEYS.WEATHER)
+    if (cachedData) {
+      return cachedData.data
+    }
+
+    // If no cached data available, return fallback data
+    return { /* fallback data */ }
+  }
 }
 ```
+
+这种实现方式的优点：
+
+1. **减少API调用**：只有在缓存过期或不存在时才会发起API请求
+2. **提高性能**：从本地存储读取数据比发起网络请求快得多
+3. **离线支持**：即使在网络不可用时，也能显示最近的数据
+4. **降级策略**：在API调用失败时，尝试使用过期的缓存数据
+5. **类型安全**：使用TypeScript接口确保数据结构一致性
 
 ## 结论
 
@@ -340,12 +385,21 @@ async function cacheData(key, data, ttlSeconds) {
    - 优化了文章排序和数据处理逻辑
    - 改进了错误处理机制
 
+5. **优化API调用逻辑**：
+   - 为天气、位置和每日一句API添加了缓存机制
+   - 使用localStorage存储API响应数据
+   - 设置了合理的缓存过期时间（天气30分钟，位置24小时，每日一句12小时）
+   - 添加了缓存验证和刷新逻辑
+   - 优化了错误处理和降级策略
+   - 添加了类型定义，提高了代码的类型安全性
+   - 提供了缓存清除功能，方便调试和强制刷新数据
+
 ### 下一步工作
 
-重点关注的是提高现有功能的质量和性能，包括：
-- 实现高级搜索功能，添加按标签、日期等筛选选项
-- 进一步改进博客集合页面的UI设计
-- 优化天气API集成，添加数据缓存机制
-- 改进导航栏组件，实现更灵活的配置方式
+重点关注的是提高现有功能的质量和用户体验，包括：
+- **实现高级搜索功能**：添加按标签、日期等筛选选项，提高搜索相关性
+- **改进博客集合页面的UI设计**：添加更好的集合封面图和描述，优化移动端适配
+- **改进导航栏组件**：实现更灵活的配置方式，优化响应式设计
+- **优化博客文章元数据**：修复缺少元数据的博客文章，标准化frontmatter格式
 
-通过继续优化API调用和改进用户界面，可以进一步提高博客的加载速度和用户体验。按照本报告提供的技术实现指南和优先级计划，可以系统地完成剩余的改进任务，最终打造一个功能精简、性能优良、用户体验出色的个人技术博客平台。
+通过继续改进用户界面和优化内容组织，可以进一步提高博客的用户体验和内容质量。按照本报告提供的技术实现指南和优先级计划，可以系统地完成剩余的改进任务，最终打造一个功能精简、性能优良、用户体验出色的个人技术博客平台。
