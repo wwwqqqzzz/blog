@@ -13,6 +13,10 @@ const getApiBaseUrl = () => {
   return isDevelopment ? '' : ''
 }
 
+// 和风天气API配置
+const QWEATHER_API_KEY = '80ce7424f8d34974af05d092792c123a'
+const QWEATHER_API_BASE_URL = 'https://devapi.qweather.com/v7'
+
 /**
  * Cache configuration
  */
@@ -104,8 +108,29 @@ interface WeatherData {
 }
 
 /**
+ * Directly fetch weather data from QWeather API
+ * @param location Location code, default is 101010100 (Beijing)
+ */
+async function fetchQWeatherDirectly(location: string = '101010100'): Promise<WeatherData> {
+  try {
+    const apiUrl = `${QWEATHER_API_BASE_URL}/weather/now?location=${location}&key=${QWEATHER_API_KEY}`
+
+    const response = await fetch(apiUrl)
+    if (!response.ok) {
+      throw new Error(`Weather API responded with status: ${response.status}`)
+    }
+
+    return await response.json()
+  }
+  catch (error) {
+    console.warn('Error directly fetching QWeather data:', error)
+    throw error
+  }
+}
+
+/**
  * Fetch weather data from QWeather API with caching
- * In development, returns mock data
+ * Uses real-time data in both development and production
  */
 export async function fetchWeatherData(): Promise<WeatherData> {
   try {
@@ -116,26 +141,32 @@ export async function fetchWeatherData(): Promise<WeatherData> {
       return cachedData.data
     }
 
-    // If no valid cache or in development mode, fetch new data
+    // If no valid cache, fetch new data
     let weatherData: WeatherData
 
-    if (isDevelopment) {
-      // Mock data for development
-      weatherData = {
-        code: '200',
-        now: {
-          temp: '23',
-          text: '晴朗',
-          icon: '100',
-          windDir: '东南风',
-          windScale: '3',
-          humidity: '65',
-        },
+    try {
+      if (isDevelopment) {
+        // In development, call the QWeather API directly
+        weatherData = await fetchQWeatherDirectly()
       }
-    } else {
-      // In production, call the actual API
-      const response = await fetch(`${getApiBaseUrl()}/api/weather`)
-      weatherData = await response.json()
+      else {
+        // In production, call through our API proxy
+        const response = await fetch(`${getApiBaseUrl()}/api/weather`)
+        weatherData = await response.json()
+      }
+    }
+    catch (fetchError) {
+      console.warn('Error fetching from primary source, trying fallback:', fetchError)
+
+      // If direct API call fails in development, try the API proxy as fallback
+      if (isDevelopment) {
+        const response = await fetch(`${getApiBaseUrl()}/api/weather`)
+        weatherData = await response.json()
+      }
+      else {
+        // If we're in production and the API proxy failed, rethrow the error
+        throw fetchError
+      }
     }
 
     // Save the new data to cache (only if it's valid)
@@ -179,7 +210,7 @@ interface LocationData {
 
 /**
  * Fetch location data based on IP with caching
- * In development, returns mock data
+ * Uses real data in both development and production
  */
 export async function fetchLocationData(): Promise<LocationData> {
   try {
@@ -190,11 +221,18 @@ export async function fetchLocationData(): Promise<LocationData> {
       return cachedData.data
     }
 
-    // If no valid cache or in development mode, fetch new data
+    // If no valid cache, fetch new data
     let locationData: LocationData
 
-    if (isDevelopment) {
-      // Mock data for development
+    try {
+      // Call the actual API in both development and production
+      const response = await fetch(`${getApiBaseUrl()}/api/location`)
+      locationData = await response.json()
+    }
+    catch (fetchError) {
+      console.warn('Error fetching location data, using fallback:', fetchError)
+
+      // Use fallback data if API call fails
       locationData = {
         city: '北京',
         region: '北京市',
@@ -202,10 +240,6 @@ export async function fetchLocationData(): Promise<LocationData> {
         latitude: 39.9042,
         longitude: 116.4074,
       }
-    } else {
-      // In production, call the actual API
-      const response = await fetch(`${getApiBaseUrl()}/api/location`)
-      locationData = await response.json()
     }
 
     // Save the new data to cache (only if it's valid)
@@ -243,7 +277,7 @@ interface DailyQuote {
 
 /**
  * Fetch daily quote from 金山词霸 API with caching
- * In development, returns mock data
+ * Uses real data in both development and production
  */
 export async function fetchDailyQuote(): Promise<DailyQuote> {
   try {
@@ -254,21 +288,24 @@ export async function fetchDailyQuote(): Promise<DailyQuote> {
       return cachedData.data
     }
 
-    // If no valid cache or in development mode, fetch new data
+    // If no valid cache, fetch new data
     let quoteData: DailyQuote
 
-    if (isDevelopment) {
-      // Mock data for development
+    try {
+      // Call the actual API in both development and production
+      const response = await fetch(`${getApiBaseUrl()}/api/daily-quote`)
+      quoteData = await response.json()
+    }
+    catch (fetchError) {
+      console.warn('Error fetching daily quote, using fallback:', fetchError)
+
+      // Use fallback data if API call fails
       quoteData = {
         content: 'The best way to predict the future is to invent it.',
         translation: '预测未来的最好方法就是创造未来。',
         author: 'Alan Kay',
         picture: 'https://cdn.iciba.com/www/img/daily-pic.jpg',
       }
-    } else {
-      // In production, call the actual API
-      const response = await fetch(`${getApiBaseUrl()}/api/daily-quote`)
-      quoteData = await response.json()
     }
 
     // Save the new data to cache (only if it's valid)
@@ -307,13 +344,15 @@ export function clearApiCache(cacheKey?: string): void {
 
     if (cacheKey) {
       localStorage.removeItem(cacheKey)
-    } else {
+    }
+    else {
       // Clear all API caches
-      Object.values(CACHE_KEYS).forEach(key => {
+      Object.values(CACHE_KEYS).forEach((key) => {
         localStorage.removeItem(key)
       })
     }
-  } catch (error) {
+  }
+  catch (error) {
     console.warn('Failed to clear API cache:', error)
   }
 }
