@@ -109,11 +109,12 @@ const config: Config = {
         <p>Copyright © 2024 - ${new Date().getFullYear()} 王起哲 | Built with Docusaurus.</p>
         `,
     },
-    algolia: {
-      appId: 'GV6YN1ODMO',
-      apiKey: '50303937b0e4630bec4a20a14e3b7872',
-      indexName: 'wangqizhe',
-    },
+    // 暂时禁用 Algolia 搜索，直到解决配置问题
+    // algolia: {
+    //   appId: 'GV6YN1ODMO',
+    //   apiKey: '50303937b0e4630bec4a20a14e3b7872',
+    //   indexName: 'wangqizhe',
+    // },
     prism: {
       theme: themes.oneLight,
       darkTheme: themes.oneDark,
