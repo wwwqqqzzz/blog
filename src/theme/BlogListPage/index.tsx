@@ -124,29 +124,56 @@ function BlogListPageContent(props: Props) {
     // 如果有搜索查询
     if (searchQuery) {
       const term = searchQuery.toLowerCase()
+      console.log('搜索词:', term)
+      console.log('搜索前文章数:', currentItems.length)
+
       currentItems = currentItems.filter((item) => {
+        if (!item || !item.content || !item.content.metadata) {
+          return false
+        }
+
         const { metadata } = item.content
 
-        // 简化搜索逻辑，避免复杂的类型处理
+        // 调试信息
+        console.log('检查文章:', metadata.title)
+
+        // 标题匹配
         const title = (metadata.title || '').toLowerCase()
-        const description = (metadata.description || '').toLowerCase()
         const titleMatch = title.includes(term)
+        if (titleMatch) console.log('- 标题匹配')
+
+        // 描述匹配
+        const description = (metadata.description || '').toLowerCase()
         const descMatch = description.includes(term)
+        if (descMatch) console.log('- 描述匹配')
 
-        // 简化标签匹配逻辑
+        // 内容匹配（如果有）
+        let contentMatch = false
+        if (metadata.source) {
+          const content = metadata.source.toLowerCase()
+          contentMatch = content.includes(term)
+          if (contentMatch) console.log('- 内容匹配')
+        }
+
+        // 标签匹配逻辑改进
         let tagMatch = false
-        try {
-          if (metadata.tags) {
-            // 尝试将tags转换为字符串进行搜索
-            const tagsString = JSON.stringify(metadata.tags).toLowerCase()
-            tagMatch = tagsString.includes(term)
-          }
-        }
-        catch (e) {
-          console.error('处理标签时出错:', e)
+        if (metadata.tags && Array.isArray(metadata.tags)) {
+          // 直接遍历标签数组
+          tagMatch = metadata.tags.some(tag => {
+            // 标签可能是字符串或对象
+            if (typeof tag === 'string') {
+              return tag.toLowerCase().includes(term)
+            }
+            if (tag && typeof tag === 'object' && 'label' in tag) {
+              return tag.label.toLowerCase().includes(term)
+            }
+            return false
+          })
+
+          if (tagMatch) console.log('- 标签匹配')
         }
 
-        const matches = titleMatch || descMatch || tagMatch
+        const matches = titleMatch || descMatch || contentMatch || tagMatch
         return matches
       })
     }

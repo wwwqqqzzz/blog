@@ -72,14 +72,40 @@ export default function SearchBox({
 
     const timer = setTimeout(() => {
       const term = searchTerm.toLowerCase()
+      console.log('SearchBox - 搜索词:', term)
+      console.log('SearchBox - 搜索前文章数:', allPosts.length)
+
       const results = allPosts.filter((post) => {
+        // 安全检查
+        if (!post || !post.title) {
+          return false
+        }
+
+        // 调试信息
+        console.log('SearchBox - 检查文章:', post.title)
+
+        // 标题匹配
         const titleMatch = post.title.toLowerCase().includes(term)
-        const descMatch = post.description.toLowerCase().includes(term)
-        const tagMatch = post.tags.some(tag => tag.label.toLowerCase().includes(term))
+        if (titleMatch) console.log('SearchBox - 标题匹配')
+
+        // 描述匹配
+        const descMatch = post.description && post.description.toLowerCase().includes(term)
+        if (descMatch) console.log('SearchBox - 描述匹配')
+
+        // 标签匹配
+        let tagMatch = false
+        if (post.tags && Array.isArray(post.tags)) {
+          tagMatch = post.tags.some(tag => {
+            if (!tag) return false
+            return tag.label && tag.label.toLowerCase().includes(term)
+          })
+          if (tagMatch) console.log('SearchBox - 标签匹配')
+        }
 
         return titleMatch || descMatch || tagMatch
       }).slice(0, maxResults)
 
+      console.log('SearchBox - 找到匹配文章数:', results.length)
       setSearchResults(results)
       setIsSearching(false)
       setIsResultsVisible(true)
@@ -156,13 +182,33 @@ export default function SearchBox({
           />
 
           {searchTerm && (
-            <button
-              type="button"
-              className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
-              onClick={() => setSearchTerm('')}
-            >
-              <Icon icon="ri:close-line" />
-            </button>
+            <div className="absolute inset-y-0 right-0 flex items-center">
+              <button
+                type="button"
+                className="flex items-center px-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+                onClick={() => {
+                  console.log('===== 搜索调试信息 =====')
+                  console.log('搜索词:', searchTerm)
+                  console.log('博客文章总数:', allPosts.length)
+                  console.log('搜索结果数:', searchResults.length)
+                  console.log('前3篇文章标题:')
+                  allPosts.slice(0, 3).forEach((post, i) => {
+                    console.log(`${i+1}. ${post.title}`)
+                  })
+                  console.log('========================')
+                }}
+                title="显示搜索调试信息"
+              >
+                <Icon icon="ri:bug-line" />
+              </button>
+              <button
+                type="button"
+                className="flex items-center pr-3 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+                onClick={() => setSearchTerm('')}
+              >
+                <Icon icon="ri:close-line" />
+              </button>
+            </div>
           )}
         </div>
       </form>

@@ -46,6 +46,18 @@ async function blogPluginEnhanced(context, options) {
         console.log('Pinned post titles:', pinnedPosts.map(post => post.metadata.title))
       }
 
+      // Log collection posts for debugging
+      const collectionPosts = content.blogPosts.filter(post => post.metadata?.frontMatter?.collection)
+      console.log('Plugin found collection posts:', collectionPosts.length)
+      if (collectionPosts.length > 0) {
+        console.log('Collection post details:')
+        collectionPosts.forEach(post => {
+          console.log(`- Title: ${post.metadata.title}`)
+          console.log(`  Collection: ${post.metadata.frontMatter.collection}`)
+          console.log(`  Collection Order: ${post.metadata.frontMatter.collection_order}`)
+        })
+      }
+
       // Create default plugin pages
       await blogPluginInstance.contentLoaded({ content, allContent, actions })
 
@@ -55,6 +67,44 @@ async function blogPluginEnhanced(context, options) {
 
       // Store all blog posts in global data
       // For homepage we only need a few, but for private blog we need all
+      console.log('Plugin storing global data, first post metadata example:',
+        content.blogPosts[0]?.metadata?.title,
+        content.blogPosts[0]?.metadata?.frontMatter?.collection);
+
+      // 检查文章是否有系列信息
+      const postsWithCollection = content.blogPosts.filter(
+        post => post.metadata?.frontMatter?.collection
+      );
+      console.log('Plugin found posts with collection:', postsWithCollection.length);
+
+      if (postsWithCollection.length > 0) {
+        console.log('Collection examples:', postsWithCollection.slice(0, 3).map(
+          post => ({
+            title: post.metadata.title,
+            collection: post.metadata.frontMatter.collection,
+            order: post.metadata.frontMatter.collection_order
+          })
+        ));
+
+        // 检查系列文章的完整性
+        postsWithCollection.forEach(post => {
+          const { title, frontMatter } = post.metadata;
+          const { collection, collection_order } = frontMatter;
+
+          if (collection && (collection_order === undefined || collection_order === null)) {
+            console.warn(`警告: 文章 "${title}" 有系列信息 "${collection}" 但缺少 collection_order`);
+          }
+        });
+      } else {
+        console.warn('警告: 没有找到带有系列信息的文章');
+
+        // 检查前几篇文章的frontMatter
+        content.blogPosts.slice(0, 5).forEach(post => {
+          console.log(`文章 "${post.metadata.title}" 的frontMatter:`,
+            Object.keys(post.metadata.frontMatter || {}));
+        });
+      }
+
       setGlobalData({
         posts: content.blogPosts.slice(0, 10), // Only store 10 posts for homepage
         blogPosts: content.blogPosts, // Store all blog posts for other pages like private blog

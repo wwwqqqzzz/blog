@@ -61,6 +61,7 @@ const config: Config = {
           position: 'right',
           items: [
             { label: '归档', to: 'blog/archive' },
+            { label: '系列', to: 'blog/collections' },
             { label: '技术笔记', to: 'docs/docusaurus-guides' },
             { label: '私密博客', to: 'private' },
           ],
@@ -79,6 +80,7 @@ const config: Config = {
           items: [
             { label: '博客', to: 'blog' },
             { label: '归档', to: 'blog/archive' },
+            { label: '系列', to: 'blog/collections' },
             { label: '项目展示', to: 'project' },
           ],
         },
