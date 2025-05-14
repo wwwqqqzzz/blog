@@ -13,13 +13,6 @@ const getApiBaseUrl = () => {
   return isDevelopment ? '' : ''
 }
 
-// 和风天气API配置
-const QWEATHER_API_KEY = '80ce7424f8d34974af05d092792c123a'
-const QWEATHER_API_BASE_URL = 'https://devapi.qweather.com/v7'
-
-// 金山词霸API配置
-const ICIBA_API_URL = 'https://open.iciba.com/dsapi/'
-
 // 默认位置配置
 const DEFAULT_LOCATION = {
   city: '南京',
@@ -127,19 +120,18 @@ interface WeatherData {
 }
 
 /**
- * Directly fetch weather data from QWeather API
+ * Fetch weather data from QWeather API via proxy
  * @param location Location code, default is 101190101 (Nanjing)
  */
 async function fetchQWeatherDirectly(location: string = '101190101'): Promise<WeatherData> {
   try {
-    const apiUrl = `${QWEATHER_API_BASE_URL}/weather/now?location=${location}&key=${QWEATHER_API_KEY}`
-
-    const response = await fetch(apiUrl, {
+    // Always use our API proxy instead of direct API calls to avoid CORS and API key issues
+    const response = await fetch(`${getApiBaseUrl()}/api/weather?location=${location}`, {
       headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0',
       },
-      mode: 'cors',
     })
 
     if (!response.ok) {
@@ -149,7 +141,7 @@ async function fetchQWeatherDirectly(location: string = '101190101'): Promise<We
     return await response.json()
   }
   catch (error) {
-    console.warn('Error directly fetching QWeather data:', error)
+    console.warn('Error fetching QWeather data via proxy:', error)
     throw error
   }
 }
@@ -185,15 +177,8 @@ export async function fetchWeatherData(): Promise<WeatherData> {
     let weatherData: WeatherData
 
     try {
-      if (isDevelopment) {
-        // In development, call the QWeather API directly
-        weatherData = await fetchQWeatherDirectly(cityCode)
-      }
-      else {
-        // In production, call through our API proxy
-        const response = await fetch(`${getApiBaseUrl()}/api/weather?location=${cityCode}`)
-        weatherData = await response.json()
-      }
+      // Always use our API proxy in both development and production
+      weatherData = await fetchQWeatherDirectly(cityCode)
     }
     catch (fetchError) {
       console.warn('Error fetching from primary source, trying fallback:', fetchError)
@@ -316,15 +301,14 @@ async function getBrowserGeolocation(): Promise<LocationData | null> {
 }
 
 /**
- * Convert city name to QWeather location code
+ * Convert city name to QWeather location code via proxy
  * @param city City name
  */
 async function getCityCode(city: string): Promise<string> {
   try {
-    // Use QWeather geo API to get city code
-    const apiUrl = `${QWEATHER_API_BASE_URL}/geo/lookup?location=${encodeURIComponent(city)}&key=${QWEATHER_API_KEY}`
+    // Use our API proxy to get city code
+    const response = await fetch(`${getApiBaseUrl()}/api/geo?location=${encodeURIComponent(city)}`)
 
-    const response = await fetch(apiUrl)
     if (!response.ok) {
       throw new Error(`Geo API responded with status: ${response.status}`)
     }
