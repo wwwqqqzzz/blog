@@ -397,24 +397,26 @@ interface DailyQuote {
 
 /**
  * Fetch daily quote from API proxy
- * This avoids CORS issues with direct API calls
+ * This avoids CORS issues by using server-side API calls
  */
 async function fetchIcibaQuoteDirectly(): Promise<DailyQuote> {
   return new Promise((resolve, reject) => {
     try {
-      // Always use API proxy to avoid CORS issues
-      // In development, use local API proxy
-      // In production, we'll use a fallback strategy if this fails
+      // Always use our server-side API proxy to avoid CORS issues
+      // This works in both development and production environments
       const apiUrl = `${getApiBaseUrl()}/api/daily-quote`
 
-      console.log('Fetching daily quote from API proxy:', apiUrl)
+      console.log('Fetching daily quote from server-side API proxy:', apiUrl)
 
       fetch(apiUrl, {
+        method: 'GET',
         headers: {
+          'Accept': 'application/json',
           'Cache-Control': 'no-cache, no-store, must-revalidate',
           'Pragma': 'no-cache',
           'Expires': '0',
         },
+        credentials: 'same-origin',
       })
         .then((response) => {
           if (!response.ok) {
@@ -454,23 +456,38 @@ async function fetchIcibaQuoteDirectly(): Promise<DailyQuote> {
  */
 export async function fetchDailyQuote(): Promise<DailyQuote> {
   try {
-    // Always clear cache to ensure we get fresh data
-    // This is temporary for debugging
-    clearApiCache(CACHE_KEYS.DAILY_QUOTE)
+    // Check for cached data first
+    const cachedData = getFromCache<DailyQuote>(CACHE_KEYS.DAILY_QUOTE)
 
-    // Disabled cache check for now to ensure we always get fresh data
-    // const cachedData = getFromCache<DailyQuote>(CACHE_KEYS.DAILY_QUOTE)
-    // if (isCacheValid(cachedData, CACHE_EXPIRY.DAILY_QUOTE)) {
-    //   const data = safeGetCachedData(cachedData)
-    //   if (data) return data
-    // }
+    // If cache is valid and not too old, use it
+    if (isCacheValid(cachedData, CACHE_EXPIRY.DAILY_QUOTE)) {
+      const data = safeGetCachedData(cachedData)
+      if (data) {
+        console.log('Using cached daily quote data:', data)
+        return data
+      }
+    }
+
+    // If no valid cache, clear it and fetch new data
+    clearApiCache(CACHE_KEYS.DAILY_QUOTE)
 
     // Fetch new data
     let quoteData: DailyQuote
+    let isRealData = false
 
     try {
-      // Use the same approach in both development and production
+      // Try to get real data from the API proxy
       quoteData = await fetchIcibaQuoteDirectly()
+
+      // Check if this is real data or fallback data from the API
+      isRealData = !(quoteData as any).fallback
+
+      if (isRealData) {
+        console.log('Successfully fetched REAL daily quote from API:', quoteData)
+      }
+      else {
+        console.log('API returned FALLBACK data:', quoteData)
+      }
     }
     catch (fetchError) {
       console.warn('Error fetching daily quote, trying fallback:', fetchError)
@@ -592,9 +609,13 @@ export async function fetchDailyQuote(): Promise<DailyQuote> {
       }
     }
 
-    // Save the new data to cache (only if it's valid)
-    if (quoteData && quoteData.content && quoteData.translation) {
+    // Save the new data to cache (only if it's valid real data)
+    if (quoteData && quoteData.content && quoteData.translation && isRealData) {
+      console.log('Saving real daily quote data to cache')
       saveToCache(CACHE_KEYS.DAILY_QUOTE, quoteData)
+    }
+    else {
+      console.log('Not caching data because it is not real API data')
     }
 
     return quoteData
