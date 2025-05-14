@@ -30,6 +30,11 @@ export default async function handler(req, res) {
     const response = await fetch(apiUrl)
     const data = await response.json()
 
+    // Validate the data
+    if (!data || !data.content || !data.note) {
+      throw new Error('Invalid response from 金山词霸 API')
+    }
+
     // Return the data
     return res.status(200).json({
       content: data.content,

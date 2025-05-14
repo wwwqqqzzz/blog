@@ -27,8 +27,8 @@ export default async function handler(req, res) {
     // QWeather API key
     const apiKey = '80ce7424f8d34974af05d092792c123a' // 和风天气API key
 
-    // Get location from query parameters or use default (Beijing)
-    const location = req.query.location || '101010100' // Default to Beijing
+    // Get location from query parameters or use default (Nanjing)
+    const location = req.query.location || '101190101' // Default to Nanjing
 
     // Build the API URL
     const apiUrl = `https://devapi.qweather.com/v7/weather/now?location=${location}&key=${apiKey}`
