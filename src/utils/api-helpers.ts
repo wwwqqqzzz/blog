@@ -402,13 +402,12 @@ interface DailyQuote {
 async function fetchIcibaQuoteDirectly(): Promise<DailyQuote> {
   return new Promise((resolve, reject) => {
     try {
-      // Call the 金山词霸 API directly in production since API routes may not be available
-      // In development, we can still use the API proxy
-      const apiUrl = isDevelopment
-        ? `${getApiBaseUrl()}/api/daily-quote`
-        : 'https://open.iciba.com/dsapi/'
+      // Always use API proxy to avoid CORS issues
+      // In development, use local API proxy
+      // In production, we'll use a fallback strategy if this fails
+      const apiUrl = `${getApiBaseUrl()}/api/daily-quote`
 
-      console.log('Fetching daily quote from:', apiUrl)
+      console.log('Fetching daily quote from API proxy:', apiUrl)
 
       fetch(apiUrl, {
         headers: {
@@ -476,14 +475,14 @@ export async function fetchDailyQuote(): Promise<DailyQuote> {
     catch (fetchError) {
       console.warn('Error fetching daily quote, trying fallback:', fetchError)
 
-      // Try a different approach as fallback - direct API call
+      // Try a different approach as fallback - use a CORS proxy
       try {
-        // Try direct API call regardless of environment
-        const response = await fetch('https://open.iciba.com/dsapi/', {
+        // Use a CORS proxy to avoid CORS issues
+        const corsProxyUrl = 'https://corsproxy.io/?'
+        const targetUrl = encodeURIComponent('https://open.iciba.com/dsapi/')
+        const response = await fetch(`${corsProxyUrl}${targetUrl}`, {
           headers: {
             'Accept': 'application/json',
-            'Content-Type': 'application/json',
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
             'Cache-Control': 'no-cache, no-store, must-revalidate',
             'Pragma': 'no-cache',
             'Expires': '0',
@@ -507,13 +506,37 @@ export async function fetchDailyQuote(): Promise<DailyQuote> {
       catch (fallbackError) {
         console.warn('Fallback also failed, using random quote:', fallbackError)
 
-        // If all API calls fail, use a fallback quote
-        quoteData = {
-          content: 'The best way to predict the future is to invent it.',
-          translation: '预测未来的最好方法就是创造未来。',
-          author: 'Alan Kay',
-          picture: 'https://cdn.iciba.com/www/img/daily-pic.jpg',
-        }
+        // If all API calls fail, use a random fallback quote
+        const fallbackQuotes = [
+          {
+            content: 'The best way to predict the future is to invent it.',
+            translation: '预测未来的最好方法就是创造未来。',
+            author: 'Alan Kay',
+            picture: 'https://cdn.iciba.com/www/img/daily-pic.jpg',
+          },
+          {
+            content: 'Success is not final, failure is not fatal: It is the courage to continue that counts.',
+            translation: '成功不是终点，失败也不是致命的：重要的是继续前进的勇气。',
+            author: 'Winston Churchill',
+            picture: 'https://cdn.iciba.com/www/img/daily-pic.jpg',
+          },
+          {
+            content: 'Life is what happens when you\'re busy making other plans.',
+            translation: '生活就是当你忙于制定其他计划时发生的事情。',
+            author: 'John Lennon',
+            picture: 'https://cdn.iciba.com/www/img/daily-pic.jpg',
+          },
+          {
+            content: 'The greatest glory in living lies not in never falling, but in rising every time we fall.',
+            translation: '生活中最大的荣耀不在于永不跌倒，而在于每次跌倒后都能爬起来。',
+            author: 'Nelson Mandela',
+            picture: 'https://cdn.iciba.com/www/img/daily-pic.jpg',
+          },
+        ]
+
+        // Select a random quote with safety check
+        const randomIndex = Math.floor(Math.random() * fallbackQuotes.length)
+        quoteData = fallbackQuotes[randomIndex] || fallbackQuotes[0]
       }
     }
 
