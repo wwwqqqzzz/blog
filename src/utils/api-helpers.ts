@@ -475,33 +475,67 @@ export async function fetchDailyQuote(): Promise<DailyQuote> {
     catch (fetchError) {
       console.warn('Error fetching daily quote, trying fallback:', fetchError)
 
-      // Try a different approach as fallback - use a CORS proxy
+      // Try a different approach as fallback - use static data
       try {
-        // Use a CORS proxy to avoid CORS issues
-        const corsProxyUrl = 'https://corsproxy.io/?'
-        const targetUrl = encodeURIComponent('https://open.iciba.com/dsapi/')
-        const response = await fetch(`${corsProxyUrl}${targetUrl}`, {
-          headers: {
-            'Accept': 'application/json',
-            'Cache-Control': 'no-cache, no-store, must-revalidate',
-            'Pragma': 'no-cache',
-            'Expires': '0',
+        console.log('Using static data as fallback')
+
+        // Instead of trying to use CORS proxies which may also fail,
+        // let's use a set of high-quality static quotes
+        const staticQuotes = [
+          {
+            content: 'The best way to predict the future is to invent it.',
+            translation: '预测未来的最好方法就是创造未来。',
+            author: 'Alan Kay',
+            picture: 'https://cdn.jsdelivr.net/gh/wwwqqqzzz/Image/img/quote-bg-1.jpg',
           },
-        })
+          {
+            content: 'Success is not final, failure is not fatal: It is the courage to continue that counts.',
+            translation: '成功不是终点，失败也不是致命的：重要的是继续前进的勇气。',
+            author: 'Winston Churchill',
+            picture: 'https://cdn.jsdelivr.net/gh/wwwqqqzzz/Image/img/quote-bg-2.jpg',
+          },
+          {
+            content: 'Life is what happens when you\'re busy making other plans.',
+            translation: '生活就是当你忙于制定其他计划时发生的事情。',
+            author: 'John Lennon',
+            picture: 'https://cdn.jsdelivr.net/gh/wwwqqqzzz/Image/img/quote-bg-3.jpg',
+          },
+          {
+            content: 'The greatest glory in living lies not in never falling, but in rising every time we fall.',
+            translation: '生活中最大的荣耀不在于永不跌倒，而在于每次跌倒后都能爬起来。',
+            author: 'Nelson Mandela',
+            picture: 'https://cdn.jsdelivr.net/gh/wwwqqqzzz/Image/img/quote-bg-4.jpg',
+          },
+        ]
 
-        if (!response.ok) {
-          throw new Error(`Fallback API responded with status: ${response.status}`)
+        // Get today's date to select a quote (ensures the same quote is shown all day)
+        const today = new Date()
+        const startOfYear = new Date(today.getFullYear(), 0, 0)
+        const diff = today.getTime() - startOfYear.getTime()
+        const dayOfYear = Math.floor(diff / (1000 * 60 * 60 * 24))
+        const index = dayOfYear % staticQuotes.length
+
+        // Make sure we have at least one quote
+        if (staticQuotes.length === 0) {
+          staticQuotes.push({
+            content: 'The best way to predict the future is to invent it.',
+            translation: '预测未来的最好方法就是创造未来。',
+            author: 'Alan Kay',
+            picture: 'https://cdn.jsdelivr.net/gh/wwwqqqzzz/Image/img/quote-bg-1.jpg',
+          })
         }
 
-        const data = await response.json()
-        console.log('Fallback daily quote data:', data)
+        // Use today's quote with safety check
+        const selectedQuote = staticQuotes[index] || staticQuotes[0]
 
+        // Create a new object with default values to satisfy TypeScript
         quoteData = {
-          content: data.content,
-          translation: data.translation || data.note,
-          author: data.author || 'Daily English',
-          picture: data.picture || data.fenxiang_img,
+          content: selectedQuote?.content || 'The best way to predict the future is to invent it.',
+          translation: selectedQuote?.translation || '预测未来的最好方法就是创造未来。',
+          author: selectedQuote?.author || 'Alan Kay',
+          picture: selectedQuote?.picture,
         }
+        console.log('Using static quote for today:', quoteData)
       }
       catch (fallbackError) {
         console.warn('Fallback also failed, using random quote:', fallbackError)
@@ -534,9 +568,27 @@ export async function fetchDailyQuote(): Promise<DailyQuote> {
           },
         ]
 
+        // Make sure we have at least one quote
+        if (fallbackQuotes.length === 0) {
+          fallbackQuotes.push({
+            content: 'The best way to predict the future is to invent it.',
+            translation: '预测未来的最好方法就是创造未来。',
+            author: 'Alan Kay',
+            picture: 'https://cdn.jsdelivr.net/gh/wwwqqqzzz/Image/img/quote-bg-1.jpg',
+          })
+        }
+
         // Select a random quote with safety check
         const randomIndex = Math.floor(Math.random() * fallbackQuotes.length)
-        quoteData = fallbackQuotes[randomIndex] || fallbackQuotes[0]
+        const selectedFallbackQuote = fallbackQuotes[randomIndex] || fallbackQuotes[0]
+
+        // Create a new object with default values to satisfy TypeScript
+        quoteData = {
+          content: selectedFallbackQuote?.content || 'The best way to predict the future is to invent it.',
+          translation: selectedFallbackQuote?.translation || '预测未来的最好方法就是创造未来。',
+          author: selectedFallbackQuote?.author || 'Alan Kay',
+          picture: selectedFallbackQuote?.picture,
+        }
       }
     }
 
