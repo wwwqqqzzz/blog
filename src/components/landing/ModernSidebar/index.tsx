@@ -63,64 +63,64 @@ export function ModernSidebar({
   const getWeatherIcon = useCallback((iconCode: string): string => {
     const iconMap: Record<string, string> = {
       // 晴
-      '100': 'ri:sun-line',
+      100: 'ri:sun-line',
       // 多云
-      '101': 'ri:sun-cloudy-line',
-      '102': 'ri:cloudy-line',
-      '103': 'ri:cloudy-line',
-      '104': 'ri:cloudy-2-line',
+      101: 'ri:sun-cloudy-line',
+      102: 'ri:cloudy-line',
+      103: 'ri:cloudy-line',
+      104: 'ri:cloudy-2-line',
       // 雨
-      '300': 'ri:drizzle-line',
-      '301': 'ri:rainy-line',
-      '302': 'ri:thunderstorms-line',
-      '303': 'ri:thunderstorms-line',
-      '304': 'ri:hail-line',
-      '305': 'ri:rainy-line',
-      '306': 'ri:rainy-line',
-      '307': 'ri:heavy-showers-line',
-      '308': 'ri:heavy-showers-line',
-      '309': 'ri:drizzle-line',
-      '310': 'ri:rainy-line',
-      '311': 'ri:heavy-showers-line',
-      '312': 'ri:heavy-showers-line',
-      '313': 'ri:snowy-line',
-      '314': 'ri:rainy-line',
-      '315': 'ri:rainy-line',
-      '316': 'ri:heavy-showers-line',
-      '317': 'ri:heavy-showers-line',
-      '318': 'ri:heavy-showers-line',
-      '399': 'ri:rainy-line',
+      300: 'ri:drizzle-line',
+      301: 'ri:rainy-line',
+      302: 'ri:thunderstorms-line',
+      303: 'ri:thunderstorms-line',
+      304: 'ri:hail-line',
+      305: 'ri:rainy-line',
+      306: 'ri:rainy-line',
+      307: 'ri:heavy-showers-line',
+      308: 'ri:heavy-showers-line',
+      309: 'ri:drizzle-line',
+      310: 'ri:rainy-line',
+      311: 'ri:heavy-showers-line',
+      312: 'ri:heavy-showers-line',
+      313: 'ri:snowy-line',
+      314: 'ri:rainy-line',
+      315: 'ri:rainy-line',
+      316: 'ri:heavy-showers-line',
+      317: 'ri:heavy-showers-line',
+      318: 'ri:heavy-showers-line',
+      399: 'ri:rainy-line',
       // 雪
-      '400': 'ri:snowy-line',
-      '401': 'ri:snowy-line',
-      '402': 'ri:heavy-snow-line',
-      '403': 'ri:heavy-snow-line',
-      '404': 'ri:snowy-line',
-      '405': 'ri:snowy-line',
-      '406': 'ri:snowy-line',
-      '407': 'ri:snowy-line',
-      '408': 'ri:snowy-line',
-      '409': 'ri:heavy-snow-line',
-      '410': 'ri:heavy-snow-line',
-      '499': 'ri:snowy-line',
+      400: 'ri:snowy-line',
+      401: 'ri:snowy-line',
+      402: 'ri:heavy-snow-line',
+      403: 'ri:heavy-snow-line',
+      404: 'ri:snowy-line',
+      405: 'ri:snowy-line',
+      406: 'ri:snowy-line',
+      407: 'ri:snowy-line',
+      408: 'ri:snowy-line',
+      409: 'ri:heavy-snow-line',
+      410: 'ri:heavy-snow-line',
+      499: 'ri:snowy-line',
       // 雾霾
-      '500': 'ri:mist-line',
-      '501': 'ri:mist-line',
-      '502': 'ri:haze-line',
-      '503': 'ri:haze-line',
-      '504': 'ri:haze-line',
-      '507': 'ri:haze-line',
-      '508': 'ri:haze-line',
-      '509': 'ri:haze-line',
-      '510': 'ri:haze-line',
-      '511': 'ri:haze-line',
-      '512': 'ri:haze-line',
-      '513': 'ri:haze-line',
-      '514': 'ri:mist-line',
-      '515': 'ri:mist-line',
+      500: 'ri:mist-line',
+      501: 'ri:mist-line',
+      502: 'ri:haze-line',
+      503: 'ri:haze-line',
+      504: 'ri:haze-line',
+      507: 'ri:haze-line',
+      508: 'ri:haze-line',
+      509: 'ri:haze-line',
+      510: 'ri:haze-line',
+      511: 'ri:haze-line',
+      512: 'ri:haze-line',
+      513: 'ri:haze-line',
+      514: 'ri:mist-line',
+      515: 'ri:mist-line',
       // 其他
-      '900': 'ri:sun-line',
-      '901': 'ri:snowy-line',
+      900: 'ri:sun-line',
+      901: 'ri:snowy-line',
     }
 
     return iconMap[iconCode] || 'ri:question-line'
@@ -293,7 +293,7 @@ export function ModernSidebar({
         post.metadata.frontMatter.tags?.map(tag =>
           typeof tag === 'string' ? tag : (tag as any).label,
         ) || [],
-      )
+      ),
     ).size,
   }
 
@@ -308,7 +308,7 @@ export function ModernSidebar({
       {/* 1. 图片展示区 */}
       <div className="overflow-hidden rounded-xl shadow-md sm:max-h-[120px] md:max-h-[150px] lg:max-h-none">
         <img
-          src="https://cdn.jsdelivr.net/gh/wwwqqqzzz/Image/img/1747142036772-a21c8a72400e04f4d03d63bf48f59951.gif"
+          src="https://cdn.jsdelivr.net/gh/wwwqqqzzz/Image/img/1747239144143-b1c7aaf6f537f7b5778c0535d50941b5.gif"
           alt="动态展示"
           className="h-auto w-full object-cover sm:object-contain md:object-cover"
           loading="lazy"
@@ -345,38 +345,44 @@ export function ModernSidebar({
           每日英语
         </h3>
         <div className="relative overflow-hidden rounded-lg bg-gradient-to-r from-gray-50 to-gray-100 p-4 dark:from-gray-800 dark:to-gray-700 sm:p-3 md:p-4">
-          {quote.loading ? (
-            <div className="flex h-24 items-center justify-center sm:h-16 md:h-20 lg:h-24">
-              <div className="size-5 animate-spin rounded-full border-2 border-primary border-t-transparent sm:size-4 md:size-5"></div>
-            </div>
-          ) : (
-            <>
-              <div className="absolute -right-4 -top-4 text-6xl text-gray-200 opacity-30 dark:text-gray-600 sm:text-4xl md:text-5xl lg:text-6xl">
-                <Icon icon="ri:double-quotes-r" />
-              </div>
-              <blockquote className="relative z-10">
-                <p className="text-sm font-medium text-gray-800 dark:text-gray-200 sm:text-xs md:text-sm">
-                  "{quote.content}"
-                </p>
-                <p className="mt-2 text-sm italic text-gray-600 dark:text-gray-400 sm:mt-1 sm:text-xs md:mt-2 md:text-sm">
-                  {quote.translation}
-                </p>
-                <footer className="mt-3 flex items-center justify-between sm:mt-2 md:mt-3">
-                  <div className="flex items-center">
-                    <Icon
-                      icon="ri:volume-up-line"
-                      className="mr-1 cursor-pointer text-primary hover:text-primary/80"
-                      onClick={() => speakText(quote.content)}
-                    />
-                    <span className="text-xs text-gray-500 sm:text-[10px] md:text-xs">朗读</span>
+          {quote.loading
+            ? (
+                <div className="flex h-24 items-center justify-center sm:h-16 md:h-20 lg:h-24">
+                  <div className="size-5 animate-spin rounded-full border-2 border-primary border-t-transparent sm:size-4 md:size-5"></div>
+                </div>
+              )
+            : (
+                <>
+                  <div className="absolute -right-4 -top-4 text-6xl text-gray-200 opacity-30 dark:text-gray-600 sm:text-4xl md:text-5xl lg:text-6xl">
+                    <Icon icon="ri:double-quotes-r" />
                   </div>
-                  <span className="text-right text-xs font-medium text-gray-500 dark:text-gray-400 sm:text-[10px] md:text-xs">
-                    — {quote.author}
-                  </span>
-                </footer>
-              </blockquote>
-            </>
-          )}
+                  <blockquote className="relative z-10">
+                    <p className="text-sm font-medium text-gray-800 dark:text-gray-200 sm:text-xs md:text-sm">
+                      "
+                      {quote.content ? quote.content : 'Loading...'}
+                      "
+                    </p>
+                    <p className="mt-2 text-sm italic text-gray-600 dark:text-gray-400 sm:mt-1 sm:text-xs md:mt-2 md:text-sm">
+                      {quote.translation ? quote.translation : 'Loading translation...'}
+                    </p>
+                    <footer className="mt-3 flex items-center justify-between sm:mt-2 md:mt-3">
+                      <div className="flex items-center">
+                        <Icon
+                          icon="ri:volume-up-line"
+                          className="mr-1 cursor-pointer text-primary hover:text-primary/80"
+                          onClick={() => quote.content && speakText(quote.content)}
+                        />
+                        <span className="text-xs text-gray-500 sm:text-[10px] md:text-xs">朗读</span>
+                      </div>
+                      <span className="text-right text-xs font-medium text-gray-500 dark:text-gray-400 sm:text-[10px] md:text-xs">
+                        —
+                        {' '}
+                        {quote.author ? quote.author : 'Unknown'}
+                      </span>
+                    </footer>
+                  </blockquote>
+                </>
+              )}
         </div>
       </div>
 
