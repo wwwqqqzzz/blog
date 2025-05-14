@@ -7,7 +7,7 @@ image: https://cdn.jsdelivr.net/gh/wwwqqqzzz/Image/img/1747179524255-bcf58c64527
 pinned: true
 private: true
 password: "20030223"
-passwordHint: "你的生日, 年月日20030727"
+passwordHint: "生日"
 ---
 
 你
