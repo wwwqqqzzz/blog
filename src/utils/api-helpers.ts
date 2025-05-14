@@ -402,14 +402,20 @@ interface DailyQuote {
 async function fetchIcibaQuoteDirectly(): Promise<DailyQuote> {
   return new Promise((resolve, reject) => {
     try {
-      // Always use the API proxy in both development and production
-      // This is more reliable than direct API calls which may have CORS issues
-      fetch(`${getApiBaseUrl()}/api/daily-quote`, {
+      // Call the 金山词霸 API directly in production since API routes may not be available
+      // In development, we can still use the API proxy
+      const apiUrl = isDevelopment
+        ? `${getApiBaseUrl()}/api/daily-quote`
+        : 'https://open.iciba.com/dsapi/'
+
+      console.log('Fetching daily quote from:', apiUrl)
+
+      fetch(apiUrl, {
         headers: {
           'Cache-Control': 'no-cache, no-store, must-revalidate',
           'Pragma': 'no-cache',
-          'Expires': '0'
-        }
+          'Expires': '0',
+        },
       })
         .then((response) => {
           if (!response.ok) {
@@ -421,11 +427,14 @@ async function fetchIcibaQuoteDirectly(): Promise<DailyQuote> {
           // Log the data to see what we're getting
           console.log('Daily quote data:', data)
 
+          // Handle different API response formats
+          // Direct API call returns { content, note, ... }
+          // Our proxy returns { content, translation, ... }
           resolve({
             content: data.content,
             translation: data.translation || data.note,
             author: data.author || 'Daily English',
-            picture: data.picture,
+            picture: data.picture || data.fenxiang_img,
           })
         })
         .catch((error) => {
@@ -450,11 +459,8 @@ export async function fetchDailyQuote(): Promise<DailyQuote> {
     // This is temporary for debugging
     clearApiCache(CACHE_KEYS.DAILY_QUOTE)
 
-    // Check for cached data (for future use)
-    const cachedData = getFromCache<DailyQuote>(CACHE_KEYS.DAILY_QUOTE)
-
-    // If cache is valid and not too old, use it
-    // Disabled for now to ensure we always get fresh data
+    // Disabled cache check for now to ensure we always get fresh data
+    // const cachedData = getFromCache<DailyQuote>(CACHE_KEYS.DAILY_QUOTE)
     // if (isCacheValid(cachedData, CACHE_EXPIRY.DAILY_QUOTE)) {
     //   const data = safeGetCachedData(cachedData)
     //   if (data) return data
@@ -470,10 +476,14 @@ export async function fetchDailyQuote(): Promise<DailyQuote> {
     catch (fetchError) {
       console.warn('Error fetching daily quote, trying fallback:', fetchError)
 
-      // Try a different approach as fallback
+      // Try a different approach as fallback - direct API call
       try {
-        const response = await fetch(`${getApiBaseUrl()}/api/daily-quote`, {
+        // Try direct API call regardless of environment
+        const response = await fetch('https://open.iciba.com/dsapi/', {
           headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
             'Cache-Control': 'no-cache, no-store, must-revalidate',
             'Pragma': 'no-cache',
             'Expires': '0',
@@ -485,11 +495,13 @@ export async function fetchDailyQuote(): Promise<DailyQuote> {
         }
 
         const data = await response.json()
+        console.log('Fallback daily quote data:', data)
+
         quoteData = {
           content: data.content,
           translation: data.translation || data.note,
           author: data.author || 'Daily English',
-          picture: data.picture,
+          picture: data.picture || data.fenxiang_img,
         }
       }
       catch (fallbackError) {
