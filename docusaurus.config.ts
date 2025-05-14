@@ -109,7 +109,7 @@ const config: Config = {
         <p>Copyright © 2024 - ${new Date().getFullYear()} 王起哲 | Built with Docusaurus.</p>
         `,
     },
-    // 暂时禁用 Algolia 搜索，直到解决配置问题
+    // 使用本地搜索替代 Algolia
     // algolia: {
     //   appId: 'GV6YN1ODMO',
     //   apiKey: '50303937b0e4630bec4a20a14e3b7872',
@@ -184,6 +184,36 @@ const config: Config = {
     'docusaurus-plugin-image-zoom',
     '@docusaurus/plugin-ideal-image',
     // ['docusaurus-plugin-baidu-tongji', { token: 'c9a3849aa75f9c4a4e65f846cd1a5155' }],
+    [
+      '@easyops-cn/docusaurus-search-local',
+      {
+        // 配置选项
+        hashed: true, // 生成哈希文件名，避免浏览器缓存问题
+        language: ['en', 'zh'], // 支持英文和中文
+        highlightSearchTermsOnTargetPage: true, // 在目标页面高亮搜索词
+        docsRouteBasePath: ['/docs', '/blog'], // 包含博客和文档路径
+        blogRouteBasePath: ['/blog'], // 博客路径
+        docsDir: ['docs', 'blog'], // 包含博客和文档目录
+        blogDir: ['blog'], // 博客目录
+        indexDocs: true, // 索引文档
+        indexBlog: true, // 索引博客
+        indexPages: true, // 索引页面
+        removeDefaultStopWordFilter: false, // 保留默认停用词过滤
+        removeDefaultStemmer: false, // 保留默认词干提取
+        searchResultLimits: 8, // 搜索结果限制
+        searchResultContextMaxLength: 50, // 搜索结果上下文最大长度
+        translations: {
+          "search_placeholder": "搜索",
+          "see_all_results": "查看所有结果",
+          "no_results": "没有找到结果",
+          "search_results_for": "搜索结果: \"{{ keyword }}\"",
+          "search_the_documentation": "搜索文档",
+          "count_documents_found": "找到 {{ count }} 篇文档",
+          "count_documents_found_plural": "找到 {{ count }} 篇文档",
+          "no_documents_were_found": "没有找到文档"
+        }
+      },
+    ],
     [
       '@docusaurus/plugin-pwa',
       {
