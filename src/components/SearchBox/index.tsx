@@ -73,29 +73,70 @@ export default function SearchBox({
     const timer = setTimeout(() => {
       const term = searchTerm.toLowerCase()
 
-      const results = allPosts.filter((post) => {
-        // 安全检查
-        if (!post || !post.title) {
-          return false
-        }
+      const results = allPosts
+        .map((post) => {
+          // 安全检查
+          if (!post || !post.title) {
+            return null
+          }
 
-        // 标题匹配
-        const titleMatch = post.title.toLowerCase().includes(term)
+          // 标题匹配
+          const titleMatch = post.title.toLowerCase().includes(term)
 
-        // 描述匹配
-        const descMatch = post.description && post.description.toLowerCase().includes(term)
+          // 描述匹配
+          const descMatch = post.description && post.description.toLowerCase().includes(term)
 
-        // 标签匹配
-        let tagMatch = false
-        if (post.tags && Array.isArray(post.tags)) {
-          tagMatch = post.tags.some((tag) => {
-            if (!tag) return false
-            return tag.label && tag.label.toLowerCase().includes(term)
-          })
-        }
+          // 标签匹配
+          let tagMatch = false
+          if (post.tags && Array.isArray(post.tags)) {
+            tagMatch = post.tags.some((tag) => {
+              if (!tag) return false
+              return tag.label && tag.label.toLowerCase().includes(term)
+            })
+          }
 
-        return titleMatch || descMatch || tagMatch
-      }).slice(0, maxResults)
+          // 内容匹配（如果有）
+          let contentMatch = false
+          let contentSnippet = ''
+
+          if (post.source) {
+            const contentLower = post.source.toLowerCase()
+            contentMatch = contentLower.includes(term)
+
+            // 如果内容匹配，提取匹配片段
+            if (contentMatch) {
+              const matchIndex = contentLower.indexOf(term)
+              const startIndex = Math.max(0, matchIndex - 30)
+              const endIndex = Math.min(post.source.length, matchIndex + 100)
+              contentSnippet = post.source.substring(startIndex, endIndex)
+              if (startIndex > 0) {
+                contentSnippet = '...' + contentSnippet
+              }
+              if (endIndex < post.source.length) {
+                contentSnippet = contentSnippet + '...'
+              }
+            }
+          }
+
+          // 如果没有任何匹配，返回null
+          if (!titleMatch && !descMatch && !tagMatch && !contentMatch) {
+            return null
+          }
+
+          // 返回匹配的文章和匹配信息
+          return {
+            ...post,
+            matchInfo: {
+              titleMatch,
+              descMatch,
+              tagMatch,
+              contentMatch,
+              contentSnippet
+            }
+          }
+        })
+        .filter(Boolean) // 过滤掉null
+        .slice(0, maxResults)
 
       setSearchResults(results)
       setIsSearching(false)
@@ -231,18 +272,39 @@ export default function SearchBox({
                     <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
                       {highlightMatch(result.title)}
                     </div>
-                    <div className="mt-1 line-clamp-1 text-xs text-gray-600 dark:text-gray-400">
-                      {highlightMatch(result.description)}
+                    <div className="mt-1 line-clamp-2 text-xs text-gray-600 dark:text-gray-400">
+                      {result.matchInfo?.contentMatch && result.matchInfo.contentSnippet
+                        ? highlightMatch(result.matchInfo.contentSnippet)
+                        : highlightMatch(result.description)}
                     </div>
 
-                    {result.tags && result.tags.length > 0 && (
-                      <div className="mt-1 flex items-center gap-1">
-                        <Icon icon="ri:price-tag-3-line" className="text-xs text-gray-500 dark:text-gray-400" />
-                        <span className="text-xs text-gray-500 dark:text-gray-400">
-                          {result.tags[0].label}
-                        </span>
-                      </div>
-                    )}
+                    <div className="mt-1 flex flex-wrap items-center gap-2">
+                      {result.tags && result.tags.length > 0 && (
+                        <div className="flex items-center gap-1">
+                          <Icon icon="ri:price-tag-3-line" className="text-xs text-gray-500 dark:text-gray-400" />
+                          <span className="text-xs text-gray-500 dark:text-gray-400">
+                            {result.tags[0].label}
+                          </span>
+                        </div>
+                      )}
+
+                      {/* 显示匹配位置 */}
+                      {searchTerm && result.matchInfo && (
+                        <div className="flex items-center gap-1">
+                          <Icon icon="ri:search-line" className="text-xs text-gray-500 dark:text-gray-400" />
+                          <span className="text-xs text-gray-500 dark:text-gray-400">
+                            匹配: {
+                              [
+                                result.matchInfo.titleMatch && '标题',
+                                result.matchInfo.descMatch && '描述',
+                                result.matchInfo.tagMatch && '标签',
+                                result.matchInfo.contentMatch && '内容'
+                              ].filter(Boolean).join(', ')
+                            }
+                          </span>
+                        </div>
+                      )}
+                    </div>
                   </Link>
                 </li>
               ))}
