@@ -7,7 +7,8 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Icon } from '@iconify/react'
 import { cn } from '@site/src/lib/utils'
 import Link from '@docusaurus/Link'
-import { createSearchIndex, searchPosts, extractMatchSnippet, highlightSearchMatch, type FuseSearchResultItem } from '@site/src/utils/fuseSearch'
+import { createSearchIndex, searchPosts, extractMatchSnippet, type FuseSearchResultItem } from '@site/src/utils/fuseSearch'
+import { SearchHighlighter } from '@site/src/components/SearchHighlighter'
 
 interface SearchBoxProps {
   /**
@@ -127,9 +128,9 @@ export default function SearchBox({
     }
   }
 
-  // 高亮匹配文本 - 使用 fuseSearch 中的函数
+  // 高亮匹配文本 - 使用 SearchHighlighter 组件
   const highlightMatch = (text: string) => {
-    return highlightSearchMatch(text, searchTerm)
+    return <SearchHighlighter text={text} query={searchTerm} />
   }
 
   return (
@@ -198,13 +199,13 @@ export default function SearchBox({
                       onClick={() => setIsResultsVisible(false)}
                     >
                       <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                        {highlightSearchMatch(post.title, searchTerm)}
+                        <SearchHighlighter text={post.title} query={searchTerm} />
                       </div>
 
                       <div className="mt-1 line-clamp-2 text-xs text-gray-600 dark:text-gray-400">
                         {snippets.length > 0 && snippets[0].field !== 'tags'
-                          ? highlightSearchMatch(snippets[0].text, searchTerm)
-                          : highlightSearchMatch(post.description, searchTerm)}
+                          ? <SearchHighlighter text={snippets[0].text} query={searchTerm} />
+                          : <SearchHighlighter text={post.description} query={searchTerm} />}
                       </div>
 
                       <div className="mt-1 flex flex-wrap items-center gap-2">
