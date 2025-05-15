@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, useMemo } from 'react'
 import { useHistory } from '@docusaurus/router'
 import { usePluginData } from '@docusaurus/useGlobalData'
 import { transformBlogItems } from '@site/src/utils/blog'
@@ -7,6 +7,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Icon } from '@iconify/react'
 import { cn } from '@site/src/lib/utils'
 import Link from '@docusaurus/Link'
+import { createSearchIndex, searchPosts, extractMatchSnippet, highlightSearchMatch, type FuseSearchResultItem } from '@site/src/utils/fuseSearch'
 
 interface SearchBoxProps {
   /**
@@ -43,7 +44,7 @@ export default function SearchBox({
   const history = useHistory()
   const [searchTerm, setSearchTerm] = useState('')
   const [isSearching, setIsSearching] = useState(false)
-  const [searchResults, setSearchResults] = useState<BlogPostData[]>([])
+  const [searchResults, setSearchResults] = useState<FuseSearchResultItem[]>([])
   const [isResultsVisible, setIsResultsVisible] = useState(false)
   const searchRef = useRef<HTMLDivElement>(null)
 
@@ -53,12 +54,17 @@ export default function SearchBox({
   } | undefined
 
   // 转换为统一格式
-  const allPosts: BlogPostData[] = React.useMemo(() => {
+  const allPosts: BlogPostData[] = useMemo(() => {
     if (!blogData?.blogPosts || !Array.isArray(blogData.blogPosts)) {
       return []
     }
     return transformBlogItems(blogData.blogPosts.map(post => ({ content: post.content })))
   }, [blogData?.blogPosts])
+
+  // 创建 Fuse.js 搜索索引
+  const searchIndex = useMemo(() => {
+    return createSearchIndex(allPosts)
+  }, [allPosts])
 
   // 处理搜索
   useEffect(() => {
@@ -71,72 +77,8 @@ export default function SearchBox({
     setIsSearching(true)
 
     const timer = setTimeout(() => {
-      const term = searchTerm.toLowerCase()
-
-      const results = allPosts
-        .map((post) => {
-          // 安全检查
-          if (!post || !post.title) {
-            return null
-          }
-
-          // 标题匹配
-          const titleMatch = post.title.toLowerCase().includes(term)
-
-          // 描述匹配
-          const descMatch = post.description && post.description.toLowerCase().includes(term)
-
-          // 标签匹配
-          let tagMatch = false
-          if (post.tags && Array.isArray(post.tags)) {
-            tagMatch = post.tags.some((tag) => {
-              if (!tag) return false
-              return tag.label && tag.label.toLowerCase().includes(term)
-            })
-          }
-
-          // 内容匹配（如果有）
-          let contentMatch = false
-          let contentSnippet = ''
-
-          if (post.source) {
-            const contentLower = post.source.toLowerCase()
-            contentMatch = contentLower.includes(term)
-
-            // 如果内容匹配，提取匹配片段
-            if (contentMatch) {
-              const matchIndex = contentLower.indexOf(term)
-              const startIndex = Math.max(0, matchIndex - 30)
-              const endIndex = Math.min(post.source.length, matchIndex + 100)
-              contentSnippet = post.source.substring(startIndex, endIndex)
-              if (startIndex > 0) {
-                contentSnippet = '...' + contentSnippet
-              }
-              if (endIndex < post.source.length) {
-                contentSnippet = contentSnippet + '...'
-              }
-            }
-          }
-
-          // 如果没有任何匹配，返回null
-          if (!titleMatch && !descMatch && !tagMatch && !contentMatch) {
-            return null
-          }
-
-          // 返回匹配的文章和匹配信息
-          return {
-            ...post,
-            matchInfo: {
-              titleMatch,
-              descMatch,
-              tagMatch,
-              contentMatch,
-              contentSnippet
-            }
-          }
-        })
-        .filter(Boolean) // 过滤掉null
-        .slice(0, maxResults)
+      // 使用 Fuse.js 执行搜索
+      const results = searchPosts(searchIndex, searchTerm, maxResults)
 
       setSearchResults(results)
       setIsSearching(false)
@@ -144,7 +86,7 @@ export default function SearchBox({
     }, debounceMs)
 
     return () => clearTimeout(timer)
-  }, [searchTerm, allPosts, maxResults, debounceMs])
+  }, [searchTerm, searchIndex, maxResults, debounceMs])
 
   // 处理点击外部关闭结果
   useEffect(() => {
@@ -185,27 +127,9 @@ export default function SearchBox({
     }
   }
 
-  // 高亮匹配文本
+  // 高亮匹配文本 - 使用 fuseSearch 中的函数
   const highlightMatch = (text: string) => {
-    if (!searchTerm.trim()) return text
-
-    const parts = text.split(new RegExp(`(${searchTerm})`, 'gi'))
-
-    return (
-      <>
-        {parts.map((part, index) =>
-          part.toLowerCase() === searchTerm.toLowerCase()
-            ? (
-                <mark key={index} className="rounded bg-primary-100 px-1 text-primary-900 dark:bg-primary-900 dark:text-primary-100">
-                  {part}
-                </mark>
-              )
-            : (
-                part
-              ),
-        )}
-      </>
-    )
+    return highlightSearchMatch(text, searchTerm)
   }
 
   return (
@@ -256,58 +180,67 @@ export default function SearchBox({
             className="absolute z-10 mt-2 w-full rounded-lg border border-gray-200 bg-white py-2 shadow-lg dark:border-gray-700 dark:bg-gray-800"
           >
             <ul className="max-h-60 overflow-y-auto">
-              {searchResults.map((result, index) => (
-                <li
-                  key={result.link}
-                  className={cn(
-                    'px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700',
-                    index !== searchResults.length - 1 && 'border-b border-gray-100 dark:border-gray-700',
-                  )}
-                >
-                  <Link
-                    to={result.link}
-                    className="block hover:no-underline"
-                    onClick={() => setIsResultsVisible(false)}
+              {searchResults.map((result, index) => {
+                const post = result.item;
+                const snippets = extractMatchSnippet(result);
+
+                return (
+                  <li
+                    key={post.link}
+                    className={cn(
+                      'px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700',
+                      index !== searchResults.length - 1 && 'border-b border-gray-100 dark:border-gray-700',
+                    )}
                   >
-                    <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                      {highlightMatch(result.title)}
-                    </div>
-                    <div className="mt-1 line-clamp-2 text-xs text-gray-600 dark:text-gray-400">
-                      {result.matchInfo?.contentMatch && result.matchInfo.contentSnippet
-                        ? highlightMatch(result.matchInfo.contentSnippet)
-                        : highlightMatch(result.description)}
-                    </div>
+                    <Link
+                      to={post.link}
+                      className="block hover:no-underline"
+                      onClick={() => setIsResultsVisible(false)}
+                    >
+                      <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                        {highlightSearchMatch(post.title, searchTerm)}
+                      </div>
 
-                    <div className="mt-1 flex flex-wrap items-center gap-2">
-                      {result.tags && result.tags.length > 0 && (
-                        <div className="flex items-center gap-1">
-                          <Icon icon="ri:price-tag-3-line" className="text-xs text-gray-500 dark:text-gray-400" />
-                          <span className="text-xs text-gray-500 dark:text-gray-400">
-                            {result.tags[0].label}
-                          </span>
-                        </div>
-                      )}
+                      <div className="mt-1 line-clamp-2 text-xs text-gray-600 dark:text-gray-400">
+                        {snippets.length > 0 && snippets[0].field !== 'tags'
+                          ? highlightSearchMatch(snippets[0].text, searchTerm)
+                          : highlightSearchMatch(post.description, searchTerm)}
+                      </div>
 
-                      {/* 显示匹配位置 */}
-                      {searchTerm && result.matchInfo && (
-                        <div className="flex items-center gap-1">
-                          <Icon icon="ri:search-line" className="text-xs text-gray-500 dark:text-gray-400" />
-                          <span className="text-xs text-gray-500 dark:text-gray-400">
-                            匹配: {
-                              [
-                                result.matchInfo.titleMatch && '标题',
-                                result.matchInfo.descMatch && '描述',
-                                result.matchInfo.tagMatch && '标签',
-                                result.matchInfo.contentMatch && '内容'
-                              ].filter(Boolean).join(', ')
-                            }
-                          </span>
-                        </div>
-                      )}
-                    </div>
-                  </Link>
-                </li>
-              ))}
+                      <div className="mt-1 flex flex-wrap items-center gap-2">
+                        {post.tags && post.tags.length > 0 && (
+                          <div className="flex items-center gap-1">
+                            <Icon icon="ri:price-tag-3-line" className="text-xs text-gray-500 dark:text-gray-400" />
+                            <span className="text-xs text-gray-500 dark:text-gray-400">
+                              {post.tags[0].label}
+                            </span>
+                          </div>
+                        )}
+
+                        {/* 显示匹配位置 */}
+                        {searchTerm && snippets.length > 0 && (
+                          <div className="flex items-center gap-1">
+                            <Icon icon="ri:search-line" className="text-xs text-gray-500 dark:text-gray-400" />
+                            <span className="text-xs text-gray-500 dark:text-gray-400">
+                              匹配: {snippets.map(s => s.field).join(', ')}
+                            </span>
+                          </div>
+                        )}
+
+                        {/* 显示匹配分数 */}
+                        {result.score !== undefined && (
+                          <div className="flex items-center gap-1">
+                            <Icon icon="ri:star-line" className="text-xs text-gray-500 dark:text-gray-400" />
+                            <span className="text-xs text-gray-500 dark:text-gray-400">
+                              相关度: {Math.round((1 - result.score) * 100)}%
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                    </Link>
+                  </li>
+                );
+              })}
             </ul>
 
             <div className="border-t border-gray-100 px-4 py-2 text-xs text-gray-500 dark:border-gray-700 dark:text-gray-400">
