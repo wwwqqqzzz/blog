@@ -201,17 +201,7 @@ const config: Config = {
         removeDefaultStopWordFilter: false, // 保留默认停用词过滤
         removeDefaultStemmer: false, // 保留默认词干提取
         searchResultLimits: 8, // 搜索结果限制
-        searchResultContextMaxLength: 50, // 搜索结果上下文最大长度
-        translations: {
-          "search_placeholder": "搜索",
-          "see_all_results": "查看所有结果",
-          "no_results": "没有找到结果",
-          "search_results_for": "搜索结果: \"{{ keyword }}\"",
-          "search_the_documentation": "搜索文档",
-          "count_documents_found": "找到 {{ count }} 篇文档",
-          "count_documents_found_plural": "找到 {{ count }} 篇文档",
-          "no_documents_were_found": "没有找到文档"
-        }
+        searchResultContextMaxLength: 50 // 搜索结果上下文最大长度
       },
     ],
     [
