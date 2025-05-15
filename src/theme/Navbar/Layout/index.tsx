@@ -4,7 +4,7 @@ import { useHideableNavbar, useNavbarMobileSidebar } from '@docusaurus/theme-com
 import type { Props } from '@theme/Navbar/Layout'
 import NavbarMobileSidebar from '@theme/Navbar/MobileSidebar'
 import clsx from 'clsx'
-import { type ComponentProps } from 'react'
+import { type ComponentProps, useEffect, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 
 import styles from './styles.module.css'
@@ -19,9 +19,26 @@ export default function NavbarLayout({ children }: Props): JSX.Element {
   } = useThemeConfig()
   const mobileSidebar = useNavbarMobileSidebar()
   const { navbarRef, isNavbarVisible } = useHideableNavbar(hideOnScroll)
+  const [isScrolled, setIsScrolled] = useState(false)
 
   const location = useLocation()
   const isHomePage = location.pathname === '/' || location.pathname === '/en/'
+
+  // 监听滚动事件，实现滚动时的效果变化
+  useEffect(() => {
+    const handleScroll = () => {
+      // 滚动超过50px时改变样式
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop
+      setIsScrolled(scrollTop > 50)
+    }
+
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    handleScroll() // 初始化检查
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll)
+    }
+  }, [])
 
   return (
     <nav
@@ -35,6 +52,7 @@ export default function NavbarLayout({ children }: Props): JSX.Element {
         'navbar',
         'navbar--fixed-top',
         isHomePage && 'bg-transparent',
+        isScrolled && 'navbar-scrolled',
         hideOnScroll && [styles.navbarHideable, !isNavbarVisible && styles.navbarHidden],
         {
           'navbar--dark': style === 'dark',
