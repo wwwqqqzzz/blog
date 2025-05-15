@@ -109,12 +109,14 @@ const config: Config = {
         <p>Copyright © 2024 - ${new Date().getFullYear()} 王起哲 | Built with Docusaurus.</p>
         `,
     },
-    // 使用本地搜索替代 Algolia
-    // algolia: {
-    //   appId: 'GV6YN1ODMO',
-    //   apiKey: '50303937b0e4630bec4a20a14e3b7872',
-    //   indexName: 'wangqizhe',
-    // },
+    // 恢复 Algolia 搜索配置
+    algolia: {
+      appId: 'GV6YN1ODMO',
+      apiKey: '50303937b0e4630bec4a20a14e3b7872',
+      indexName: 'wangqizhe',
+      contextualSearch: true,
+      searchParameters: {},
+    },
     prism: {
       theme: themes.oneLight,
       darkTheme: themes.oneDark,
@@ -184,26 +186,13 @@ const config: Config = {
     'docusaurus-plugin-image-zoom',
     '@docusaurus/plugin-ideal-image',
     // ['docusaurus-plugin-baidu-tongji', { token: 'c9a3849aa75f9c4a4e65f846cd1a5155' }],
-    [
-      '@easyops-cn/docusaurus-search-local',
-      {
-        // 配置选项
-        hashed: true, // 生成哈希文件名，避免浏览器缓存问题
-        language: ['en', 'zh'], // 支持英文和中文
-        highlightSearchTermsOnTargetPage: true, // 在目标页面高亮搜索词
-        docsRouteBasePath: ['/docs', '/blog'], // 包含博客和文档路径
-        blogRouteBasePath: ['/blog'], // 博客路径
-        docsDir: ['docs', 'blog'], // 包含博客和文档目录
-        blogDir: ['blog'], // 博客目录
-        indexDocs: true, // 索引文档
-        indexBlog: true, // 索引博客
-        indexPages: true, // 索引页面
-        removeDefaultStopWordFilter: false, // 保留默认停用词过滤
-        removeDefaultStemmer: false, // 保留默认词干提取
-        searchResultLimits: 8, // 搜索结果限制
-        searchResultContextMaxLength: 50 // 搜索结果上下文最大长度
-      },
-    ],
+    // 暂时移除本地搜索插件配置
+    // [
+    //   '@easyops-cn/docusaurus-search-local',
+    //   {
+    //     // 配置选项已移除
+    //   },
+    // ],
     [
       '@docusaurus/plugin-pwa',
       {
