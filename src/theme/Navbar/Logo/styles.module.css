@@ -1,0 +1,27 @@
+.logoWrapper {
+  display: flex;
+  align-items: center;
+  transition: all 0.3s ease;
+}
+
+.navbarLogo {
+  transition: all 0.3s ease;
+  margin-right: 0.5rem;
+}
+
+.navbarTitle {
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  transition: all 0.3s ease;
+}
+
+/* 悬停效果 */
+.logoWrapper:hover .navbarLogo {
+  transform: rotate(-5deg);
+}
+
+@media (max-width: 996px) {
+  .navbarTitle {
+    font-size: 1rem;
+  }
+}
