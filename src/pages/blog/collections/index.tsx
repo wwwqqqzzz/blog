@@ -1,13 +1,13 @@
 import React from 'react'
 import Layout from '@theme/Layout'
 import { usePluginData } from '@docusaurus/useGlobalData'
-import { transformBlogItems, extractCollections } from '@site/src/utils/blog'
+import { extractCollections } from '@site/src/utils/blog'
 import type { BlogPostData, BlogCollection } from '@site/src/types/blog'
 import { motion } from 'framer-motion'
 import { Icon } from '@iconify/react'
 import Link from '@docusaurus/Link'
 import { cn } from '@site/src/lib/utils'
-import Image from '@theme/IdealImage'
+import { collections as collectionsData, defaultCollectionImage, defaultCollectionDescription } from '@site/data/collections'
 
 /**
  * 博客系列列表页面
@@ -213,13 +213,17 @@ interface CollectionCardProps {
 function CollectionCard({ collection, index }: CollectionCardProps): React.ReactNode {
   const { id, name, description, posts, path, encodedSlug, image } = collection
 
-  // 使用编码后的原始系列名称作为URL参数
-  const safePath = `/blog/collections/${encodedSlug}`
+  // 使用查询参数方式构建URL
+  const safePath = `/blog/collections/detail?name=${encodedSlug}`
 
-  console.log(`CollectionCard: 渲染系列 "${name}", ID: "${id}", 路径: "${safePath}"`)
+  console.log(`CollectionCard: 渲染系列 "${name}", 路径: "${safePath}", 文章数: ${posts.length}`)
 
-  // 默认封面图
-  const defaultImage = 'https://source.unsplash.com/random/800x600/?book'
+  // 查找集合数据
+  const collectionData = collectionsData.find(c => c.id === id)
+
+  // 使用集合数据中的图片和描述，如果没有则使用默认值
+  const coverImage = collectionData?.image || image || defaultCollectionImage
+  const enhancedDescription = collectionData?.description || description || defaultCollectionDescription
 
   return (
     <motion.div
@@ -236,21 +240,11 @@ function CollectionCard({ collection, index }: CollectionCardProps): React.React
         }}
       >
         <div className="relative h-48 w-full overflow-hidden">
-          {image
-            ? (
-                <img
-                  src={image}
-                  alt={name}
-                  className="size-full object-cover transition-transform duration-700 group-hover:scale-105"
-                />
-              )
-            : (
-                <img
-                  src={defaultImage}
-                  alt={name}
-                  className="size-full object-cover transition-transform duration-700 group-hover:scale-105"
-                />
-              )}
+          <img
+            src={coverImage}
+            alt={name}
+            className="size-full object-cover transition-transform duration-700 group-hover:scale-105"
+          />
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
           <div className="absolute bottom-0 left-0 p-4">
             <h2 className="text-xl font-bold text-white">{name}</h2>
@@ -263,8 +257,8 @@ function CollectionCard({ collection, index }: CollectionCardProps): React.React
           </div>
         </div>
         <div className="p-4">
-          <p className="mb-4 line-clamp-2 text-sm text-gray-600 dark:text-gray-400">
-            {description}
+          <p className="mb-4 line-clamp-3 text-sm text-gray-600 dark:text-gray-400">
+            {enhancedDescription}
           </p>
           <div className="flex items-center justify-between">
             <span className="text-sm font-medium text-primary-600 dark:text-primary-400">

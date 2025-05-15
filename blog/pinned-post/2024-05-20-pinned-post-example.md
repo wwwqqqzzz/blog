@@ -41,4 +41,4 @@ pinned: true
 
 *注：不接受P2P金融、保健品、成功学课程等类型广告*
 
-![广告位实景图](https://images.unsplash.com/photo-1499750310107-5fef28a66643?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80)
+![广告位实景图](https://cdn.jsdelivr.net/gh/wwwqqqzzz/Image/img/1747238777430-4e96090b41b7e8e95b37726b2d42bf97.png)

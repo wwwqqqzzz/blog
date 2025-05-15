@@ -327,7 +327,9 @@ article p > span > a {
 }
 
 .navbar-sidebar__items {
-  height: calc(100% - var(--ifm-navbar-height) - 444px);
+  height: auto;
+  max-height: calc(100vh - var(--ifm-navbar-height) - 200px);
+  overflow-y: auto;
 }
 
 @media (max-width: 570px) {
@@ -442,6 +444,7 @@ div[class^='announcementBar_'] {
 .navbar-sidebar {
   background: var(--navbar-sidebar-background);
   backdrop-filter: blur(10px);
+  z-index: var(--ifm-z-index-fixed);
 }
 
 /* 主题切换动画 */
@@ -837,7 +840,7 @@ html[data-theme='dark'] #feature-buttons-group {
   }
 
   /* 避免与侧边栏冲突 */
-  .navbar-sidebar + #feature-buttons-group {
+  .navbar-sidebar--show + #feature-buttons-group {
     opacity: 0 !important;
     visibility: hidden !important;
     pointer-events: none !important;
@@ -872,9 +875,40 @@ html[data-theme='dark'] #immersive-toggle-container {
   opacity: 0.9 !important;
 }
 
+/* 社交媒体链接容器样式 */
+.social-links-container {
+  position: relative;
+  z-index: 200;
+  width: fit-content;
+  margin: 0 auto;
+}
+
 /* 移动设备适配 */
 @media (max-width: 768px) {
   #immersive-toggle-container {
     padding: 0 !important;
   }
+
+  /* 确保移动端侧边栏正确显示 */
+  .navbar-sidebar {
+    width: 85%;
+    max-width: 300px;
+  }
+
+  .navbar-sidebar__backdrop {
+    z-index: calc(var(--ifm-z-index-fixed) - 1);
+  }
+
+  /* 移动端社交媒体链接容器样式 */
+  .social-links-container {
+    width: auto;
+    max-width: 100%;
+    padding: 0.25rem;
+    background-color: rgba(var(--ifm-background-color-rgb), 0.5);
+    border-radius: 9999px;
+    backdrop-filter: blur(4px);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  }
+
+  /* 移动端社交媒体链接样式已移至专用CSS文件 */
 }

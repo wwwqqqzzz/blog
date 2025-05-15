@@ -8,6 +8,8 @@
 
 .userCardNavbar {
   @apply pt-4 relative block text-center;
+  max-height: 300px; /* 增加高度以确保社交链接可见 */
+  overflow-y: auto;
 }
 
 .cardImg {
@@ -19,7 +21,7 @@
 }
 
 .name {
-  @apply text-[var(--ifm-text-color)] font-[var(--ifm-font-family-name)] font-black cursor-pointer m-auto;
+  @apply text-[var(--ifm-text-color)] font-black cursor-pointer m-auto;
 }
 
 .bio {

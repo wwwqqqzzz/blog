@@ -26,7 +26,7 @@
   display: inline-block;
   font-size: 3rem;
   font-weight: 700;
-  background: linear-gradient(135deg, 
+  background: linear-gradient(135deg,
     #60A5FA 0%,
     #3B82F6 50%,
     #2563EB 100%
@@ -58,7 +58,7 @@
   position: absolute;
   inset: 0;
   z-index: 0;
-  background-image: 
+  background-image:
     linear-gradient(rgba(80, 117, 177, 0.15) 1px, transparent 1px),
     linear-gradient(90deg, rgba(80, 117, 177, 0.15) 1px, transparent 1px);
   background-size: 32px 32px;
@@ -90,6 +90,8 @@
   inset: 0;
   z-index: 0;
   overflow: hidden;
+  /* 确保不会干扰社交媒体链接的交互 */
+  pointer-events: none;
 }
 
 .geometric_shapes::before {
@@ -126,6 +128,9 @@
   max-width: 600px;
   padding: 0 1rem;
   margin: 2rem auto;
+  /* 确保不会与社交媒体链接重叠 */
+  position: relative;
+  z-index: 5;
 }
 
 .icon_wrapper {
@@ -163,7 +168,8 @@
   bottom: -10px;
   left: 0;
   width: 100%;
-  z-index: 12;
+  /* 降低z-index，确保不会覆盖社交媒体链接 */
+  z-index: 10;
   pointer-events: none;
 }
 
@@ -192,8 +198,8 @@
   left: 0;
   width: 100%;
   height: 70px;
-  background: linear-gradient(to top, 
-    var(--ifm-background-color) 0%, 
+  background: linear-gradient(to top,
+    var(--ifm-background-color) 0%,
     var(--ifm-background-color) 40%,
     rgba(var(--ifm-background-color-rgb), 0.95) 70%,
     rgba(var(--ifm-background-color-rgb), 0.6) 100%
@@ -227,8 +233,8 @@
   left: 0;
   width: 100%;
   height: 160px;
-  background: linear-gradient(to top, 
-    var(--ifm-background-color) 0%, 
+  background: linear-gradient(to top,
+    var(--ifm-background-color) 0%,
     rgba(32, 180, 250, 0.12) 55%,
     rgba(32, 180, 250, 0.06) 80%,
     transparent 100%
@@ -276,9 +282,9 @@
   left: 0;
   width: 100%;
   height: 1px;
-  background: linear-gradient(90deg, 
-    transparent 0%, 
-    rgba(32, 180, 250, 0.6) 50%, 
+  background: linear-gradient(90deg,
+    transparent 0%,
+    rgba(32, 180, 250, 0.6) 50%,
     transparent 100%
   );
   box-shadow: 0 0 25px 3px rgba(32, 180, 250, 0.4);
@@ -313,7 +319,7 @@
   left: 50%;
   transform: translateX(-50%);
   width: 90%;
-  height: 60px; 
+  height: 60px;
   background: var(--ifm-background-color);
   border-radius: 50% 50% 0 0 / 100% 100% 0 0;
   filter: blur(20px);
@@ -358,7 +364,7 @@
 
 /* 暗色模式适配 */
 html[data-theme='dark'] .grid_background {
-  background-image: 
+  background-image:
     linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
     linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
 }
@@ -380,7 +386,7 @@ html[data-theme='dark'] .geometric_shapes::after {
 }
 
 html[data-theme='dark'] .transition_gradient {
-  background: linear-gradient(to top, 
+  background: linear-gradient(to top,
     var(--ifm-background-color) 0%,
     rgba(32, 180, 250, 0.15) 55%,
     rgba(32, 180, 250, 0.08) 80%,
@@ -389,8 +395,8 @@ html[data-theme='dark'] .transition_gradient {
 }
 
 html[data-theme='dark'] .transition_wave::before {
-  background: linear-gradient(to top, 
-    var(--ifm-background-color) 0%, 
+  background: linear-gradient(to top,
+    var(--ifm-background-color) 0%,
     var(--ifm-background-color) 40%,
     rgba(var(--ifm-background-color-rgb), 0.9) 70%,
     rgba(var(--ifm-background-color-rgb), 0.5) 100%
@@ -408,9 +414,9 @@ html[data-theme='dark'] .transition_gradient::before {
 }
 
 html[data-theme='dark'] .transition_line {
-  background: linear-gradient(90deg, 
-    transparent 0%, 
-    rgba(32, 180, 250, 0.7) 50%, 
+  background: linear-gradient(90deg,
+    transparent 0%,
+    rgba(32, 180, 250, 0.7) 50%,
     transparent 100%
   );
   box-shadow: 0 0 30px 4px rgba(32, 180, 250, 0.5);
@@ -456,7 +462,7 @@ html[data-theme='dark'] .smooth_transition::after {
     width: 3.2rem;
     height: 3.2rem;
   }
-  
+
   .tech_icon {
     width: 1.8rem;
     height: 1.8rem;
@@ -468,7 +474,7 @@ html[data-theme='dark'] .smooth_transition::after {
     padding: 2.5rem 1.5rem 5rem;
     min-height: auto;
   }
-  
+
   .name {
     font-size: 2.25rem;
     line-height: 1.3;
@@ -498,36 +504,36 @@ html[data-theme='dark'] .smooth_transition::after {
     width: 1.7rem;
     height: 1.7rem;
   }
-  
+
   .transition_wave {
     height: 120px;
   }
-  
+
   .transition_gradient {
     height: 100px;
   }
-  
+
   .transition_gradient::before {
     height: 50px;
     width: 80%;
   }
-  
+
   .transition_wave::before {
     height: 50px;
   }
-  
+
   .smooth_transition > div:last-child {
     bottom: -20px;
     height: 40px;
     width: 85%;
   }
-  
+
   .wave_svg {
     transform-origin: bottom;
     animation: waveAnimation 20s linear infinite alternate;
     filter: blur(1.2px);
   }
-  
+
   .smooth_transition::after {
     bottom: 40px;
     width: 20px;
@@ -578,7 +584,7 @@ html[data-theme='dark'] .smooth_transition::after {
     width: 1.6rem;
     height: 1.6rem;
   }
-  
+
   .transition_wave {
     height: 100px;
     bottom: -5px;
@@ -589,7 +595,7 @@ html[data-theme='dark'] .smooth_transition::after {
   .hero {
     padding: 1.5rem 0.75rem 4rem;
   }
-  
+
   .decorative_icons {
     grid-template-columns: repeat(5, 1fr);
     gap: 0.4rem;
@@ -606,11 +612,11 @@ html[data-theme='dark'] .smooth_transition::after {
     width: 1.4rem;
     height: 1.4rem;
   }
-  
+
   .smooth_transition {
     bottom: -5px;
   }
-  
+
   /* 确保按钮在小屏幕上适当缩放 */
   .intro a {
     font-size: 0.9rem;
@@ -626,13 +632,13 @@ html[data-theme='dark'] .smooth_transition::after {
     max-width: 100%;
     padding: 0 0.2rem;
   }
-  
+
   .icon_wrapper {
     width: 2.2rem;
     height: 2.2rem;
     border-radius: 6px;
   }
-  
+
   .tech_icon {
     width: 1.3rem;
     height: 1.3rem;

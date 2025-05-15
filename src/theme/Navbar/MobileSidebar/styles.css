@@ -1,0 +1,28 @@
+/* 移动端导航栏样式修复 */
+.navbar-sidebar {
+  overflow-y: auto;
+}
+
+/* 用户卡片容器 */
+.navbar-sidebar__user-card {
+  position: relative;
+  z-index: 10;
+}
+
+/* 确保社交链接在移动端正确显示 */
+.navbar-sidebar .socialLinks_nm_K {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem;
+  margin: 0.5rem auto;
+  width: 100%;
+  position: relative;
+  z-index: 10;
+}
+
+/* 确保用户卡片内容不被遮挡 */
+.navbar-sidebar .userCardNavbar {
+  padding-bottom: 0.5rem;
+  margin-bottom: 0;
+}

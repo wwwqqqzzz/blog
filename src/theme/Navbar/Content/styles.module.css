@@ -1,19 +1,24 @@
 /*
-Hide color mode toggle in small viewports
+ * 导航栏样式
  */
+
+/* 隐藏小屏幕上的颜色模式切换按钮 */
 @media (max-width: 996px) {
   .colorModeToggle {
     display: none;
   }
 }
 
+/* 居中导航栏 */
 .centeredNavbar {
   display: flex;
   justify-content: center;
   width: 100%;
   padding: 0 1rem;
+  transition: all 0.3s ease;
 }
 
+/* 导航项居中 */
 .navbarItemsCenter {
   display: flex;
   justify-content: center;
@@ -24,10 +29,137 @@ Hide color mode toggle in small viewports
   margin: 0 auto;
 }
 
+/* 毛玻璃效果 */
+.glassmorphism {
+  backdrop-filter: blur(10px);
+  background-color: rgba(255, 255, 255, 0.8);
+}
+
+/* 暗色模式下的毛玻璃效果 */
+html[data-theme='dark'] .glassmorphism {
+  background-color: rgba(36, 37, 38, 0.8);
+}
+
+/* 阴影效果 */
+.shadow {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+/* 暗色模式下的阴影效果 */
+html[data-theme='dark'] .shadow {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+/* 滚动后的效果 */
+.scrolled {
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* 暗色模式下滚动后的效果 */
+html[data-theme='dark'] .scrolled {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* 导航项悬停效果 */
+:global(.navbar__item) {
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+:global(.navbar__item::after) {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  background: var(--ifm-navbar-link-hover-color);
+  transition: all 0.3s ease;
+  transform: translateX(-50%);
+  opacity: 0;
+}
+
+:global(.navbar__item:hover::after) {
+  width: 100%;
+  opacity: 1;
+}
+
+/* 活跃导航项样式 */
+:global(.navbar__item--active) {
+  font-weight: 600;
+}
+
+:global(.navbar__item--active::after) {
+  width: 100%;
+  opacity: 1;
+}
+
+/* 下拉菜单样式 */
+:global(.dropdown__menu) {
+  border-radius: 8px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  padding: 0.5rem 0;
+}
+
+html[data-theme='dark'] :global(.dropdown__menu) {
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+:global(.dropdown__link) {
+  transition: all 0.2s ease;
+}
+
+:global(.dropdown__link:hover) {
+  background-color: var(--ifm-color-emphasis-100);
+}
+
+/* 移动端导航栏样式 */
+.mobileNavbar {
+  background-color: var(--ifm-navbar-background-color);
+  backdrop-filter: none;
+  z-index: var(--ifm-z-index-fixed);
+  position: relative;
+}
+
+/* 移动端阴影效果 - 更轻微，避免视觉干扰 */
+.mobileShadow {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+html[data-theme='dark'] .mobileShadow {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
 /* 移动设备适配 */
 @media (max-width: 768px) {
   .navbarItemsCenter {
     justify-content: space-between;
     gap: 0.5rem;
+  }
+
+  /* 修复移动端社交媒体按钮被覆盖的问题 */
+  .glassmorphism {
+    backdrop-filter: none;
+    background-color: var(--ifm-navbar-background-color);
+  }
+
+  /* 移动端禁用悬停效果，避免干扰触摸操作 */
+  :global(.navbar__item::after) {
+    display: none;
+  }
+
+  /* 确保导航栏不会覆盖其他元素 */
+  .centeredNavbar {
+    z-index: auto;
+  }
+
+  /* 确保下拉菜单在移动端正常显示 */
+  :global(.dropdown__menu) {
+    position: absolute;
+    top: 100%;
+    z-index: var(--ifm-z-index-dropdown);
   }
 }

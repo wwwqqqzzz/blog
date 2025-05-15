@@ -24,7 +24,10 @@
     "noUnusedParameters": false,
     "importsNotUsedAsValues": "remove",
     "moduleResolution": "Bundler",
-    "skipLibCheck": false
+    "skipLibCheck": false,
+    "jsx": "react",
+    "jsxFactory": "React.createElement",
+    "jsxFragmentFactory": "React.Fragment"
   },
   "exclude": ["src/sw.js"]
 }

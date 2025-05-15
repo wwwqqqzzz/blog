@@ -109,14 +109,14 @@ const config: Config = {
         <p>Copyright © 2024 - ${new Date().getFullYear()} 王起哲 | Built with Docusaurus.</p>
         `,
     },
-    // 恢复 Algolia 搜索配置
-    algolia: {
-      appId: 'GV6YN1ODMO',
-      apiKey: '50303937b0e4630bec4a20a14e3b7872',
-      indexName: 'wangqizhe',
-      contextualSearch: true,
-      searchParameters: {},
-    },
+    // 禁用 Algolia 搜索配置，因为 API 密钥权限问题
+    // algolia: {
+    //   appId: 'GV6YN1ODMO',
+    //   apiKey: '50303937b0e4630bec4a20a14e3b7872',
+    //   indexName: 'wangqizhe',
+    //   contextualSearch: true,
+    //   searchParameters: {},
+    // },
     prism: {
       theme: themes.oneLight,
       darkTheme: themes.oneDark,
@@ -169,7 +169,11 @@ const config: Config = {
         },
         blog: false,
         theme: {
-          customCss: ['./src/css/custom.css', './src/css/tweet-theme.css'],
+          customCss: [
+            './src/css/custom.css',
+            './src/css/tweet-theme.css',
+            './src/theme/Navbar/MobileSidebar/styles.css'
+          ],
         },
         sitemap: {
           priority: 0.5,

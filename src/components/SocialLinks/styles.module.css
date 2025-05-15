@@ -5,7 +5,8 @@
   gap: 1rem;
   padding: 0.5rem 0;
   position: relative;
-  z-index: 50;
+  /* 增加z-index确保社交媒体链接在最上层 */
+  z-index: 100;
   width: fit-content;
   margin: 0 auto;
   flex-wrap: wrap;
@@ -14,18 +15,23 @@
 .socialLinks a {
   display: inline-flex;
   box-sizing: content-box;
-  width: 2rem;
-  height: 2rem;
+  width: 2.5rem;  /* 增大图标容器 */
+  height: 2.5rem; /* 增大图标容器 */
   align-items: center;
   justify-content: center;
-  transition: background-color 0.3s, color 0.3s;
-  border-radius: 9999px;
-  padding: 0.25rem;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 50%; /* 确保完全圆形 */
+  padding: 0.3rem;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.08);
 }
 
 .socialLinks a:hover {
   color: white;
   background-color: var(--color);
+  transform: translateY(-3px) scale(1.1); /* 悬浮时放大并上移 */
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
 }
 
 .socialLinks .dropdown {
@@ -44,26 +50,155 @@
 
 .socialLinks svg,
 .socialLinks svg path {
-  width: 1.5rem;
-  height: 1.5rem;
+  width: 1.8rem;  /* 增大图标尺寸 */
+  height: 1.8rem; /* 增大图标尺寸 */
 }
 
-@media (max-width: 570px) {
+@media (max-width: 768px) {
   .socialLinks {
-    gap: 0.75rem;
+    gap: 1rem; /* 保持较大间距 */
     max-width: 100%;
-    padding: 0.5rem 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin: 0.5rem 0;
+    /* 确保在移动端导航栏中可见 */
+    position: relative;
+    z-index: 200;
   }
-  
+
   .socialLinks a {
-    width: 1.75rem;
-    height: 1.75rem;
-    padding: 0.125rem;
+    width: 2.2rem; /* 稍微减小但保持可见 */
+    height: 2.2rem;
+    padding: 0.2rem;
   }
-  
+
   .socialLinks svg,
   .socialLinks svg path {
-    width: 1.25rem;
-    height: 1.25rem;
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+}
+
+/* 更小屏幕的适配 */
+@media (max-width: 480px) {
+  .socialLinks {
+    gap: 0.8rem; /* 增加间距但保持紧凑 */
+    padding: 0.4rem;
+    /* 在更小的屏幕上使用更紧凑的布局 */
+    width: auto;
+    max-width: 90%;
+    /* 确保在移动端导航栏中可见 */
+    position: relative;
+    z-index: 200;
+    /* 确保在移动端导航栏中不被截断 */
+    overflow: visible;
+  }
+
+  .socialLinks a {
+    width: 2rem; /* 保持较大尺寸确保可见性 */
+    height: 2rem;
+    padding: 0.15rem;
+  }
+
+  .socialLinks svg,
+  .socialLinks svg path {
+    width: 1.4rem;
+    height: 1.4rem;
+  }
+}
+
+/* Hero组件中的社交链接特殊样式 */
+:global(.social-links-hero) {
+  /* 确保在Hero组件中的社交链接始终可见 */
+  position: relative;
+  z-index: 200 !important;
+  /* 增强毛玻璃效果，降低不透明度 */
+  background-color: rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(15px);
+  border-radius: 9999px;
+  padding: 0.5rem 1.2rem;
+  margin: 1rem auto;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  gap: 1rem; /* 按钮间距 */
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+/* Hero组件中的社交链接样式 */
+:global(.social-links-hero) a {
+  background-color: transparent;
+  border: none;
+  transition: all 0.25s ease;
+  width: 2.2rem;
+  height: 2.2rem;
+  padding: 0.3rem;
+  color: var(--ifm-color-primary);
+  border-radius: 50%; /* 确保默认状态也是圆形 */
+}
+
+/* Hero组件中的社交链接图标 */
+:global(.social-links-hero) svg,
+:global(.social-links-hero) svg path {
+  width: 1.6rem;
+  height: 1.6rem;
+}
+
+/* Hero组件中的社交链接悬浮效果 */
+:global(.social-links-hero) a:hover {
+  color: white;
+  background-color: var(--color);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 50%; /* 保持圆形外观 */
+}
+
+/* 暗色模式下的Hero社交链接 */
+html[data-theme='dark'] :global(.social-links-hero) {
+  background-color: rgba(30, 41, 59, 0.25);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+html[data-theme='dark'] :global(.social-links-hero) a {
+  background-color: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.05);
+}
+
+/* 移动端Hero社交链接适配 */
+@media (max-width: 768px) {
+  :global(.social-links-hero) {
+    padding: 0.4rem 1rem;
+    gap: 0.8rem;
+  }
+
+  :global(.social-links-hero) a {
+    width: 2rem;
+    height: 2rem;
+  }
+
+  :global(.social-links-hero) svg,
+  :global(.social-links-hero) svg path {
+    width: 1.4rem;
+    height: 1.4rem;
+  }
+}
+
+/* 更小屏幕的适配 */
+@media (max-width: 480px) {
+  :global(.social-links-hero) {
+    padding: 0.3rem 0.8rem;
+    gap: 0.6rem;
+  }
+
+  :global(.social-links-hero) a {
+    width: 1.8rem;
+    height: 1.8rem;
+  }
+
+  :global(.social-links-hero) svg,
+  :global(.social-links-hero) svg path {
+    width: 1.2rem;
+    height: 1.2rem;
   }
 }

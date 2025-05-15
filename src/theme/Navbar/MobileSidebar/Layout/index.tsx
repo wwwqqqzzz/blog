@@ -8,11 +8,14 @@ export default function NavbarMobileSidebarLayout({ header, primaryMenu, seconda
   return (
     <div className="navbar-sidebar">
       {header}
-      <UserCard isNavbar />
+      <div className="navbar-sidebar__user-card" style={{ overflow: 'visible' }}>
+        <UserCard isNavbar />
+      </div>
       <div
         className={cn('navbar-sidebar__items', {
           'navbar-sidebar__items--show-secondary': secondaryMenuShown,
         })}
+        style={{ marginTop: '1rem' }} // 增加间距，确保社交链接有足够空间
       >
         <div className="navbar-sidebar__item menu">{primaryMenu}</div>
         <div className="navbar-sidebar__item menu">{secondaryMenu}</div>

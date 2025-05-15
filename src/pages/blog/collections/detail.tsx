@@ -1,7 +1,7 @@
 import React from 'react'
 import Layout from '@theme/Layout'
 import { usePluginData } from '@docusaurus/useGlobalData'
-import { transformBlogItems, extractCollections } from '@site/src/utils/blog'
+import { extractCollections } from '@site/src/utils/blog'
 import type { BlogPostData, BlogCollection } from '@site/src/types/blog'
 import { motion } from 'framer-motion'
 import { Icon } from '@iconify/react'
@@ -9,36 +9,24 @@ import Link from '@docusaurus/Link'
 import { cn } from '@site/src/lib/utils'
 import { useLocation } from '@docusaurus/router'
 import NotFound from '@theme/NotFound'
+import { getCollectionData, defaultCollectionImage, defaultCollectionDescription } from '@site/data/collections'
 
 /**
  * 博客系列详情页面
  * 展示特定系列的所有文章
  */
-export default function CollectionDetailPage(): React.ReactNode {
+export default function CollectionDetailPage(): JSX.Element {
   const location = useLocation()
-
-  // 从URL路径中提取系列名称
-  const pathParts = location.pathname.split('/')
-  const encodedCollectionName = pathParts[pathParts.length - 1] || ''
-
-  // 解码URL参数，得到原始系列名称
-  let collectionName
-  try {
-    collectionName = decodeURIComponent(encodedCollectionName)
-  }
-  catch (e) {
-    collectionName = encodedCollectionName // 解码失败时使用原始值
-  }
-
-  // 特殊处理Git教程系列
-  const isGitTutorial
-    = collectionName === 'Git教程'
-      || collectionName === 'git教程'
-      || collectionName.toLowerCase().includes('git')
-
-  if (isGitTutorial) {
-    // 标准化Git教程的名称
-    collectionName = 'Git教程'
+  
+  // 从URL查询参数中获取集合名称
+  const searchParams = new URLSearchParams(location.search)
+  const collectionName = searchParams.get('name') || ''
+  
+  console.log('CollectionDetailPage: 当前查找的系列名称', collectionName)
+  
+  if (!collectionName) {
+    console.log('CollectionDetailPage: 未提供系列名称，显示404页面')
+    return <NotFound />
   }
 
   // 获取所有博客文章数据
@@ -49,12 +37,16 @@ export default function CollectionDetailPage(): React.ReactNode {
   // 转换为统一格式
   const allPosts: BlogPostData[] = React.useMemo(() => {
     if (!blogData?.blogPosts || !Array.isArray(blogData.blogPosts)) {
+      console.log('CollectionDetailPage: 没有找到博客文章数据')
       return []
     }
+
+    console.log('CollectionDetailPage: 原始博客文章数量', blogData.blogPosts.length)
 
     // 修改数据转换方式，直接使用metadata而不是通过content
     return blogData.blogPosts.map((post) => {
       if (!post.metadata) {
+        console.log('CollectionDetailPage: 文章缺少元数据', post.id)
         return {
           title: '',
           link: '',
@@ -78,6 +70,15 @@ export default function CollectionDetailPage(): React.ReactNode {
 
       // 确保从frontMatter中获取系列信息
       const frontMatter = metadata.frontMatter || {}
+
+      // 打印原始frontMatter以便调试
+      if (frontMatter.collection) {
+        console.log(`CollectionDetailPage: 文章 "${title}" 的系列信息:`, {
+          collection: frontMatter.collection,
+          order: frontMatter.collection_order,
+          description: frontMatter.collection_description,
+        })
+      }
 
       const {
         sticky = 0,
@@ -114,82 +115,69 @@ export default function CollectionDetailPage(): React.ReactNode {
   const collections: BlogCollection[] = React.useMemo(() => {
     // 检查文章中是否有系列信息
     const postsWithCollection = allPosts.filter(post => post.collection)
+    console.log('CollectionDetailPage: 带有系列信息的文章数量', postsWithCollection.length)
+
+    if (postsWithCollection.length > 0) {
+      console.log('CollectionDetailPage: 系列文章示例', postsWithCollection.slice(0, 3).map(post => ({
+        title: post.title,
+        collection: post.collection,
+        collectionOrder: post.collectionOrder,
+      })))
+    }
 
     // 提取所有系列
     const extractedCollections = extractCollections(allPosts)
+    console.log('CollectionDetailPage: 提取到的系列数量', extractedCollections.length)
+
+    if (extractedCollections.length > 0) {
+      console.log('CollectionDetailPage: 系列示例', extractedCollections.map(c => ({
+        id: c.id,
+        name: c.name,
+        postsCount: c.posts?.length || 0,
+      })))
+    }
 
     return extractedCollections
   }, [allPosts])
 
-  // 简化匹配逻辑：直接使用系列名称匹配
-  const currentCollection = collections.find(c => c.id === collectionName)
-
-  // 特殊处理Git教程系列
-  if (!currentCollection && isGitTutorial) {
-    const gitCollection = collections.find(c =>
-      c.id === 'Git教程'
-      || c.name === 'Git教程',
-    )
-
-    if (gitCollection) {
-      return (
-        <Layout title="Git教程 - 博客系列" description="Git版本控制系统教程系列文章">
-          <div className="container py-8">
-            <div className="mx-auto max-w-4xl">
-              <h1 className="mb-6 text-3xl font-bold">Git教程系列</h1>
-              <p className="mb-8 text-gray-600 dark:text-gray-400">
-                Git版本控制系统教程系列文章，从基础到高级，全面介绍Git的使用方法和最佳实践。
-              </p>
-
-              {/* 直接显示Git教程系列的文章 */}
-              <div className="space-y-6">
-                {gitCollection.posts.map((post, index) => (
-                  <div key={index} className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800">
-                    <h2 className="mb-2 text-xl font-bold">
-                      <a href={post.link} className="text-gray-900 hover:text-primary-600 dark:text-gray-100 dark:hover:text-primary-400">
-                        {post.title}
-                      </a>
-                    </h2>
-                    <p className="mb-4 text-gray-600 dark:text-gray-400">{post.description}</p>
-                    <div className="flex items-center justify-between">
-                      <a href={post.link} className="text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300">
-                        阅读文章 →
-                      </a>
-                      <span className="text-sm text-gray-500 dark:text-gray-400">
-                        {new Date(post.date).toLocaleDateString()}
-                      </span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </Layout>
-      )
-    }
-  }
+  // 查找当前系列
+  let currentCollection = collections.find(c => c.id === collectionName)
 
   // 如果找不到当前系列，尝试创建一个临时系列
   if (!currentCollection) {
+    console.log('CollectionDetailPage: 未找到匹配的系列，尝试创建临时系列')
+
     // 查找所有匹配的文章
     const seriesPosts = allPosts.filter(post => post.collection === collectionName)
+    console.log('CollectionDetailPage: 找到匹配的文章数量', seriesPosts.length)
 
     if (seriesPosts.length > 0) {
+      console.log('CollectionDetailPage: 创建临时系列', collectionName)
+
       // 创建临时系列
       const tempCollection = {
         id: collectionName,
         name: collectionName,
         description: `${collectionName}系列文章`,
         posts: seriesPosts,
-        path: `/blog/collections/${encodeURIComponent(collectionName)}`,
+        path: `/blog/collections/detail?name=${encodeURIComponent(collectionName)}`,
         slug: collectionName.toLowerCase().replace(/\s+/g, '-'),
         encodedSlug: encodeURIComponent(collectionName),
-        image: seriesPosts[0].image || '',
+        image: seriesPosts[0]?.image || '',
+      }
+
+      // 获取集合数据
+      const collectionData = getCollectionData(collectionName)
+      if (collectionData) {
+        console.log('CollectionDetailPage: 找到集合数据', collectionData)
+        tempCollection.description = collectionData.description || tempCollection.description
+        tempCollection.image = collectionData.image || tempCollection.image
       }
 
       currentCollection = tempCollection
     }
     else {
+      console.log('CollectionDetailPage: 未找到匹配的文章，显示404页面')
       // 如果没有找到匹配的文章，显示404页面
       return <NotFound />
     }
@@ -197,94 +185,122 @@ export default function CollectionDetailPage(): React.ReactNode {
 
   const { name, description, posts, image } = currentCollection
 
+  // 获取增强的集合数据
+  const collectionData = getCollectionData(currentCollection.id)
+
+  // 使用集合数据中的图片和描述，如果没有则使用默认值
+  const enhancedImage = collectionData?.image || image || defaultCollectionImage
+  const enhancedDescription = collectionData?.description || description || defaultCollectionDescription
+
   // 确保posts是一个数组
+  let postsArray = posts;
+
   if (posts && !Array.isArray(posts)) {
-    currentCollection.posts = Array.from(posts || [])
+    currentCollection.posts = Array.from(posts || []);
+    postsArray = currentCollection.posts;
   }
   else if (!posts || posts.length === 0) {
     // 尝试从所有文章中查找属于该系列的文章
-    const matchingPosts = allPosts.filter(post => post.collection === name)
+    const matchingPosts = allPosts.filter(post => post.collection === name);
+    console.log('CollectionDetailPage: 找到匹配的文章数量', matchingPosts.length);
 
     if (matchingPosts.length > 0) {
       // 如果找到了匹配的文章，但系列中没有文章，说明系列提取逻辑有问题
       // 直接使用匹配的文章
-      currentCollection.posts = matchingPosts
-
-      // 更新posts变量
-      posts = matchingPosts
+      currentCollection.posts = matchingPosts;
+      postsArray = matchingPosts;
+      console.log('CollectionDetailPage: 使用匹配的文章替换空集合');
     }
+  } else {
+    postsArray = posts;
   }
 
   // 确保文章按照顺序排序
-  if (posts && posts.length > 0) {
+  if (postsArray && postsArray.length > 0) {
+    console.log('CollectionDetailPage: 对文章进行排序和验证，文章数量', postsArray.length);
+
     // 检查文章数据的完整性
-    const validPosts = posts.filter(post => post && post.title)
-    if (validPosts.length !== posts.length) {
-      currentCollection.posts = validPosts
+    const validPosts = postsArray.filter((post: BlogPostData) => post && post.title);
+    if (validPosts.length !== postsArray.length) {
+      console.log('CollectionDetailPage: 过滤掉无效文章，有效文章数量', validPosts.length);
+      currentCollection.posts = validPosts;
+      postsArray = validPosts;
     }
 
     // 对文章进行排序
     try {
-      posts.sort((a, b) => {
+      // 创建一个副本进行排序，避免直接修改原数组
+      const sortedPosts = [...postsArray].sort((a: BlogPostData, b: BlogPostData) => {
         // 首先按照 collectionOrder 排序
-        const orderA = typeof a.collectionOrder === 'number' ? a.collectionOrder : 9999
-        const orderB = typeof b.collectionOrder === 'number' ? b.collectionOrder : 9999
+        const orderA = typeof a.collectionOrder === 'number' ? a.collectionOrder : 9999;
+        const orderB = typeof b.collectionOrder === 'number' ? b.collectionOrder : 9999;
 
         if (orderA !== orderB) {
-          return orderA - orderB
+          return orderA - orderB;
         }
 
         // 如果 collectionOrder 相同，按照日期排序
         try {
-          const dateA = new Date(a.date || '').getTime()
-          const dateB = new Date(b.date || '').getTime()
-          return dateB - dateA
+          const dateA = new Date(a.date || '').getTime();
+          const dateB = new Date(b.date || '').getTime();
+          return dateB - dateA;
         }
         catch (e) {
-          return 0
+          return 0;
         }
-      })
+      });
+
+      // 更新排序后的文章列表
+      currentCollection.posts = sortedPosts;
+      postsArray = sortedPosts;
+      console.log('CollectionDetailPage: 文章排序完成');
     }
     catch (error) {
-      // 排序失败时不做任何处理
+      console.error('CollectionDetailPage: 文章排序失败', error);
     }
 
     // 确保每篇文章都有必要的字段
-    posts.forEach((post) => {
-      if (!post.title) post.title = '无标题'
-      if (!post.link) post.link = '#'
-      if (!post.description) post.description = ''
-    })
+    postsArray.forEach((post: BlogPostData) => {
+      if (!post.title) post.title = '无标题';
+      if (!post.link) post.link = '#';
+      if (!post.description) post.description = '';
+    });
   }
 
-  // 默认封面图
-  const defaultImage = 'https://source.unsplash.com/random/1200x400/?book'
-
   // 最后的安全检查
-  if (!posts || !Array.isArray(posts)) {
-    currentCollection.posts = []
+  if (!postsArray || !Array.isArray(postsArray) || postsArray.length === 0) {
+    console.log('CollectionDetailPage: 最后安全检查 - 文章数组为空或无效');
 
     // 尝试从所有文章中查找属于该系列的文章
-    const matchingPosts = allPosts.filter(post => post.collection === name)
+    const matchingPosts = allPosts.filter(post => post.collection === name);
+    console.log('CollectionDetailPage: 最后安全检查 - 找到匹配的文章数量', matchingPosts.length);
+
     if (matchingPosts.length > 0) {
-      currentCollection.posts = matchingPosts
+      currentCollection.posts = matchingPosts;
+      postsArray = matchingPosts;
+      console.log('CollectionDetailPage: 最后安全检查 - 使用匹配的文章');
+    } else {
+      // 如果仍然找不到文章，确保posts数组至少是空数组而不是null或undefined
+      currentCollection.posts = [];
+      postsArray = [];
     }
   }
 
   // 确保我们有一个可用的posts数组
-  const safePostsArray = Array.isArray(currentCollection.posts) ? currentCollection.posts : []
+  const safePostsArray = Array.isArray(currentCollection.posts) ? currentCollection.posts : [];
+  console.log('CollectionDetailPage: 最终文章数量', safePostsArray.length);
 
   return (
     <Layout
       title={`${name} - 博客系列`}
-      description={description}
+      description={enhancedDescription}
     >
       <div>
         {/* 系列封面 */}
         <div className="relative">
           <div className="h-64 w-full overflow-hidden md:h-80">
             <img
-              src={image || defaultImage}
+              src={enhancedImage}
               alt={name}
               className="size-full object-cover"
             />
@@ -300,7 +316,7 @@ export default function CollectionDetailPage(): React.ReactNode {
                 <span>{name}</span>
               </div>
               <h1 className="mt-2 text-3xl font-bold text-white md:text-4xl">{name}</h1>
-              <p className="mt-2 max-w-2xl text-white/90 md:text-lg">{description}</p>
+              <p className="mt-2 max-w-3xl text-white/90 md:text-lg">{enhancedDescription}</p>
               <div className="mt-4 flex items-center text-white/80">
                 <Icon icon="ri:article-line" className="mr-2" />
                 <span>
@@ -313,7 +329,7 @@ export default function CollectionDetailPage(): React.ReactNode {
                     <span className="mx-2">•</span>
                     <span>
                       最近更新:
-                      {new Date(safePostsArray[0].date).toLocaleDateString()}
+                      {new Date(safePostsArray[0]?.date || new Date()).toLocaleDateString()}
                     </span>
                   </>
                 )}
@@ -341,7 +357,7 @@ export default function CollectionDetailPage(): React.ReactNode {
 
                       {/* 文章列表渲染 */}
                       <div className="mt-8">
-                        {safePostsArray.map((post, index) => (
+                        {safePostsArray.map((post: BlogPostData, index: number) => (
                           <div
                             key={index}
                             className="relative mb-4 rounded-lg border border-gray-200 bg-white p-6 shadow-sm transition-all hover:-translate-y-1 hover:shadow-md dark:border-gray-700 dark:bg-gray-800"
@@ -415,98 +431,5 @@ export default function CollectionDetailPage(): React.ReactNode {
         </div>
       </div>
     </Layout>
-  )
-}
-
-interface CollectionPostItemProps {
-  post: BlogPostData
-  index: number
-  totalPosts: number
-}
-
-/**
- * 系列文章项组件
- */
-function CollectionPostItem({ post, index, totalPosts }: CollectionPostItemProps): React.ReactNode {
-  // 防止空对象导致错误
-  if (!post) {
-    return (
-      <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-red-700 dark:border-red-800 dark:bg-red-900/30 dark:text-red-400">
-        错误：文章数据为空
-      </div>
-    )
-  }
-
-  const {
-    title = '无标题',
-    description = '',
-    link = '#',
-    date = new Date().toISOString(),
-    image = '',
-    collectionOrder = 0,
-  } = post
-
-  // 确保日期是有效的
-  let formattedDate = ''
-  try {
-    formattedDate = new Date(date).toLocaleDateString()
-  }
-  catch (e) {
-    formattedDate = '未知日期'
-  }
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4, delay: index * 0.1 }}
-      className="group relative rounded-lg border border-gray-200 bg-white p-6 shadow-sm transition-all hover:-translate-y-1 hover:shadow-md dark:border-gray-700 dark:bg-gray-800"
-      style={{ display: 'block', visibility: 'visible', minHeight: '150px' }} // 确保卡片可见
-    >
-      <div className="absolute left-0 top-0 flex h-full items-center">
-        <div className="flex h-full flex-col items-center px-6">
-          <div className="flex size-8 items-center justify-center rounded-full bg-primary-100 text-sm font-bold text-primary-700 dark:bg-primary-900/30 dark:text-primary-300">
-            {index + 1}
-          </div>
-          {index < totalPosts - 1 && (
-            <div className="mt-2 h-full w-0.5 flex-1 bg-gray-200 dark:bg-gray-700" />
-          )}
-        </div>
-      </div>
-
-      <div className="ml-12">
-        <Link
-          to={link}
-          className="mb-2 block text-xl font-bold text-gray-900 hover:text-primary-600 hover:no-underline dark:text-gray-100 dark:hover:text-primary-400"
-        >
-          {title}
-        </Link>
-
-        <p className="mb-4 text-sm text-gray-600 dark:text-gray-400">
-          {description}
-        </p>
-
-        <div className="flex items-center justify-between">
-          <Link
-            to={link}
-            className="flex items-center text-sm font-medium text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300"
-          >
-            阅读文章
-            <Icon icon="ri:arrow-right-s-line" className="ml-1" />
-          </Link>
-
-          <span className="text-xs text-gray-500 dark:text-gray-400">
-            {formattedDate}
-            {collectionOrder !== undefined && (
-              <span className="ml-2 rounded-full bg-primary-100 px-2 py-0.5 text-xs font-medium text-primary-800 dark:bg-primary-900/30 dark:text-primary-300">
-                顺序:
-                {' '}
-                {collectionOrder}
-              </span>
-            )}
-          </span>
-        </div>
-      </div>
-    </motion.div>
-  )
+  );
 }

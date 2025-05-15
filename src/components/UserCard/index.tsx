@@ -75,12 +75,21 @@ export default function UserCard({ isNavbar = false }: { isNavbar?: boolean }) {
         </Link>
       </div>
       <SocialLinks
+        className="socialLinks_nm_K"
         style={{
           maxWidth: '100%',
-          padding: '0.5em 0',
+          padding: '0.8em 0',
           justifyContent: 'center',
-          gap: '0.5rem',
-          ...(isNavbar ? { borderBottom: '1px solid var(--ifm-border-color)' } : null),
+          gap: '1.2rem', /* 增加间距 */
+          position: 'relative',
+          zIndex: 200,
+          ...(isNavbar ? {
+            borderBottom: '1px solid var(--ifm-border-color)',
+            marginBottom: '0.8rem',
+            marginTop: '0.4rem',
+            display: 'flex',
+            flexWrap: 'wrap',
+          } : null),
         }}
       />
     </div>

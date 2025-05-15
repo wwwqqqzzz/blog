@@ -101,29 +101,12 @@ export default function SearchBox({
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [])
 
-  // 处理表单提交 - 触发本地搜索插件的搜索功能
+  // 处理表单提交 - 使用我们自己的 Fuse.js 搜索
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     if (searchTerm.trim()) {
-      // 触发本地搜索插件的搜索功能
-      // 这里我们通过模拟点击导航栏中的搜索按钮来实现
-      const searchButton = document.querySelector('.DocSearch-Button') as HTMLButtonElement
-      if (searchButton) {
-        searchButton.click()
-
-        // 等待搜索弹窗出现后，填入搜索词
-        setTimeout(() => {
-          const searchInput = document.querySelector('.DocSearch-Input') as HTMLInputElement
-          if (searchInput) {
-            searchInput.value = searchTerm
-            // 触发输入事件，让搜索插件执行搜索
-            searchInput.dispatchEvent(new Event('input', { bubbles: true }))
-          }
-        }, 100)
-      } else {
-        // 如果找不到搜索按钮，回退到原来的行为
-        history.push(`/blog?q=${encodeURIComponent(searchTerm)}`)
-      }
+      // 直接跳转到博客页面并传递搜索参数
+      history.push(`/blog?q=${encodeURIComponent(searchTerm)}`)
       setIsResultsVisible(false)
     }
   }

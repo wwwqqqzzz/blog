@@ -194,9 +194,18 @@ export default function Hero() {
           initial="hidden"
           animate="visible"
           variants={variants}
-          className="flex w-full flex-wrap items-center justify-center"
+          className="relative flex w-full flex-wrap items-center justify-center"
+          style={{
+            zIndex: 100, // 确保容器也有高z-index
+            position: 'relative',
+            marginTop: '1rem',
+            marginBottom: '1rem'
+          }}
         >
-          <SocialLinks />
+          {/* 社交媒体链接容器 */}
+          <div className="social-links-container" style={{ position: 'relative', zIndex: 200 }}>
+            <SocialLinks className="social-links-hero" />
+          </div>
         </motion.div>
 
         <motion.div
