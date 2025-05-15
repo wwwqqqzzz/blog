@@ -1,6 +1,6 @@
 import Fuse from 'fuse.js';
 import type { BlogPostData } from '../types/blog';
-import React from 'react';
+import React, { Fragment } from 'react';
 
 /**
  * 搜索结果项
@@ -52,7 +52,7 @@ export function createSearchIndex(posts: BlogPostData[]): Fuse<BlogPostData> {
     // 最小匹配字符长度
     minMatchCharLength: 2
   };
-  
+
   // 创建并返回 Fuse 实例
   return new Fuse(posts, options);
 }
@@ -73,7 +73,7 @@ export function searchPosts(
   if (!query || !query.trim()) {
     return [];
   }
-  
+
   // 执行搜索并限制结果数量
   return fuse.search(query, { limit });
 }
@@ -89,27 +89,27 @@ export function extractMatchSnippet(
   maxLength: number = 150
 ): { field: string; text: string }[] {
   const snippets: { field: string; text: string }[] = [];
-  
+
   // 如果没有匹配信息，返回空数组
   if (!result.matches || result.matches.length === 0) {
     return snippets;
   }
-  
+
   // 处理每个匹配字段
   result.matches.forEach(match => {
     const { key, value, indices } = match;
-    
+
     // 如果没有值或索引，跳过
     if (!value || !indices || indices.length === 0) {
       return;
     }
-    
+
     // 获取字段名称
     let fieldName = String(key);
     if (fieldName === 'tags.label') {
       fieldName = 'tags';
     }
-    
+
     // 如果是标签，直接使用匹配的标签作为片段
     if (fieldName === 'tags') {
       snippets.push({
@@ -118,18 +118,18 @@ export function extractMatchSnippet(
       });
       return;
     }
-    
+
     // 对于其他字段，提取上下文片段
     const firstMatch = indices[0];
     const [start, end] = firstMatch;
-    
+
     // 计算片段的起始和结束位置
     const snippetStart = Math.max(0, start - 30);
     const snippetEnd = Math.min(value.length, end + 100);
-    
+
     // 提取片段
     let snippet = value.substring(snippetStart, snippetEnd);
-    
+
     // 添加省略号
     if (snippetStart > 0) {
       snippet = '...' + snippet;
@@ -137,14 +137,14 @@ export function extractMatchSnippet(
     if (snippetEnd < value.length) {
       snippet = snippet + '...';
     }
-    
+
     // 添加到片段列表
     snippets.push({
       field: fieldName,
       text: snippet
     });
   });
-  
+
   return snippets;
 }
 
@@ -156,20 +156,20 @@ export function extractMatchSnippet(
  */
 export function highlightSearchMatch(text: string, query: string): React.ReactNode {
   if (!query || !text) return text;
-  
+
   const normalizedQuery = query.toLowerCase().trim();
   const queryTerms = normalizedQuery.split(/\s+/).filter(term => term.length > 1);
-  
+
   if (queryTerms.length === 0) return text;
-  
+
   // 创建正则表达式匹配所有查询词
   const regex = new RegExp(`(${queryTerms.map(term => term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|')})`, 'gi');
-  
+
   // 分割文本
   const parts = text.split(regex);
-  
+
   return (
-    <>
+    <Fragment>
       {parts.map((part, index) => {
         const isMatch = queryTerms.some(term => part.toLowerCase() === term);
         return isMatch ? (
@@ -178,6 +178,6 @@ export function highlightSearchMatch(text: string, query: string): React.ReactNo
           </mark>
         ) : part;
       })}
-    </>
+    </Fragment>
   );
 }
