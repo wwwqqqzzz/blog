@@ -144,60 +144,112 @@ export function extractMatchSnippet(
 ): { field: string; text: string }[] {
   const snippets: { field: string; text: string }[] = [];
 
-  // 如果没有匹配信息，返回空数组
-  if (!result.matches || result.matches.length === 0) {
-    return snippets;
-  }
+  try {
+    // 如果没有匹配信息，尝试从 item 中提取信息
+    if (!result.matches || result.matches.length === 0) {
+      console.log('extractMatchSnippet: 没有匹配信息，尝试从 item 中提取');
 
-  // 处理每个匹配字段
-  result.matches.forEach(match => {
-    const { key, value, indices } = match;
+      const post = result.item;
 
-    // 如果没有值或索引，跳过
-    if (!value || !indices || indices.length === 0) {
-      return;
-    }
-
-    // 获取字段名称
-    let fieldName = String(key);
-    if (fieldName === 'tags.label') {
-      fieldName = 'tags';
-    }
-
-    // 如果是标签，直接使用匹配的标签作为片段
-    if (fieldName === 'tags') {
+      // 添加标题片段
       snippets.push({
-        field: 'tags',
-        text: value
+        field: 'title',
+        text: post.title
       });
-      return;
+
+      // 添加描述片段（如果有）
+      if (post.description) {
+        snippets.push({
+          field: 'description',
+          text: post.description.length > maxLength
+            ? post.description.substring(0, maxLength) + '...'
+            : post.description
+        });
+      }
+
+      // 添加内容片段（如果有）
+      if (post.source) {
+        snippets.push({
+          field: 'content',
+          text: post.source.length > maxLength
+            ? post.source.substring(0, maxLength) + '...'
+            : post.source
+        });
+      }
+
+      return snippets;
     }
 
-    // 对于其他字段，提取上下文片段
-    const firstMatch = indices[0];
-    const [start, end] = firstMatch;
+    // 处理每个匹配字段
+    result.matches.forEach(match => {
+      const { key, value, indices } = match;
 
-    // 计算片段的起始和结束位置
-    const snippetStart = Math.max(0, start - 30);
-    const snippetEnd = Math.min(value.length, end + 100);
+      // 如果没有值，跳过
+      if (!value) {
+        return;
+      }
 
-    // 提取片段
-    let snippet = value.substring(snippetStart, snippetEnd);
+      // 获取字段名称
+      let fieldName = String(key);
+      if (fieldName === 'tags.label') {
+        fieldName = 'tags';
+      }
 
-    // 添加省略号
-    if (snippetStart > 0) {
-      snippet = '...' + snippet;
-    }
-    if (snippetEnd < value.length) {
-      snippet = snippet + '...';
-    }
+      // 如果是标签，直接使用匹配的标签作为片段
+      if (fieldName === 'tags') {
+        snippets.push({
+          field: 'tags',
+          text: value
+        });
+        return;
+      }
 
-    // 添加到片段列表
-    snippets.push({
-      field: fieldName,
-      text: snippet
+      // 对于其他字段，提取上下文片段
+      let snippet = '';
+
+      // 如果有索引信息，使用它来提取片段
+      if (indices && indices.length > 0) {
+        const firstMatch = indices[0];
+        const [start, end] = firstMatch;
+
+        // 计算片段的起始和结束位置
+        const snippetStart = Math.max(0, start - 30);
+        const snippetEnd = Math.min(value.length, end + 100);
+
+        // 提取片段
+        snippet = value.substring(snippetStart, snippetEnd);
+
+        // 添加省略号
+        if (snippetStart > 0) {
+          snippet = '...' + snippet;
+        }
+        if (snippetEnd < value.length) {
+          snippet = snippet + '...';
+        }
+      } else {
+        // 如果没有索引信息，使用整个值（最多 maxLength 个字符）
+        snippet = value.length > maxLength
+          ? value.substring(0, maxLength) + '...'
+          : value;
+      }
+
+      // 添加到片段列表
+      snippets.push({
+        field: fieldName,
+        text: snippet
+      });
     });
-  });
+  } catch (error) {
+    console.error('extractMatchSnippet: 提取片段时出错', error);
+
+    // 出错时，尝试添加一个基本片段
+    if (result.item && result.item.description) {
+      snippets.push({
+        field: 'description',
+        text: result.item.description
+      });
+    }
+  }
 
   return snippets;
 }
