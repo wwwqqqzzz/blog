@@ -68,6 +68,12 @@ export function transformBlogItems(items: BlogPostItemsProps['items']): BlogPost
       console.log('- 系列顺序:', collection_order)
       console.log('- 系列描述:', collection_description)
       console.log('- 原始frontMatter:', JSON.stringify(frontMatter, null, 2))
+
+      // 检查 source 字段
+      console.log('- 原始 source:', metadata.source ? '存在' : '不存在')
+      if (metadata.source) {
+        console.log('- source 示例:', metadata.source.substring(0, 100) + '...')
+      }
     }
 
     // Safely create date string
@@ -126,7 +132,7 @@ export function transformBlogItems(items: BlogPostItemsProps['items']): BlogPost
       pinned,
       image,
       // 添加原始内容引用，用于全文搜索
-      source: metadata.source || '',
+      source: metadata.source || metadata.description || '',
       // 添加系列相关信息
       collection: collection || '',
       collectionOrder: typeof collection_order === 'number' ? collection_order : 0,

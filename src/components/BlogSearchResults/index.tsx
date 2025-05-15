@@ -28,9 +28,31 @@ export function BlogSearchResults(): React.ReactNode {
   // 转换为统一格式
   const allPosts: BlogPostData[] = useMemo(() => {
     if (!blogData?.blogPosts || !Array.isArray(blogData.blogPosts)) {
+      console.error('BlogSearchResults: 无法获取博客数据');
       return [];
     }
-    return transformBlogItems(blogData.blogPosts.map(post => ({ content: post.content })));
+
+    console.log('BlogSearchResults: 获取到博客数据', blogData.blogPosts.length);
+
+    // 检查博客数据结构
+    if (blogData.blogPosts.length > 0) {
+      console.log('BlogSearchResults: 博客数据示例', blogData.blogPosts[0]);
+    }
+
+    const transformedPosts = transformBlogItems(blogData.blogPosts.map(post => ({ content: post.content })));
+    console.log('BlogSearchResults: 转换后的博客数据', transformedPosts.length);
+
+    // 检查转换后的数据结构
+    if (transformedPosts.length > 0) {
+      console.log('BlogSearchResults: 转换后的博客数据示例', {
+        title: transformedPosts[0].title,
+        description: transformedPosts[0].description,
+        tags: transformedPosts[0].tags,
+        source: transformedPosts[0].source?.substring(0, 100) + '...' // 只显示前100个字符
+      });
+    }
+
+    return transformedPosts;
   }, [blogData?.blogPosts]);
 
   // 创建 Fuse.js 搜索索引
@@ -41,24 +63,106 @@ export function BlogSearchResults(): React.ReactNode {
   // 执行搜索
   useEffect(() => {
     if (!searchQuery.trim() || !searchIndex) {
+      console.log('BlogSearchResults: 搜索查询为空或搜索索引不存在');
       setSearchResults([]);
       return;
     }
+
+    console.log(`BlogSearchResults: 开始搜索 "${searchQuery}"`);
+    console.log('BlogSearchResults: 搜索索引包含文章数量', allPosts.length);
 
     setIsSearching(true);
 
     // 使用 setTimeout 避免阻塞 UI
     setTimeout(() => {
-      const results = searchPosts(searchIndex, searchQuery, 20);
-      setSearchResults(results);
-      setIsSearching(false);
+      try {
+        const results = searchPosts(searchIndex, searchQuery, 20);
+        console.log(`BlogSearchResults: 搜索结果数量`, results.length);
+
+        // 如果没有结果，打印更多调试信息
+        if (results.length === 0) {
+          console.log('BlogSearchResults: 没有找到匹配的文章');
+          console.log('BlogSearchResults: 尝试手动搜索第一篇文章');
+
+          // 手动检查第一篇文章是否包含搜索词
+          if (allPosts.length > 0) {
+            const firstPost = allPosts[0];
+            console.log('BlogSearchResults: 第一篇文章标题', firstPost.title);
+            console.log('BlogSearchResults: 第一篇文章描述', firstPost.description);
+            console.log('BlogSearchResults: 第一篇文章标签', firstPost.tags.map(t => t.label).join(', '));
+
+            const titleMatch = firstPost.title.toLowerCase().includes(searchQuery.toLowerCase());
+            const descMatch = firstPost.description?.toLowerCase().includes(searchQuery.toLowerCase());
+            const tagMatch = firstPost.tags.some(tag => tag.label.toLowerCase().includes(searchQuery.toLowerCase()));
+            const contentMatch = firstPost.source?.toLowerCase().includes(searchQuery.toLowerCase());
+
+            console.log('BlogSearchResults: 手动匹配结果', {
+              titleMatch,
+              descMatch,
+              tagMatch,
+              contentMatch
+            });
+          }
+        } else {
+          // 打印第一个结果的详细信息
+          console.log('BlogSearchResults: 第一个搜索结果', {
+            title: results[0].item.title,
+            score: results[0].score,
+            matches: results[0].matches
+          });
+        }
+
+        setSearchResults(results);
+      } catch (error) {
+        console.error('BlogSearchResults: 搜索过程中出错', error);
+      } finally {
+        setIsSearching(false);
+      }
     }, 0);
-  }, [searchQuery, searchIndex]);
+  }, [searchQuery, searchIndex, allPosts]);
+
+  // 手动搜索函数，用于调试
+  const manualSearch = () => {
+    if (!allPosts.length) {
+      console.log('手动搜索: 没有文章数据');
+      return;
+    }
+
+    console.log(`手动搜索: 开始搜索 "${searchQuery}" 在 ${allPosts.length} 篇文章中`);
+
+    // 简单的字符串匹配搜索
+    const results = allPosts.filter(post => {
+      const titleMatch = post.title.toLowerCase().includes(searchQuery.toLowerCase());
+      const descMatch = post.description?.toLowerCase().includes(searchQuery.toLowerCase());
+      const tagMatch = post.tags.some(tag => tag.label.toLowerCase().includes(searchQuery.toLowerCase()));
+      const contentMatch = post.source?.toLowerCase().includes(searchQuery.toLowerCase());
+
+      return titleMatch || descMatch || tagMatch || contentMatch;
+    });
+
+    console.log(`手动搜索: 找到 ${results.length} 个结果`);
+
+    if (results.length > 0) {
+      console.log('手动搜索: 第一个结果', {
+        title: results[0].title,
+        description: results[0].description?.substring(0, 50) + '...',
+        tags: results[0].tags.map(t => t.label).join(', '),
+        source: results[0].source ? results[0].source.substring(0, 50) + '...' : '无'
+      });
+    }
+  };
 
   // 如果没有搜索查询，不显示任何内容
   if (!searchQuery.trim()) {
     return null;
   }
+
+  // 调用手动搜索函数（仅用于调试）
+  React.useEffect(() => {
+    if (searchQuery && allPosts.length > 0) {
+      manualSearch();
+    }
+  }, [searchQuery, allPosts.length]);
 
   return (
     <div className="mb-10">

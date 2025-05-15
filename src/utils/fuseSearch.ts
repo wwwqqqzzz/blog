@@ -42,18 +42,43 @@ export function createSearchIndex(posts: BlogPostData[]): Fuse<BlogPostData> {
     includeScore: true,
     // 包含匹配位置信息
     includeMatches: true,
-    // 匹配阈值（0-1，越低越精确）
-    threshold: 0.4,
+    // 匹配阈值（0-1，越高越宽松）
+    threshold: 0.6,
     // 忽略位置，提高模糊匹配能力
     ignoreLocation: true,
-    // 使用 AND 逻辑，所有词都必须匹配
-    useExtendedSearch: true,
+    // 不使用 AND 逻辑，任何词匹配即可
+    useExtendedSearch: false,
     // 最小匹配字符长度
-    minMatchCharLength: 2
+    minMatchCharLength: 1,
+    // 启用模糊搜索
+    isCaseSensitive: false,
+    // 模糊搜索距离
+    distance: 100,
+    // 启用模糊搜索
+    fuzzy: {
+      // 模糊搜索距离
+      distance: 3,
+    }
   };
 
+  // 检查文章数据
+  console.log(`createSearchIndex: 创建索引，文章数量 ${posts.length}`);
+
+  // 检查第一篇文章的数据结构
+  if (posts.length > 0) {
+    const firstPost = posts[0];
+    console.log('createSearchIndex: 第一篇文章数据', {
+      title: firstPost.title,
+      description: firstPost.description,
+      tags: firstPost.tags.map(t => t.label).join(', '),
+      source: firstPost.source ? `${firstPost.source.substring(0, 50)}...` : '无'
+    });
+  }
+
   // 创建并返回 Fuse 实例
-  return new Fuse(posts, options);
+  const fuse = new Fuse(posts, options);
+  console.log(`createSearchIndex: 索引创建完成，文档数量 ${fuse['_docs']?.length || 0}`);
+  return fuse;
 }
 
 /**
@@ -70,11 +95,41 @@ export function searchPosts(
 ): FuseSearchResultItem[] {
   // 如果查询为空，返回空数组
   if (!query || !query.trim()) {
+    console.log('searchPosts: 查询为空');
     return [];
   }
 
-  // 执行搜索并限制结果数量
-  return fuse.search(query, { limit });
+  console.log(`searchPosts: 开始搜索 "${query}"`);
+
+  try {
+    // 检查 fuse 实例是否有效
+    if (!fuse || typeof fuse.search !== 'function') {
+      console.error('searchPosts: Fuse 实例无效');
+      return [];
+    }
+
+    // 检查索引中的文档数量
+    const docsCount = fuse['_docs']?.length || 0;
+    console.log(`searchPosts: 索引中的文档数量 ${docsCount}`);
+
+    // 执行搜索并限制结果数量
+    const results = fuse.search(query, { limit });
+    console.log(`searchPosts: 找到 ${results.length} 个结果`);
+
+    // 如果有结果，打印第一个结果的详细信息
+    if (results.length > 0) {
+      console.log('searchPosts: 第一个结果', {
+        title: results[0].item.title,
+        score: results[0].score,
+        matches: results[0].matches?.map(m => m.key)
+      });
+    }
+
+    return results;
+  } catch (error) {
+    console.error('searchPosts: 搜索过程中出错', error);
+    return [];
+  }
 }
 
 /**
