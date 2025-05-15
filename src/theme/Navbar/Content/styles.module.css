@@ -12,79 +12,22 @@ Hide color mode toggle in small viewports
   justify-content: center;
   width: 100%;
   padding: 0 1rem;
-  transition: all 0.3s ease;
 }
 
 .navbarItemsCenter {
   display: flex;
-  justify-content: space-between; /* 改为两端对齐 */
+  justify-content: center;
   align-items: center;
   flex-grow: 1;
   gap: 1rem;
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0.5rem 0; /* 添加上下内边距 */
-}
-
-/* 导航项容器 */
-.navbarItemsLeft {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
-
-.navbarItemsRight {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
-
-/* 导航项样式 */
-:global(.navbar__item) {
-  position: relative;
-  padding: 0.5rem 0.75rem;
-  font-weight: 500;
-  transition: all 0.2s ease;
-  border-radius: 0.375rem;
-}
-
-:global(.navbar__item:hover) {
-  background-color: rgba(0, 0, 0, 0.05);
-}
-
-:global(html[data-theme='dark'] .navbar__item:hover) {
-  background-color: rgba(255, 255, 255, 0.05);
-}
-
-/* 活动项样式 */
-:global(.navbar__item.navbar__link--active) {
-  position: relative;
-  font-weight: 600;
-}
-
-:global(.navbar__item.navbar__link--active::after) {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0.75rem;
-  right: 0.75rem;
-  height: 2px;
-  background: var(--ifm-navbar-link-hover-color);
-  border-radius: 2px;
 }
 
 /* 移动设备适配 */
-@media (max-width: 996px) {
+@media (max-width: 768px) {
   .navbarItemsCenter {
     justify-content: space-between;
     gap: 0.5rem;
-  }
-
-  .navbarItemsLeft, .navbarItemsRight {
-    gap: 0.5rem;
-  }
-
-  :global(.navbar__item) {
-    padding: 0.5rem;
   }
 }

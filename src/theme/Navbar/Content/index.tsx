@@ -45,13 +45,9 @@ function NavbarContentLayout({
 }) {
   return (
     <div className={`navbar__inner ${styles.centeredNavbar}`}>
-      <div className={styles.navbarItemsCenter}>
-        <div className={styles.navbarItemsLeft}>
-          {left}
-        </div>
-        <div className={styles.navbarItemsRight}>
-          {right}
-        </div>
+      <div className={`navbar__items ${styles.navbarItemsCenter}`}>
+        {left}
+        {right}
       </div>
     </div>
   )
