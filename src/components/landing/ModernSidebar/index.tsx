@@ -1,14 +1,29 @@
 import type { BlogPost } from '@docusaurus/plugin-content-blog'
-import { motion } from 'framer-motion'
 import React, { useState, useEffect, useCallback } from 'react'
-import { Icon } from '@iconify/react'
-import { fetchWeatherData, fetchLocationData, fetchDailyQuote, clearApiCache } from '../../../utils/api-helpers'
+// Try to safely import Icon
+let Icon: any
+try {
+  // Dynamic import to avoid potential issues
+  Icon = require('@iconify/react').Icon
+}
+catch (error) {
+  console.error('Error importing @iconify/react:', error)
+  // Fallback icon component
+  Icon = ({ icon, className }: { icon: string, className?: string }) => (
+    <span className={className || ''}>
+      Icon:
+      {icon}
+    </span>
+  )
+}
+import { fetchWeatherData, fetchLocationData, fetchDailyQuote } from '../../../utils/api-helpers'
+import { withErrorBoundary } from '../../../utils/component-debugger'
 
 /**
  * 现代化侧边栏组件
  * 显示时间、天气、每日一句和博客统计信息
  */
-export function ModernSidebar({
+function ModernSidebarComponent({
   filteredPosts,
 }: {
   filteredPosts: BlogPost[]
@@ -133,42 +148,51 @@ export function ModernSidebar({
         // 设置加载状态
         setWeather(prev => ({ ...prev, loading: true }))
 
-        // 清除缓存，确保获取最新数据
-        clearApiCache('cached_weather_data')
-        clearApiCache('cached_location_data')
+        // 不清除缓存，避免频繁API调用
+        // clearApiCache('cached_weather_data')
+        // clearApiCache('cached_location_data')
 
-        // 获取天气数据
-        const data = await fetchWeatherData()
+        try {
+          // 获取天气数据
+          const data = await fetchWeatherData()
 
-        if (data.code === '200' && data.now) {
-          // 获取城市名称
-          let locationName = '未知位置'
-          try {
-            const locationData = await fetchLocationData()
-            if (locationData && locationData.city) {
-              locationName = locationData.city
+          if (data && data.code === '200' && data.now) {
+            // 获取城市名称
+            let locationName = '未知位置'
+            try {
+              const locationData = await fetchLocationData()
+              if (locationData && locationData.city) {
+                locationName = locationData.city
+              }
             }
-          }
-          catch (locationError) {
-            // 位置获取失败时使用默认位置
-            locationName = '南京'
-          }
+            catch (locationError) {
+              console.warn('位置获取失败:', locationError)
+              // 位置获取失败时使用默认位置
+              locationName = '南京'
+            }
 
-          // 更新天气状态
-          const weatherIcon = data.now.icon ? getWeatherIcon(data.now.icon) : 'ri:question-line'
-          setWeather({
-            temp: `${data.now.temp}°C`,
-            condition: data.now.text,
-            icon: weatherIcon,
-            location: locationName,
-            loading: false,
-          })
+            // 更新天气状态
+            const weatherIcon = data.now.icon ? getWeatherIcon(data.now.icon) : 'ri:question-line'
+            setWeather({
+              temp: `${data.now.temp}°C`,
+              condition: data.now.text,
+              icon: weatherIcon,
+              location: locationName,
+              loading: false,
+            })
+          }
+          else {
+            console.warn('天气数据格式错误:', data)
+            throw new Error('天气数据格式错误')
+          }
         }
-        else {
-          throw new Error('天气数据格式错误')
+        catch (weatherError) {
+          console.warn('天气数据获取失败:', weatherError)
+          throw weatherError
         }
       }
       catch (error) {
+        console.warn('天气组件错误，使用默认数据:', error)
         // 出错时使用默认数据
         setWeather({
           temp: '25°C',
@@ -184,34 +208,42 @@ export function ModernSidebar({
     getWeatherData()
   }, [getWeatherIcon])
 
-  // 使用金山词霸每日一句API
+  // 使用每日一句功能
   useEffect(() => {
     const getQuoteData = async () => {
       try {
         // 设置加载状态
         setQuote(prev => ({ ...prev, loading: true }))
 
-        // 清除缓存，确保获取最新数据
-        clearApiCache('cached_daily_quote')
+        // 不清除缓存，避免频繁API调用
+        // clearApiCache('cached_daily_quote')
 
-        // 获取每日一句数据
-        const data = await fetchDailyQuote()
+        try {
+          // 获取每日一句数据
+          const data = await fetchDailyQuote()
 
-        if (data && data.content) {
-          // 更新每日一句状态
-          setQuote({
-            content: data.content,
-            translation: data.translation,
-            author: data.author || 'Daily English',
-            picture: data.picture,
-            loading: false,
-          })
+          if (data && data.content) {
+            // 更新每日一句状态
+            setQuote({
+              content: data.content,
+              translation: data.translation,
+              author: data.author || 'Daily English',
+              picture: data.picture,
+              loading: false,
+            })
+          }
+          else {
+            console.warn('每日一句数据格式错误:', data)
+            throw new Error('每日一句数据格式错误')
+          }
         }
-        else {
-          throw new Error('每日一句数据格式错误')
+        catch (quoteError) {
+          console.warn('每日一句数据获取失败:', quoteError)
+          throw quoteError
         }
       }
       catch (error) {
+        console.warn('每日一句组件错误，使用默认数据:', error)
         // 出错时使用默认数据
         const fallbackQuotes: QuoteData[] = [
           {
@@ -298,13 +330,7 @@ export function ModernSidebar({
   }
 
   return (
-    <motion.div
-      className="flex h-full flex-col gap-5 rounded-xl sm:gap-3 md:gap-4 lg:gap-5"
-      initial={{ opacity: 0, x: -20 }}
-      whileInView={{ opacity: 1, x: 0 }}
-      transition={{ duration: 0.5 }}
-      viewport={{ once: true }}
-    >
+    <div className="flex h-full flex-col gap-5 rounded-xl sm:gap-3 md:gap-4 lg:gap-5">
 
       {/* 2. 日期和天气卡片 */}
       <div className="relative overflow-hidden rounded-xl bg-gradient-to-br from-primary-500 to-primary-700 p-4 text-white shadow-md backdrop-blur-sm sm:p-3 md:p-4">
@@ -332,7 +358,7 @@ export function ModernSidebar({
       {/* 1. 图片展示区 */}
       <div className="overflow-hidden rounded-xl shadow-md sm:max-h-[120px] md:max-h-[150px] lg:max-h-none">
         <img
-          src="https://cdn.jsdelivr.net/gh/wwwqqqzzz/Image/img/1747239144143-b1c7aaf6f537f7b5778c0535d50941b5.gif"
+          src="https://cdn.jsdelivr.net/gh/wwwqqqzzz/Image/img/1747492894469-cd9d1672a6650fcd9f1e7757d49a40cd.gif"
           alt="动态展示"
           className="h-auto w-full object-cover sm:object-contain md:object-cover"
           loading="lazy"
@@ -461,6 +487,9 @@ export function ModernSidebar({
           </div>
         </div>
       </div>
-    </motion.div>
+    </div>
   )
 }
+
+// Export the component wrapped with an error boundary
+export const ModernSidebar = withErrorBoundary(ModernSidebarComponent, 'ModernSidebar')
