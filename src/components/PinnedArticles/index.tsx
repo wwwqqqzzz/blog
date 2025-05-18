@@ -12,10 +12,6 @@ interface PinnedArticlesProps {
    * 当前选中的标签（如果有）
    */
   currentTag?: string
-  /**
-   * 当前搜索查询（如果有）
-   */
-  searchQuery?: string
 }
 
 /**
@@ -25,7 +21,6 @@ interface PinnedArticlesProps {
 export default function PinnedArticles({
   items,
   currentTag = '',
-  searchQuery = '',
 }: PinnedArticlesProps): React.ReactNode | null {
   // 筛选出标记为pinned的文章
   const pinnedItems = items.filter(item => item.pinned)
@@ -35,8 +30,8 @@ export default function PinnedArticles({
     return null
   }
 
-  // 如果有搜索或标签筛选，显示提示信息
-  const hasFilters = currentTag || searchQuery
+  // 如果有标签筛选，显示提示信息
+  const hasFilters = !!currentTag
 
   return (
     <section className="mb-10 mt-6">
@@ -49,21 +44,9 @@ export default function PinnedArticles({
         ? (
             <div className="mb-6 rounded-lg bg-gray-50 p-4 text-center dark:bg-gray-800">
               <p className="text-sm text-gray-600 dark:text-gray-400">
-                {currentTag && (
-                  <>
-                    <span className="font-medium text-primary-600 dark:text-primary-400">置顶文章</span>
-                    {' '}
-                    始终显示，不受标签筛选影响。
-                    {searchQuery && ' 同时，'}
-                  </>
-                )}
-                {searchQuery && (
-                  <>
-                    <span className="font-medium text-primary-600 dark:text-primary-400">置顶文章</span>
-                    {' '}
-                    始终显示，不受搜索查询影响。
-                  </>
-                )}
+                <span className="font-medium text-primary-600 dark:text-primary-400">置顶文章</span>
+                {' '}
+                始终显示，不受标签筛选影响。
               </p>
             </div>
           )

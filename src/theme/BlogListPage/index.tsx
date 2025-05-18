@@ -17,8 +17,6 @@ import { transformBlogItems, extractAllTags, filterPostsByTag } from '@site/src/
 import FeaturedArticles from '@site/src/components/FeaturedArticles'
 import PinnedArticles from '@site/src/components/PinnedArticles'
 import SimplifiedTagsFilter from '@site/src/components/SimplifiedTagsFilter'
-import SearchBox from '@site/src/components/SearchBox'
-import { BlogSearchResults } from '@site/src/components/BlogSearchResults'
 import BlogSortControls from '@site/src/components/blog/BlogSortControls'
 import { getArticleViewData } from '@site/src/utils/article-view-tracker'
 import { useEffect, useState } from 'react'
@@ -91,7 +89,6 @@ function BlogListPageContent(props: Props) {
   const history = useHistory()
   const queryParams = new URLSearchParams(location.search)
   const currentTag = queryParams.get('tag') || ''
-  const searchQuery = queryParams.get('q') || ''
   const sortBy = queryParams.get('sort') || 'newest'
 
   const { viewType, toggleViewType } = useViewType()
@@ -109,7 +106,7 @@ function BlogListPageContent(props: Props) {
   // 获取文章阅读数据（用于热度排序）
   const viewData = typeof window !== 'undefined' ? getArticleViewData() : {}
 
-  // 当标签筛选或搜索查询变化时，更新筛选后的文章列表
+  // 当标签筛选变化时，更新筛选后的文章列表
   useEffect(() => {
     let currentItems = items
 
@@ -122,66 +119,8 @@ function BlogListPageContent(props: Props) {
       })
     }
 
-    // 如果有搜索查询
-    if (searchQuery) {
-      const term = searchQuery.toLowerCase()
-      console.log('搜索词:', term)
-      console.log('搜索前文章数:', currentItems.length)
-
-      currentItems = currentItems.filter((item) => {
-        if (!item || !item.content || !item.content.metadata) {
-          return false
-        }
-
-        const { metadata } = item.content
-
-        // 调试信息
-        console.log('检查文章:', metadata.title)
-
-        // 标题匹配
-        const title = (metadata.title || '').toLowerCase()
-        const titleMatch = title.includes(term)
-        if (titleMatch) console.log('- 标题匹配')
-
-        // 描述匹配
-        const description = (metadata.description || '').toLowerCase()
-        const descMatch = description.includes(term)
-        if (descMatch) console.log('- 描述匹配')
-
-        // 内容匹配（如果有）
-        let contentMatch = false
-        if (metadata.source) {
-          const content = metadata.source.toLowerCase()
-          contentMatch = content.includes(term)
-          if (contentMatch) console.log('- 内容匹配')
-        }
-
-        // 标签匹配逻辑改进
-        let tagMatch = false
-        if (metadata.tags && Array.isArray(metadata.tags)) {
-          // 直接遍历标签数组
-          tagMatch = metadata.tags.some((tag) => {
-            // 标签可能是字符串或对象
-            if (typeof tag === 'string') {
-              return tag.toLowerCase().includes(term)
-            }
-            if (tag && typeof tag === 'object' && 'label' in tag) {
-              return tag.label.toLowerCase().includes(term)
-            }
-            return false
-          })
-
-          if (tagMatch) console.log('- 标签匹配')
-        }
-
-        const matches = titleMatch || descMatch || contentMatch || tagMatch
-        return matches
-      })
-    }
-
-    console.log(`过滤后文章数: ${currentItems.length}`)
     setFilteredItems(currentItems)
-  }, [currentTag, searchQuery, items, blogItems])
+  }, [currentTag, items, blogItems])
 
   // 当筛选结果或排序方式变化时，排序文章
   useEffect(() => {
@@ -246,108 +185,87 @@ function BlogListPageContent(props: Props) {
         </p>
       </div>
 
-      {/* 搜索框 */}
-      <div className="mx-auto mb-8 max-w-md">
-        <SearchBox
-          placeholder="搜索文章标题、描述或标签..."
-          maxResults={5}
-        />
-      </div>
 
-      {/* 置顶文章区域 - 仅在没有搜索查询时显示 */}
-      {!searchQuery && (
-        <PinnedArticles
-          items={blogItems}
-          currentTag={currentTag}
-          searchQuery={searchQuery}
-        />
-      )}
 
-      {/* 标签筛选器 - 仅在没有搜索查询时显示 */}
-      {!searchQuery && (
-        <SimplifiedTagsFilter tags={allTags} maxTags={8} />
-      )}
+      {/* 置顶文章区域 */}
+      <PinnedArticles
+        items={blogItems}
+        currentTag={currentTag}
+      />
 
-      {/* 精选文章区域 - 仅在没有搜索和标签筛选时显示 */}
-      {!searchQuery && !currentTag && (
+      {/* 标签筛选器 */}
+      <SimplifiedTagsFilter tags={allTags} maxTags={8} />
+
+      {/* 精选文章区域 - 仅在没有标签筛选时显示 */}
+      {!currentTag && (
         <FeaturedArticles items={blogItems} />
       )}
 
-      {/* 排序和过滤控制 - 仅在没有搜索查询时显示 */}
-      {!searchQuery && (
-        <BlogSortControls
-          totalCount={sortedItems.length}
-          searchQuery={searchQuery}
-          currentTag={currentTag}
-        />
-      )}
+      {/* 排序和过滤控制 */}
+      <BlogSortControls
+        totalCount={sortedItems.length}
+        currentTag={currentTag}
+      />
 
-      {/* 视图切换 - 仅在没有搜索查询时显示 */}
-      {!searchQuery && (
-        <ViewTypeSwitch viewType={viewType} toggleViewType={toggleViewType} />
-      )}
+      {/* 视图切换 */}
+      <ViewTypeSwitch viewType={viewType} toggleViewType={toggleViewType} />
 
-      {/* 搜索结果 */}
-      {searchQuery ? (
-        <BlogSearchResults />
-      ) : null}
 
-      {/* 博客文章列表 - 仅在没有搜索查询时显示 */}
-      {!searchQuery && (
-        <div className="row">
-          <div className="col col--12">
-            {sortedItems.length > 0
-              ? (
-                  <>
-                    {isTimelineView && (
-                      <motion.div
-                        className="mb-8"
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ duration: 0.5 }}
-                      >
-                        <BlogPostTimelineItems items={sortedItems} />
-                      </motion.div>
-                    )}
-                    {isGridView && (
-                      <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ duration: 0.5 }}
-                      >
-                        <BlogPostGridItems items={sortedItems} />
-                      </motion.div>
-                    )}
-                    <BlogListPaginator metadata={metadata} />
-                  </>
-                )
-              : (
-                  <div className="my-10 text-center">
-                    <p className="text-lg text-gray-600 dark:text-gray-400">没有找到匹配的文章</p>
-                    <button
-                      className="mt-4 rounded-md bg-primary-500 px-4 py-2 text-white hover:bg-primary-600"
-                      onClick={() => {
-                        // 使用 React Router 的 history 对象
-                        const params = new URLSearchParams()
-                        // 只保留排序参数
-                        const sortValue = queryParams.get('sort')
-                        if (sortValue) {
-                          params.set('sort', sortValue)
-                        }
-                        // 使用 history.push 导航
-                        history.push({
-                          pathname: location.pathname,
-                          search: params.toString(),
-                        })
-                      }}
+
+      {/* 博客文章列表 */}
+      <div className="row">
+        <div className="col col--12">
+          {sortedItems.length > 0
+            ? (
+                <>
+                  {isTimelineView && (
+                    <motion.div
+                      className="mb-8"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ duration: 0.5 }}
                     >
-                      查看所有文章
-                    </button>
-                  </div>
-                )}
-          </div>
+                      <BlogPostTimelineItems items={sortedItems} />
+                    </motion.div>
+                  )}
+                  {isGridView && (
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ duration: 0.5 }}
+                    >
+                      <BlogPostGridItems items={sortedItems} />
+                    </motion.div>
+                  )}
+                  <BlogListPaginator metadata={metadata} />
+                </>
+              )
+            : (
+                <div className="my-10 text-center">
+                  <p className="text-lg text-gray-600 dark:text-gray-400">没有找到匹配的文章</p>
+                  <button
+                    className="mt-4 rounded-md bg-primary-500 px-4 py-2 text-white hover:bg-primary-600"
+                    onClick={() => {
+                      // 使用 React Router 的 history 对象
+                      const params = new URLSearchParams()
+                      // 只保留排序参数
+                      const sortValue = queryParams.get('sort')
+                      if (sortValue) {
+                        params.set('sort', sortValue)
+                      }
+                      // 使用 history.push 导航
+                      history.push({
+                        pathname: location.pathname,
+                        search: params.toString(),
+                      })
+                    }}
+                  >
+                    查看所有文章
+                  </button>
+                </div>
+              )}
         </div>
-      )}
+      </div>
       <BackToTopButton />
     </MyLayout>
   )

@@ -109,14 +109,7 @@ const config: Config = {
         <p>Copyright © 2024 - ${new Date().getFullYear()} 王起哲 | Built with Docusaurus.</p>
         `,
     },
-    // 禁用 Algolia 搜索配置，因为 API 密钥权限问题
-    // algolia: {
-    //   appId: 'GV6YN1ODMO',
-    //   apiKey: '50303937b0e4630bec4a20a14e3b7872',
-    //   indexName: 'wangqizhe',
-    //   contextualSearch: true,
-    //   searchParameters: {},
-    // },
+    // 搜索功能已完全禁用
     prism: {
       theme: themes.oneLight,
       darkTheme: themes.oneDark,
@@ -190,13 +183,6 @@ const config: Config = {
     'docusaurus-plugin-image-zoom',
     '@docusaurus/plugin-ideal-image',
     // ['docusaurus-plugin-baidu-tongji', { token: 'c9a3849aa75f9c4a4e65f846cd1a5155' }],
-    // 暂时移除本地搜索插件配置
-    // [
-    //   '@easyops-cn/docusaurus-search-local',
-    //   {
-    //     // 配置选项已移除
-    //   },
-    // ],
     [
       '@docusaurus/plugin-pwa',
       {

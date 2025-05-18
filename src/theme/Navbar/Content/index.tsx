@@ -3,9 +3,7 @@ import { splitNavbarItems, useNavbarMobileSidebar } from '@docusaurus/theme-comm
 import NavbarColorModeToggle from '@theme/Navbar/ColorModeToggle'
 import NavbarLogo from '@theme/Navbar/Logo'
 import NavbarMobileSidebarToggle from '@theme/Navbar/MobileSidebar/Toggle'
-import NavbarSearch from '@theme/Navbar/Search'
 import NavbarItem, { type Props as DocusaurusNavbarItemConfig } from '@theme/NavbarItem'
-import SearchBar from '@theme/SearchBar'
 import React, { type ReactNode, useEffect, useState } from 'react'
 import navbarConfig from '@site/data/navbar'
 import type { NavbarItemConfig } from '@site/src/types/navbar'
@@ -173,12 +171,6 @@ export default function NavbarContent() {
           <NavbarItems items={rightItems} />
           {/* 颜色模式切换按钮 */}
           <NavbarColorModeToggle className={styles.colorModeToggle} />
-          {/* 搜索框 */}
-          {!searchBarItem && (
-            <NavbarSearch>
-              <SearchBar />
-            </NavbarSearch>
-          )}
         </>
       )}
     />

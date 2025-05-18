@@ -1,5 +1,6 @@
 import { translate } from '@docusaurus/Translate'
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext'
+// @ts-ignore - 忽略扩展名问题
 import { Project, ProjectType, Tags, groupByProjects, projectTypeMap, projects } from '@site/data/projects'
 import { cn } from '@site/src/lib/utils'
 import ShowcaseCard from './_components/ShowcaseCard'

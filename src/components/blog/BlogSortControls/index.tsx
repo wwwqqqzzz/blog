@@ -24,10 +24,6 @@ interface BlogSortControlsProps {
    */
   totalCount: number
   /**
-   * 当前查询的搜索词
-   */
-  searchQuery?: string
-  /**
    * 当前选中的标签
    */
   currentTag?: string
@@ -39,11 +35,10 @@ interface BlogSortControlsProps {
 
 /**
  * 博客排序控制组件
- * 包含排序选项和搜索相关控制
+ * 包含排序选项和标签过滤控制
  */
 export default function BlogSortControls({
   totalCount,
-  searchQuery,
   currentTag,
   className,
 }: BlogSortControlsProps): React.ReactNode {
@@ -53,7 +48,7 @@ export default function BlogSortControls({
   const currentSort = queryParams.get('sort') || 'newest'
 
   // 是否有任何活跃的过滤器
-  const hasActiveFilters = !!searchQuery || !!currentTag
+  const hasActiveFilters = !!currentTag
 
   // 处理排序变化
   const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -76,15 +71,7 @@ export default function BlogSortControls({
     })
   }
 
-  // 清除搜索
-  const clearSearch = () => {
-    const params = new URLSearchParams(queryParams)
-    params.delete('q')
-    history.push({
-      pathname: location.pathname,
-      search: params.toString(),
-    })
-  }
+
 
   // 清除标签
   const clearTag = () => {
@@ -119,18 +106,7 @@ export default function BlogSortControls({
             </button>
           )}
 
-          {searchQuery && (
-            <div className="flex items-center gap-1 rounded-md bg-primary-50 px-2 py-1 text-xs text-primary-700 dark:bg-gray-700 dark:text-primary-300">
-              <Icon icon="ri:search-line" className="text-xs" />
-              <span className="max-w-[150px] truncate">{searchQuery}</span>
-              <button
-                onClick={clearSearch}
-                className="ml-1 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
-              >
-                <Icon icon="ri:close-line" className="text-xs" />
-              </button>
-            </div>
-          )}
+
 
           {currentTag && (
             <div className="flex items-center gap-1 rounded-md bg-primary-50 px-2 py-1 text-xs text-primary-700 dark:bg-gray-700 dark:text-primary-300">
