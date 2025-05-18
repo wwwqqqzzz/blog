@@ -1,3 +1,4 @@
+import React from 'react'
 import type { BlogPostData, BlogTag } from '../types/blog'
 
 /**
@@ -108,7 +109,7 @@ export function searchPosts(
   options: SearchOptions = {},
 ): SearchResults {
   const startTime = performance.now()
-  
+
   // 默认选项
   const {
     filters = {},
@@ -116,24 +117,24 @@ export function searchPosts(
     limit = 10,
     page = 1,
   } = options
-  
+
   // 过滤文章
   let filteredPosts = [...posts]
-  
+
   // 应用标签过滤器
   if (filters.tags && filters.tags.length > 0) {
     filteredPosts = filteredPosts.filter(post => {
       if (!post.tags || post.tags.length === 0) return false
-      return filters.tags.some(tag => 
+      return filters.tags.some(tag =>
         post.tags.some(postTag => postTag.label.toLowerCase() === tag.toLowerCase())
       )
     })
   }
-  
+
   // 应用日期范围过滤器
   if (filters.dateRange) {
     const { from, to } = filters.dateRange
-    
+
     if (from) {
       const fromDate = new Date(from)
       filteredPosts = filteredPosts.filter(post => {
@@ -141,7 +142,7 @@ export function searchPosts(
         return postDate >= fromDate
       })
     }
-    
+
     if (to) {
       const toDate = new Date(to)
       filteredPosts = filteredPosts.filter(post => {
@@ -150,7 +151,7 @@ export function searchPosts(
       })
     }
   }
-  
+
   // 应用系列/集合过滤器
   if (filters.collections && filters.collections.length > 0) {
     filteredPosts = filteredPosts.filter(post => {
@@ -158,28 +159,28 @@ export function searchPosts(
       return filters.collections.includes(post.collection)
     })
   }
-  
+
   // 如果有搜索查询，执行搜索
   let searchResults: SearchResultItem[] = []
-  
+
   if (query && query.trim()) {
     const normalizedQuery = query.toLowerCase().trim()
     const queryTerms = normalizedQuery.split(/\s+/).filter(term => term.length > 1)
-    
+
     searchResults = filteredPosts.map(post => {
       const matchedFields: string[] = []
       let score = 0
       const snippets: { field: string; text: string }[] = []
-      
+
       // 检查标题匹配
       if (post.title) {
         const titleLower = post.title.toLowerCase()
         const titleMatch = queryTerms.some(term => titleLower.includes(term))
-        
+
         if (titleMatch) {
           matchedFields.push('title')
           score += 10 // 标题匹配得分最高
-          
+
           // 创建标题片段
           snippets.push({
             field: 'title',
@@ -187,16 +188,16 @@ export function searchPosts(
           })
         }
       }
-      
+
       // 检查描述匹配
       if (post.description) {
         const descLower = post.description.toLowerCase()
         const descMatch = queryTerms.some(term => descLower.includes(term))
-        
+
         if (descMatch) {
           matchedFields.push('description')
           score += 5 // 描述匹配得分次之
-          
+
           // 创建描述片段
           const firstMatchTerm = queryTerms.find(term => descLower.includes(term))
           if (firstMatchTerm) {
@@ -204,7 +205,7 @@ export function searchPosts(
             const startIndex = Math.max(0, matchIndex - 30)
             const endIndex = Math.min(post.description.length, matchIndex + 100)
             const snippet = post.description.substring(startIndex, endIndex)
-            
+
             snippets.push({
               field: 'description',
               text: startIndex > 0 ? `...${snippet}` : snippet,
@@ -212,39 +213,39 @@ export function searchPosts(
           }
         }
       }
-      
+
       // 检查标签匹配
       if (post.tags && post.tags.length > 0) {
-        const tagMatch = post.tags.some(tag => 
+        const tagMatch = post.tags.some(tag =>
           tag.label && queryTerms.some(term => tag.label.toLowerCase().includes(term))
         )
-        
+
         if (tagMatch) {
           matchedFields.push('tags')
           score += 3 // 标签匹配得分较低
-          
+
           // 创建标签片段
           const matchedTags = post.tags
             .filter(tag => tag.label && queryTerms.some(term => tag.label.toLowerCase().includes(term)))
             .map(tag => tag.label)
             .join(', ')
-          
+
           snippets.push({
             field: 'tags',
             text: matchedTags,
           })
         }
       }
-      
+
       // 检查内容匹配（如果有）
       if (post.source) {
         const contentLower = post.source.toLowerCase()
         const contentMatch = queryTerms.some(term => contentLower.includes(term))
-        
+
         if (contentMatch) {
           matchedFields.push('content')
           score += 2 // 内容匹配得分最低
-          
+
           // 创建内容片段
           const firstMatchTerm = queryTerms.find(term => contentLower.includes(term))
           if (firstMatchTerm) {
@@ -252,7 +253,7 @@ export function searchPosts(
             const startIndex = Math.max(0, matchIndex - 30)
             const endIndex = Math.min(post.source.length, matchIndex + 100)
             const snippet = post.source.substring(startIndex, endIndex)
-            
+
             snippets.push({
               field: 'content',
               text: startIndex > 0 ? `...${snippet}` : snippet,
@@ -260,7 +261,7 @@ export function searchPosts(
           }
         }
       }
-      
+
       return {
         ...post,
         matchedFields,
@@ -277,7 +278,7 @@ export function searchPosts(
       snippets: [],
     }))
   }
-  
+
   // 应用排序
   switch (sort) {
     case 'relevance':
@@ -301,16 +302,16 @@ export function searchPosts(
       searchResults.sort((a, b) => b.title.localeCompare(a.title))
       break
   }
-  
+
   // 计算分页
   const total = searchResults.length
   const totalPages = Math.ceil(total / limit)
   const startIndex = (page - 1) * limit
   const endIndex = Math.min(startIndex + limit, total)
   const paginatedResults = searchResults.slice(startIndex, endIndex)
-  
+
   const endTime = performance.now()
-  
+
   return {
     items: paginatedResults,
     total,
@@ -328,18 +329,18 @@ export function searchPosts(
  */
 export function highlightSearchMatch(text: string, query: string): React.ReactNode {
   if (!query || !text) return text
-  
+
   const normalizedQuery = query.toLowerCase().trim()
   const queryTerms = normalizedQuery.split(/\s+/).filter(term => term.length > 1)
-  
+
   if (queryTerms.length === 0) return text
-  
+
   // 创建正则表达式匹配所有查询词
   const regex = new RegExp(`(${queryTerms.map(term => term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|')})`, 'gi')
-  
+
   // 分割文本
   const parts = text.split(regex)
-  
+
   return (
     <>
       {parts.map((part, index) => {
@@ -361,12 +362,12 @@ export function highlightSearchMatch(text: string, query: string): React.ReactNo
  */
 export function extractAllCollections(posts: BlogPostData[]): string[] {
   const collectionsSet = new Set<string>()
-  
+
   posts.forEach(post => {
     if (post.collection) {
       collectionsSet.add(post.collection)
     }
   })
-  
+
   return Array.from(collectionsSet)
 }

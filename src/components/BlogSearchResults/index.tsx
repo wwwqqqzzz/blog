@@ -3,11 +3,12 @@ import { useLocation } from '@docusaurus/router';
 import { usePluginData } from '@docusaurus/useGlobalData';
 import { transformBlogItems } from '@site/src/utils/blog';
 import type { BlogPostData } from '@site/src/types/blog';
-import { createSearchIndex, searchPosts, extractMatchSnippet, type FuseSearchResultItem } from '@site/src/utils/fuseSearch';
+import { createSearchIndex, extractMatchSnippet, type FuseSearchResultItem } from '@site/src/utils/fuseSearch';
 import { SearchHighlighter } from '@site/src/components/SearchHighlighter';
 import { Icon } from '@iconify/react';
 import Link from '@docusaurus/Link';
-import { cn } from '@site/src/lib/utils';
+// 导入 Fuse 类型
+import Fuse from 'fuse.js';
 
 /**
  * 博客搜索结果组件
@@ -283,8 +284,12 @@ export function BlogSearchResults(): React.ReactNode {
 
                   <p className="mt-2 text-sm text-gray-700 dark:text-gray-300">
                     {snippets.length > 0 && snippets[0].field !== 'tags'
-                      ? <SearchHighlighter text={snippets[0].text} query={searchQuery} />
-                      : <SearchHighlighter text={post.description} query={searchQuery} />}
+                      ? (
+                        <SearchHighlighter text={snippets[0].text} query={searchQuery} />
+                      )
+                      : (
+                        <SearchHighlighter text={post.description} query={searchQuery} />
+                      )}
                   </p>
 
                   {/* 显示匹配位置 */}
