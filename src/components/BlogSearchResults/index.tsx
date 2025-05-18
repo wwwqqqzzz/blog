@@ -224,14 +224,17 @@ export function BlogSearchResults(): React.ReactNode {
         </p>
       </div>
 
-      {isSearching ? (
-        <div className="flex items-center justify-center py-12">
-          <div className="flex items-center space-x-2">
-            <Icon icon="ri:loader-2-line" className="animate-spin text-2xl text-primary-500" />
-            <span className="text-sm text-gray-600 dark:text-gray-400">正在搜索...</span>
+      {isSearching
+        ? (
+          <div className="flex items-center justify-center py-12">
+            <div className="flex items-center space-x-2">
+              <Icon icon="ri:loader-2-line" className="animate-spin text-2xl text-primary-500" />
+              <span className="text-sm text-gray-600 dark:text-gray-400">正在搜索...</span>
+            </div>
           </div>
-        </div>
-      ) : searchResults.length > 0 ? (
+        )
+        : searchResults.length > 0
+          ? (
         <div className="space-y-6">
           {searchResults.map((result) => {
             const post = result.item;
@@ -303,7 +306,8 @@ export function BlogSearchResults(): React.ReactNode {
             );
           })}
         </div>
-      ) : (
+      )
+      : (
         <div className="my-10 rounded-lg border border-gray-200 bg-white p-8 text-center dark:border-gray-700 dark:bg-gray-800">
           <Icon icon="ri:search-line" className="mx-auto mb-4 text-4xl text-gray-400" />
           <h3 className="mb-2 text-lg font-medium text-gray-900 dark:text-gray-100">

@@ -342,7 +342,7 @@ export function highlightSearchMatch(text: string, query: string): React.ReactNo
   const parts = text.split(regex)
 
   return (
-    <>
+    <React.Fragment>
       {parts.map((part, index) => {
         const isMatch = queryTerms.some(term => part.toLowerCase() === term)
         return isMatch ? (
@@ -351,7 +351,7 @@ export function highlightSearchMatch(text: string, query: string): React.ReactNo
           </mark>
         ) : part
       })}
-    </>
+    </React.Fragment>
   )
 }
 
