@@ -299,8 +299,8 @@ export function extractCollections(items: BlogPostData[]): BlogCollection[] {
       }
 
       // 如果文章有系列描述且系列描述为空或是默认描述，使用该文章的系列描述
-      if (post.collectionDescription &&
-          (!collection.description || collection.description === `${post.collection}系列文章`)) {
+      if (post.collectionDescription
+        && (!collection.description || collection.description === `${post.collection}系列文章`)) {
         collection.description = post.collectionDescription
         console.log(`更新系列 "${post.collection}" 描述: "${post.collectionDescription}"`)
       }

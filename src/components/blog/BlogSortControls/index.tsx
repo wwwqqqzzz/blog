@@ -71,8 +71,6 @@ export default function BlogSortControls({
     })
   }
 
-
-
   // 清除标签
   const clearTag = () => {
     const params = new URLSearchParams(queryParams)
@@ -105,8 +103,6 @@ export default function BlogSortControls({
               清除全部筛选
             </button>
           )}
-
-
 
           {currentTag && (
             <div className="flex items-center gap-1 rounded-md bg-primary-50 px-2 py-1 text-xs text-primary-700 dark:bg-gray-700 dark:text-primary-300">

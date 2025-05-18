@@ -165,7 +165,7 @@ const config: Config = {
           customCss: [
             './src/css/custom.css',
             './src/css/tweet-theme.css',
-            './src/theme/Navbar/MobileSidebar/styles.css'
+            './src/theme/Navbar/MobileSidebar/styles.css',
           ],
         },
         sitemap: {

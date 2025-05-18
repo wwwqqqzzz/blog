@@ -185,8 +185,6 @@ function BlogListPageContent(props: Props) {
         </p>
       </div>
 
-
-
       {/* 置顶文章区域 */}
       <PinnedArticles
         items={blogItems}
@@ -209,8 +207,6 @@ function BlogListPageContent(props: Props) {
 
       {/* 视图切换 */}
       <ViewTypeSwitch viewType={viewType} toggleViewType={toggleViewType} />
-
-
 
       {/* 博客文章列表 */}
       <div className="row">

@@ -21,7 +21,7 @@ export interface NavbarLinkItem {
 export interface NavbarDropdownItem {
   type: 'dropdown'
   label: string
-  items: (NavbarLinkItem | { type: 'html'; value: string })[]
+  items: (NavbarLinkItem | { type: 'html', value: string })[]
   className?: string
   icon?: string
 }

@@ -123,10 +123,10 @@ export function searchPosts(
 
   // 应用标签过滤器
   if (filters.tags && filters.tags.length > 0) {
-    filteredPosts = filteredPosts.filter(post => {
+    filteredPosts = filteredPosts.filter((post) => {
       if (!post.tags || post.tags.length === 0) return false
       return filters.tags.some(tag =>
-        post.tags.some(postTag => postTag.label.toLowerCase() === tag.toLowerCase())
+        post.tags.some(postTag => postTag.label.toLowerCase() === tag.toLowerCase()),
       )
     })
   }
@@ -137,7 +137,7 @@ export function searchPosts(
 
     if (from) {
       const fromDate = new Date(from)
-      filteredPosts = filteredPosts.filter(post => {
+      filteredPosts = filteredPosts.filter((post) => {
         const postDate = new Date(post.date)
         return postDate >= fromDate
       })
@@ -145,7 +145,7 @@ export function searchPosts(
 
     if (to) {
       const toDate = new Date(to)
-      filteredPosts = filteredPosts.filter(post => {
+      filteredPosts = filteredPosts.filter((post) => {
         const postDate = new Date(post.date)
         return postDate <= toDate
       })
@@ -154,7 +154,7 @@ export function searchPosts(
 
   // 应用系列/集合过滤器
   if (filters.collections && filters.collections.length > 0) {
-    filteredPosts = filteredPosts.filter(post => {
+    filteredPosts = filteredPosts.filter((post) => {
       if (!post.collection) return false
       return filters.collections.includes(post.collection)
     })
@@ -167,10 +167,10 @@ export function searchPosts(
     const normalizedQuery = query.toLowerCase().trim()
     const queryTerms = normalizedQuery.split(/\s+/).filter(term => term.length > 1)
 
-    searchResults = filteredPosts.map(post => {
+    searchResults = filteredPosts.map((post) => {
       const matchedFields: string[] = []
       let score = 0
-      const snippets: { field: string; text: string }[] = []
+      const snippets: { field: string, text: string }[] = []
 
       // 检查标题匹配
       if (post.title) {
@@ -217,7 +217,7 @@ export function searchPosts(
       // 检查标签匹配
       if (post.tags && post.tags.length > 0) {
         const tagMatch = post.tags.some(tag =>
-          tag.label && queryTerms.some(term => tag.label.toLowerCase().includes(term))
+          tag.label && queryTerms.some(term => tag.label.toLowerCase().includes(term)),
         )
 
         if (tagMatch) {
@@ -269,7 +269,8 @@ export function searchPosts(
         snippets,
       }
     }).filter(result => result.matchedFields.length > 0)
-  } else {
+  }
+  else {
     // 如果没有搜索查询，所有过滤后的文章都是结果
     searchResults = filteredPosts.map(post => ({
       ...post,
@@ -285,7 +286,8 @@ export function searchPosts(
       // 如果有搜索查询，按相关性排序；否则按日期降序排序
       if (query && query.trim()) {
         searchResults.sort((a, b) => b.score - a.score)
-      } else {
+      }
+      else {
         searchResults.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
       }
       break
@@ -328,26 +330,26 @@ export function searchPosts(
  * @returns 高亮后的JSX元素
  */
 export function highlightSearchMatch(text: string, query: string): React.ReactNode {
-  if (!query || !text) return text;
+  if (!query || !text) return text
 
-  const normalizedQuery = query.toLowerCase().trim();
-  const queryTerms = normalizedQuery.split(/\s+/).filter(term => term.length > 1);
+  const normalizedQuery = query.toLowerCase().trim()
+  const queryTerms = normalizedQuery.split(/\s+/).filter(term => term.length > 1)
 
-  if (queryTerms.length === 0) return text;
+  if (queryTerms.length === 0) return text
 
   // 创建正则表达式匹配所有查询词
-  const regex = new RegExp(`(${queryTerms.map(term => term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|')})`, 'gi');
+  const regex = new RegExp(`(${queryTerms.map(term => term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|')})`, 'gi')
 
   // 分割文本
-  const parts = text.split(regex);
+  const parts = text.split(regex)
 
   // 创建结果数组
-  const result: React.ReactNode[] = [];
+  const result: React.ReactNode[] = []
 
   // 遍历分割后的部分
   for (let i = 0; i < parts.length; i++) {
-    const part = parts[i];
-    const isMatch = queryTerms.some(term => part.toLowerCase() === term);
+    const part = parts[i]
+    const isMatch = queryTerms.some(term => part.toLowerCase() === term)
 
     if (isMatch) {
       // 如果匹配，添加高亮标记
@@ -356,19 +358,20 @@ export function highlightSearchMatch(text: string, query: string): React.ReactNo
           'mark',
           {
             key: i,
-            className: 'rounded bg-primary-100 px-1 text-primary-900 dark:bg-primary-900 dark:text-primary-100'
+            className: 'rounded bg-primary-100 px-1 text-primary-900 dark:bg-primary-900 dark:text-primary-100',
           },
-          part
-        )
-      );
-    } else {
+          part,
+        ),
+      )
+    }
+    else {
       // 否则直接添加文本
-      result.push(part);
+      result.push(part)
     }
   }
 
   // 返回包装在Fragment中的结果
-  return React.createElement(React.Fragment, null, ...result);
+  return React.createElement(React.Fragment, null, ...result)
 }
 
 /**
@@ -379,7 +382,7 @@ export function highlightSearchMatch(text: string, query: string): React.ReactNo
 export function extractAllCollections(posts: BlogPostData[]): string[] {
   const collectionsSet = new Set<string>()
 
-  posts.forEach(post => {
+  posts.forEach((post) => {
     if (post.collection) {
       collectionsSet.add(post.collection)
     }

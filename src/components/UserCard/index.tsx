@@ -83,13 +83,15 @@ export default function UserCard({ isNavbar = false }: { isNavbar?: boolean }) {
           gap: '1.2rem', /* 增加间距 */
           position: 'relative',
           zIndex: 200,
-          ...(isNavbar ? {
-            borderBottom: '1px solid var(--ifm-border-color)',
-            marginBottom: '0.8rem',
-            marginTop: '0.4rem',
-            display: 'flex',
-            flexWrap: 'wrap',
-          } : null),
+          ...(isNavbar
+            ? {
+                borderBottom: '1px solid var(--ifm-border-color)',
+                marginBottom: '0.8rem',
+                marginTop: '0.4rem',
+                display: 'flex',
+                flexWrap: 'wrap',
+              }
+            : null),
         }}
       />
     </div>

@@ -36,14 +36,14 @@ function SocialLink({ href, icon, title, color, ...prop }: Props) {
 
 export default function SocialLinks({ ...prop }) {
   // 定义社交媒体图标的显示顺序
-  const socialOrder = ['github', 'juejin', 'x', 'email', 'discord', 'cloudmusic', 'rss'];
+  const socialOrder = ['github', 'juejin', 'x', 'email', 'discord', 'cloudmusic', 'rss']
 
   return (
     <div className={styles.socialLinks} {...prop}>
       {socialOrder
         .filter(key => social[key as keyof typeof social]?.href || (key === 'rss' && social['rss' as keyof typeof social]?.href))
-        .map(key => {
-          const { href, icon, title, color } = social[key as keyof typeof social] || social['rss'];
+        .map((key) => {
+          const { href, icon, title, color } = social[key as keyof typeof social] || social['rss']
           return (
             <SocialLink
               key={key}

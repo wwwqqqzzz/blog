@@ -7,19 +7,19 @@ export interface CollectionData {
   /**
    * 集合ID，与博客文章中的collection字段匹配
    */
-  id: string;
+  id: string
   /**
    * 集合名称（可选，默认使用id）
    */
-  name?: string;
+  name?: string
   /**
    * 集合描述
    */
-  description: string;
+  description: string
   /**
    * 集合封面图片URL
    */
-  image: string;
+  image: string
 }
 
 /**
@@ -75,8 +75,8 @@ export const collections: CollectionData[] = [
     id: '微前端架构',
     description: '微前端架构设计与实践指南。本系列深入探讨微前端的核心理念、技术选型、实现方案和最佳实践。从基础概念到框架对比，从路由集成到应用通信，从构建配置到部署策略，全面解析如何将庞大的前端应用拆分为独立开发、独立部署的微应用，以提高团队并行开发效率，降低系统复杂度，实现渐进式技术栈演进。',
     image: 'https://images.unsplash.com/photo-1558050032-160f36233a07?q=80&w=1200&auto=format&fit=crop',
-  }
-];
+  },
+]
 
 /**
  * 获取集合数据
@@ -84,15 +84,15 @@ export const collections: CollectionData[] = [
  * @returns 集合数据
  */
 export function getCollectionData(id: string): CollectionData | undefined {
-  return collections.find(collection => collection.id === id);
+  return collections.find(collection => collection.id === id)
 }
 
 /**
  * 默认集合封面图
  */
-export const defaultCollectionImage = 'https://images.unsplash.com/photo-1499750310107-5fef28a66643?q=80&w=1200&auto=format&fit=crop';
+export const defaultCollectionImage = 'https://images.unsplash.com/photo-1499750310107-5fef28a66643?q=80&w=1200&auto=format&fit=crop'
 
 /**
  * 默认集合描述
  */
-export const defaultCollectionDescription = '探索这个系列的文章，系统化学习相关知识，获取深入的技术见解和实践经验。';
+export const defaultCollectionDescription = '探索这个系列的文章，系统化学习相关知识，获取深入的技术见解和实践经验。'

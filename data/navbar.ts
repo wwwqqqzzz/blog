@@ -51,28 +51,28 @@ const navbarConfig: {
       label: '博客',
       to: '/blog',
       activeBaseRegex: '^/blog(/)?$',
-      className: 'navbar-item-blog'
+      className: 'navbar-item-blog',
     },
     {
       type: 'default',
       label: '项目',
       to: '/project',
       activeBaseRegex: '^/project(/)?$',
-      className: 'navbar-item-project'
+      className: 'navbar-item-project',
     },
     {
       type: 'default',
       label: '友链',
       to: '/friends',
       activeBaseRegex: '^/friends(/)?$',
-      className: 'navbar-item-friends'
+      className: 'navbar-item-friends',
     },
     {
       type: 'default',
       label: '关于',
       to: '/about',
       activeBaseRegex: '^/about(/)?$',
-      className: 'navbar-item-about'
+      className: 'navbar-item-about',
     },
     {
       type: 'dropdown',
@@ -83,28 +83,28 @@ const navbarConfig: {
           type: 'default',
           label: '归档',
           to: '/blog/archive',
-          className: 'navbar-dropdown-item-archive'
+          className: 'navbar-dropdown-item-archive',
         },
         {
           type: 'default',
           label: '系列',
           to: '/blog/collections',
-          className: 'navbar-dropdown-item-collections'
+          className: 'navbar-dropdown-item-collections',
         },
         {
           type: 'default',
           label: '技术笔记',
           to: '/docs/docusaurus-guides',
-          className: 'navbar-dropdown-item-docs'
+          className: 'navbar-dropdown-item-docs',
         },
         {
           type: 'default',
           label: '私密博客',
           to: '/private',
-          className: 'navbar-dropdown-item-private'
+          className: 'navbar-dropdown-item-private',
         },
-      ]
-    }
+      ],
+    },
   ],
 
   // 视觉效果配置
@@ -116,8 +116,8 @@ const navbarConfig: {
     // 启用悬停效果（在移动端会自动禁用）
     enableHoverEffect: true,
     // 启用滚动过渡效果（在移动端会自动禁用）
-    enableScrollTransition: true
-  }
+    enableScrollTransition: true,
+  },
 }
 
 export default navbarConfig

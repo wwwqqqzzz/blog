@@ -17,13 +17,13 @@ import { getCollectionData, defaultCollectionImage, defaultCollectionDescription
  */
 export default function CollectionDetailPage(): JSX.Element {
   const location = useLocation()
-  
+
   // 从URL查询参数中获取集合名称
   const searchParams = new URLSearchParams(location.search)
   const collectionName = searchParams.get('name') || ''
-  
+
   console.log('CollectionDetailPage: 当前查找的系列名称', collectionName)
-  
+
   if (!collectionName) {
     console.log('CollectionDetailPage: 未提供系列名称，显示404页面')
     return <NotFound />
@@ -193,38 +193,39 @@ export default function CollectionDetailPage(): JSX.Element {
   const enhancedDescription = collectionData?.description || description || defaultCollectionDescription
 
   // 确保posts是一个数组
-  let postsArray = posts;
+  let postsArray = posts
 
   if (posts && !Array.isArray(posts)) {
-    currentCollection.posts = Array.from(posts || []);
-    postsArray = currentCollection.posts;
+    currentCollection.posts = Array.from(posts || [])
+    postsArray = currentCollection.posts
   }
   else if (!posts || posts.length === 0) {
     // 尝试从所有文章中查找属于该系列的文章
-    const matchingPosts = allPosts.filter(post => post.collection === name);
-    console.log('CollectionDetailPage: 找到匹配的文章数量', matchingPosts.length);
+    const matchingPosts = allPosts.filter(post => post.collection === name)
+    console.log('CollectionDetailPage: 找到匹配的文章数量', matchingPosts.length)
 
     if (matchingPosts.length > 0) {
       // 如果找到了匹配的文章，但系列中没有文章，说明系列提取逻辑有问题
       // 直接使用匹配的文章
-      currentCollection.posts = matchingPosts;
-      postsArray = matchingPosts;
-      console.log('CollectionDetailPage: 使用匹配的文章替换空集合');
+      currentCollection.posts = matchingPosts
+      postsArray = matchingPosts
+      console.log('CollectionDetailPage: 使用匹配的文章替换空集合')
     }
-  } else {
-    postsArray = posts;
+  }
+  else {
+    postsArray = posts
   }
 
   // 确保文章按照顺序排序
   if (postsArray && postsArray.length > 0) {
-    console.log('CollectionDetailPage: 对文章进行排序和验证，文章数量', postsArray.length);
+    console.log('CollectionDetailPage: 对文章进行排序和验证，文章数量', postsArray.length)
 
     // 检查文章数据的完整性
-    const validPosts = postsArray.filter((post: BlogPostData) => post && post.title);
+    const validPosts = postsArray.filter((post: BlogPostData) => post && post.title)
     if (validPosts.length !== postsArray.length) {
-      console.log('CollectionDetailPage: 过滤掉无效文章，有效文章数量', validPosts.length);
-      currentCollection.posts = validPosts;
-      postsArray = validPosts;
+      console.log('CollectionDetailPage: 过滤掉无效文章，有效文章数量', validPosts.length)
+      currentCollection.posts = validPosts
+      postsArray = validPosts
     }
 
     // 对文章进行排序
@@ -232,63 +233,64 @@ export default function CollectionDetailPage(): JSX.Element {
       // 创建一个副本进行排序，避免直接修改原数组
       const sortedPosts = [...postsArray].sort((a: BlogPostData, b: BlogPostData) => {
         // 首先按照 collectionOrder 排序
-        const orderA = typeof a.collectionOrder === 'number' ? a.collectionOrder : 9999;
-        const orderB = typeof b.collectionOrder === 'number' ? b.collectionOrder : 9999;
+        const orderA = typeof a.collectionOrder === 'number' ? a.collectionOrder : 9999
+        const orderB = typeof b.collectionOrder === 'number' ? b.collectionOrder : 9999
 
         if (orderA !== orderB) {
-          return orderA - orderB;
+          return orderA - orderB
         }
 
         // 如果 collectionOrder 相同，按照日期排序
         try {
-          const dateA = new Date(a.date || '').getTime();
-          const dateB = new Date(b.date || '').getTime();
-          return dateB - dateA;
+          const dateA = new Date(a.date || '').getTime()
+          const dateB = new Date(b.date || '').getTime()
+          return dateB - dateA
         }
         catch (e) {
-          return 0;
+          return 0
         }
-      });
+      })
 
       // 更新排序后的文章列表
-      currentCollection.posts = sortedPosts;
-      postsArray = sortedPosts;
-      console.log('CollectionDetailPage: 文章排序完成');
+      currentCollection.posts = sortedPosts
+      postsArray = sortedPosts
+      console.log('CollectionDetailPage: 文章排序完成')
     }
     catch (error) {
-      console.error('CollectionDetailPage: 文章排序失败', error);
+      console.error('CollectionDetailPage: 文章排序失败', error)
     }
 
     // 确保每篇文章都有必要的字段
     postsArray.forEach((post: BlogPostData) => {
-      if (!post.title) post.title = '无标题';
-      if (!post.link) post.link = '#';
-      if (!post.description) post.description = '';
-    });
+      if (!post.title) post.title = '无标题'
+      if (!post.link) post.link = '#'
+      if (!post.description) post.description = ''
+    })
   }
 
   // 最后的安全检查
   if (!postsArray || !Array.isArray(postsArray) || postsArray.length === 0) {
-    console.log('CollectionDetailPage: 最后安全检查 - 文章数组为空或无效');
+    console.log('CollectionDetailPage: 最后安全检查 - 文章数组为空或无效')
 
     // 尝试从所有文章中查找属于该系列的文章
-    const matchingPosts = allPosts.filter(post => post.collection === name);
-    console.log('CollectionDetailPage: 最后安全检查 - 找到匹配的文章数量', matchingPosts.length);
+    const matchingPosts = allPosts.filter(post => post.collection === name)
+    console.log('CollectionDetailPage: 最后安全检查 - 找到匹配的文章数量', matchingPosts.length)
 
     if (matchingPosts.length > 0) {
-      currentCollection.posts = matchingPosts;
-      postsArray = matchingPosts;
-      console.log('CollectionDetailPage: 最后安全检查 - 使用匹配的文章');
-    } else {
+      currentCollection.posts = matchingPosts
+      postsArray = matchingPosts
+      console.log('CollectionDetailPage: 最后安全检查 - 使用匹配的文章')
+    }
+    else {
       // 如果仍然找不到文章，确保posts数组至少是空数组而不是null或undefined
-      currentCollection.posts = [];
-      postsArray = [];
+      currentCollection.posts = []
+      postsArray = []
     }
   }
 
   // 确保我们有一个可用的posts数组
-  const safePostsArray = Array.isArray(currentCollection.posts) ? currentCollection.posts : [];
-  console.log('CollectionDetailPage: 最终文章数量', safePostsArray.length);
+  const safePostsArray = Array.isArray(currentCollection.posts) ? currentCollection.posts : []
+  console.log('CollectionDetailPage: 最终文章数量', safePostsArray.length)
 
   return (
     <Layout
@@ -431,5 +433,5 @@ export default function CollectionDetailPage(): JSX.Element {
         </div>
       </div>
     </Layout>
-  );
+  )
 }

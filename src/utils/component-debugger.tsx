@@ -7,9 +7,9 @@ import React from 'react'
  */
 export function withErrorBoundary<P>(
   Component: React.ComponentType<P>,
-  componentName: string
+  componentName: string,
 ): React.ComponentType<P> {
-  class ComponentErrorBoundary extends React.Component<P, { hasError: boolean; error: Error | null }> {
+  class ComponentErrorBoundary extends React.Component<P, { hasError: boolean, error: Error | null }> {
     constructor(props: P) {
       super(props)
       this.state = { hasError: false, error: null }
@@ -32,9 +32,13 @@ export function withErrorBoundary<P>(
             margin: '10px',
             backgroundColor: '#ffebee',
             border: '1px solid #f44336',
-            borderRadius: '4px'
-          }}>
-            <h3>Error in {componentName}</h3>
+            borderRadius: '4px',
+          }}
+          >
+            <h3>
+              Error in
+              {componentName}
+            </h3>
             <p>{this.state.error?.message || 'Unknown error'}</p>
             <button
               onClick={() => this.setState({ hasError: false, error: null })}
@@ -44,7 +48,7 @@ export function withErrorBoundary<P>(
                 color: 'white',
                 border: 'none',
                 borderRadius: '4px',
-                cursor: 'pointer'
+                cursor: 'pointer',
               }}
             >
               Try Again
@@ -70,17 +74,17 @@ export function withErrorBoundary<P>(
  */
 export function wrapModuleWithErrorBoundaries<T extends Record<string, any>>(
   module: T,
-  moduleName: string
+  moduleName: string,
 ): T {
   const wrappedModule = { ...module }
 
-  Object.keys(module).forEach(key => {
+  Object.keys(module).forEach((key) => {
     const component = module[key]
     if (
-      typeof component === 'function' &&
-      (component.prototype?.isReactComponent || // Class component
-        component.$$typeof === Symbol.for('react.forward_ref') || // ForwardRef
-        component.$$typeof === Symbol.for('react.memo')) // Memo
+      typeof component === 'function'
+      && (component.prototype?.isReactComponent // Class component
+        || component.$$typeof === Symbol.for('react.forward_ref') // ForwardRef
+        || component.$$typeof === Symbol.for('react.memo')) // Memo
     ) {
       wrappedModule[key] = withErrorBoundary(component, `${moduleName}.${key}`)
     }
@@ -92,17 +96,17 @@ export function wrapModuleWithErrorBoundaries<T extends Record<string, any>>(
 /**
  * A component that renders its children with an error boundary
  */
-export function SafeRender({ 
-  children, 
-  componentName = 'Unknown' 
-}: { 
-  children: React.ReactNode, 
-  componentName?: string 
+export function SafeRender({
+  children,
+  componentName = 'Unknown',
+}: {
+  children: React.ReactNode
+  componentName?: string
 }): React.ReactElement {
   const ErrorBoundary = withErrorBoundary(
     ({ children }: { children: React.ReactNode }) => <>{children}</>,
-    componentName
+    componentName,
   )
-  
+
   return <ErrorBoundary>{children}</ErrorBoundary>
 }

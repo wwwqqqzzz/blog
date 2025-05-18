@@ -165,8 +165,8 @@ export default function SearchBox({
           >
             <ul className="max-h-60 overflow-y-auto">
               {searchResults.map((result, index) => {
-                const post = result.item;
-                const snippets = extractMatchSnippet(result);
+                const post = result.item
+                const snippets = extractMatchSnippet(result)
 
                 return (
                   <li
@@ -206,7 +206,9 @@ export default function SearchBox({
                           <div className="flex items-center gap-1">
                             <Icon icon="ri:search-line" className="text-xs text-gray-500 dark:text-gray-400" />
                             <span className="text-xs text-gray-500 dark:text-gray-400">
-                              匹配: {snippets.map(s => s.field).join(', ')}
+                              匹配:
+                              {' '}
+                              {snippets.map(s => s.field).join(', ')}
                             </span>
                           </div>
                         )}
@@ -216,14 +218,17 @@ export default function SearchBox({
                           <div className="flex items-center gap-1">
                             <Icon icon="ri:star-line" className="text-xs text-gray-500 dark:text-gray-400" />
                             <span className="text-xs text-gray-500 dark:text-gray-400">
-                              相关度: {Math.round((1 - result.score) * 100)}%
+                              相关度:
+                              {' '}
+                              {Math.round((1 - result.score) * 100)}
+                              %
                             </span>
                           </div>
                         )}
                       </div>
                     </Link>
                   </li>
-                );
+                )
               })}
             </ul>
 

@@ -33,8 +33,9 @@ class ErrorBoundary extends React.Component {
           margin: '20px',
           backgroundColor: '#ffebee',
           border: '1px solid #f44336',
-          borderRadius: '4px'
-        }}>
+          borderRadius: '4px',
+        }}
+        >
           <h2>Something went wrong</h2>
           <details style={{ whiteSpace: 'pre-wrap' }}>
             <summary>Show error details</summary>
@@ -67,12 +68,14 @@ export default function Root({ children }): React.ReactElement {
         if (args[0] && typeof args[0] === 'object') {
           try {
             originalConsoleError('Detailed error object:', JSON.stringify(args[0], null, 2))
-          } catch (e) {
+          }
+          catch (e) {
             originalConsoleError('Error object (non-serializable):', Object.keys(args[0]))
             for (const key in args[0]) {
               try {
                 originalConsoleError(`- ${key}:`, args[0][key])
-              } catch (err) {
+              }
+              catch (err) {
                 originalConsoleError(`- ${key}: [Cannot display value]`)
               }
             }
@@ -88,7 +91,7 @@ export default function Root({ children }): React.ReactElement {
           source,
           lineno,
           colno,
-          error: error ? error.stack : 'No error object'
+          error: error ? error.stack : 'No error object',
         })
 
         // 如果存在原始处理器则调用
@@ -103,7 +106,7 @@ export default function Root({ children }): React.ReactElement {
       window.onunhandledrejection = (event) => {
         console.error('Unhandled Promise Rejection:', {
           reason: event.reason,
-          stack: event.reason?.stack || 'No stack trace'
+          stack: event.reason?.stack || 'No stack trace',
         })
 
         // 如果存在原始处理器则调用
