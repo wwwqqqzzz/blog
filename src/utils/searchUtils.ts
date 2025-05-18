@@ -328,31 +328,47 @@ export function searchPosts(
  * @returns 高亮后的JSX元素
  */
 export function highlightSearchMatch(text: string, query: string): React.ReactNode {
-  if (!query || !text) return text
+  if (!query || !text) return text;
 
-  const normalizedQuery = query.toLowerCase().trim()
-  const queryTerms = normalizedQuery.split(/\s+/).filter(term => term.length > 1)
+  const normalizedQuery = query.toLowerCase().trim();
+  const queryTerms = normalizedQuery.split(/\s+/).filter(term => term.length > 1);
 
-  if (queryTerms.length === 0) return text
+  if (queryTerms.length === 0) return text;
 
   // 创建正则表达式匹配所有查询词
-  const regex = new RegExp(`(${queryTerms.map(term => term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|')})`, 'gi')
+  const regex = new RegExp(`(${queryTerms.map(term => term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|')})`, 'gi');
 
   // 分割文本
-  const parts = text.split(regex)
+  const parts = text.split(regex);
 
-  return (
-    <React.Fragment>
-      {parts.map((part, index) => {
-        const isMatch = queryTerms.some(term => part.toLowerCase() === term)
-        return isMatch ? (
-          <mark key={index} className="rounded bg-primary-100 px-1 text-primary-900 dark:bg-primary-900 dark:text-primary-100">
-            {part}
-          </mark>
-        ) : part
-      })}
-    </React.Fragment>
-  )
+  // 创建结果数组
+  const result: React.ReactNode[] = [];
+
+  // 遍历分割后的部分
+  for (let i = 0; i < parts.length; i++) {
+    const part = parts[i];
+    const isMatch = queryTerms.some(term => part.toLowerCase() === term);
+
+    if (isMatch) {
+      // 如果匹配，添加高亮标记
+      result.push(
+        React.createElement(
+          'mark',
+          {
+            key: i,
+            className: 'rounded bg-primary-100 px-1 text-primary-900 dark:bg-primary-900 dark:text-primary-100'
+          },
+          part
+        )
+      );
+    } else {
+      // 否则直接添加文本
+      result.push(part);
+    }
+  }
+
+  // 返回包装在Fragment中的结果
+  return React.createElement(React.Fragment, null, ...result);
 }
 
 /**
