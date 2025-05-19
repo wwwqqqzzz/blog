@@ -1,6 +1,6 @@
 // @ts-check
 /** @type {import('eslint').Linter.Config} */
-export default {
+module.exports = {
   root: true,
   // 完全禁用所有规则，只保留最基本的语法检查
   extends: [],
