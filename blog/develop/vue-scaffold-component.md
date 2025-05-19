@@ -7,6 +7,9 @@ tags: [Vue, 前端开发, 脚手架, 组件化]
 keywords: [Vue CLI, 组件开发, 单文件组件, Props, 自定义事件, 插槽]
 description: 全面介绍Vue脚手架(Vue CLI)的使用方法和组件化开发的核心概念，包括项目创建、组件通信、生命周期、混入等，帮助开发者构建结构清晰、可维护的Vue应用。
 image: https://cdn.jsdelivr.net/gh/wwwqqqzzz/Image/img/1747555805842-af5b3817dcb9564c2feb229d68d1acf9.png
+collection: Vue.js系列
+collection_order: 7
+collection_description: 这个系列全面介绍Vue.js的核心概念和高级特性，包括Vue 2和Vue 3，以及相关生态系统（Vue Router、Vuex、Pinia等），帮助你掌握这个流行的渐进式JavaScript框架。
 ---
 
 <!-- truncate -->
@@ -101,7 +104,7 @@ npm run lint
 
 ## 2. 单文件组件(.vue文件)
 
-Vue CLI项目使用单文件组件（Single File Components，简称SFC）。这是一种特殊的文件格式，扩展名为`.vue`，将组件的模板、脚本和样式封装在同一个文件中。 
+Vue CLI项目使用单文件组件（Single File Components，简称SFC）。这是一种特殊的文件格式，扩展名为`.vue`，将组件的模板、脚本和样式封装在同一个文件中。
 
 ### 2.1 单文件组件的基本结构
 

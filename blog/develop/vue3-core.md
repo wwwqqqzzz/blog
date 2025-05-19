@@ -7,6 +7,9 @@ tags: [Vue, JavaScript, 前端开发, 框架]
 keywords: [Vue3, Composition API, 响应式, 组件通信, 生命周期]
 description: 全面介绍Vue 3的核心语法和概念，包括Composition API、响应式系统、组件通信、生命周期钩子等，帮助开发者快速掌握Vue 3的新特性和最佳实践。
 image: https://cdn.jsdelivr.net/gh/wwwqqqzzz/Image/img/1747555805842-af5b3817dcb9564c2feb229d68d1acf9.png
+collection: Vue.js系列
+collection_order: 2
+collection_description: 这个系列全面介绍Vue.js的核心概念和高级特性，包括Vue 2和Vue 3，以及相关生态系统（Vue Router、Vuex、Pinia等），帮助你掌握这个流行的渐进式JavaScript框架。
 ---
 
 <!-- truncate -->

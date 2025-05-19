@@ -7,6 +7,9 @@ tags: [JavaScript, DOM, 前端开发, 定时器]
 keywords: [DOM操作, JavaScript定时器, 事件处理, 网页交互]
 description: 全面介绍DOM操作和JavaScript定时器的基础知识与实践技巧，包括元素选择、属性操作、事件处理以及各类定时器的使用方法，帮助开发者构建交互丰富的Web应用。
 image: https://cdn.jsdelivr.net/gh/wwwqqqzzz/Image/img/1747555805842-af5b3817dcb9564c2feb229d68d1acf9.png
+collection: JavaScript基础系列
+collection_order: 3
+collection_description: 这个系列涵盖了JavaScript的核心概念、DOM操作、ES6+特性和异步编程等内容，帮助你从零开始掌握JavaScript编程。
 ---
 
 <!-- truncate -->
@@ -345,7 +348,7 @@ let count = 0;
 const counterId = setInterval((max) => {
   count++;
   console.log(`计数：${count}`);
-  
+
   if (count >= max) {
     clearInterval(counterId); // 达到最大次数后停止
     console.log('计数结束');
@@ -365,7 +368,7 @@ clearInterval(intervalId);
 function animate() {
   // 更新动画状态
   element.style.left = (parseInt(element.style.left) || 0) + 1 + 'px';
-  
+
   // 如果还没到目标位置，继续请求下一帧
   if (parseInt(element.style.left) < 300) {
     requestAnimationFrame(animate);
@@ -395,28 +398,28 @@ class Component {
   constructor() {
     this.timerId = null;
   }
-  
+
   start() {
     // 启动前先清除可能存在的定时器
     this.stop();
-    
+
     // 使用箭头函数保持this指向
     this.timerId = setInterval(() => {
       this.update();
     }, 1000);
   }
-  
+
   update() {
     console.log('更新组件');
   }
-  
+
   stop() {
     if (this.timerId !== null) {
       clearInterval(this.timerId);
       this.timerId = null;
     }
   }
-  
+
   // 组件销毁时清除定时器
   destroy() {
     this.stop();
@@ -434,12 +437,12 @@ function createTodoList() {
   // 创建容器
   const container = document.createElement('div');
   container.className = 'todo-container';
-  
+
   // 创建输入框和按钮
   const input = document.createElement('input');
   input.type = 'text';
   input.placeholder = '输入新待办事项...';
-  
+
   const addButton = document.createElement('button');
   addButton.textContent = '添加';
   addButton.addEventListener('click', function() {
@@ -448,11 +451,11 @@ function createTodoList() {
       input.value = '';
     }
   });
-  
+
   // 创建列表
   const list = document.createElement('ul');
   list.className = 'todo-list';
-  
+
   // 使用事件委托处理列表项的点击
   list.addEventListener('click', function(event) {
     if (event.target.classList.contains('delete-btn')) {
@@ -461,25 +464,25 @@ function createTodoList() {
       event.target.classList.toggle('completed');
     }
   });
-  
+
   // 添加待办项的函数
   function addTodoItem(text) {
     const item = document.createElement('li');
     item.textContent = text;
-    
+
     const deleteBtn = document.createElement('button');
     deleteBtn.textContent = '删除';
     deleteBtn.className = 'delete-btn';
-    
+
     item.appendChild(deleteBtn);
     list.appendChild(item);
   }
-  
+
   // 组装组件
   container.appendChild(input);
   container.appendChild(addButton);
   container.appendChild(list);
-  
+
   return container;
 }
 
@@ -493,31 +496,31 @@ document.body.appendChild(createTodoList());
 function createCountdown(seconds, elementId) {
   const element = document.getElementById(elementId);
   if (!element) return;
-  
+
   let remainingTime = seconds;
-  
+
   // 更新显示
   function updateDisplay() {
     const minutes = Math.floor(remainingTime / 60);
     const seconds = remainingTime % 60;
     element.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
   }
-  
+
   // 初始显示
   updateDisplay();
-  
+
   // 启动倒计时
   const intervalId = setInterval(() => {
     remainingTime--;
     updateDisplay();
-    
+
     if (remainingTime <= 0) {
       clearInterval(intervalId);
       element.textContent = '时间到！';
       element.classList.add('expired');
     }
   }, 1000);
-  
+
   // 返回控制函数
   return {
     pause() {

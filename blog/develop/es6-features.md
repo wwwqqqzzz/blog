@@ -7,6 +7,9 @@ tags: [JavaScript, ES6, 前端开发, 编程语言]
 keywords: [ES6, JavaScript, 箭头函数, Promise, 解构赋值, 模块化]
 description: 全面详细介绍ES6及更高版本的JavaScript新特性，包括let/const声明、箭头函数、解构赋值、Promise异步处理等，帮助开发者快速掌握现代JavaScript编程技巧。
 image: https://cdn.jsdelivr.net/gh/wwwqqqzzz/Image/img/1747555805842-af5b3817dcb9564c2feb229d68d1acf9.png
+collection: JavaScript基础系列
+collection_order: 4
+collection_description: 这个系列涵盖了JavaScript的核心概念、DOM操作、ES6+特性和异步编程等内容，帮助你从零开始掌握JavaScript编程。
 ---
 
 <!-- truncate -->
@@ -235,12 +238,12 @@ class Person {
     this.name = name;
     this.age = age;
   }
-  
+
   // 方法
   sayHello() {
     return `你好，我是${this.name}，今年${this.age}岁`;
   }
-  
+
   // 静态方法
   static createAnonymous() {
     return new Person("匿名", 0);
@@ -257,11 +260,11 @@ class Student extends Person {
     super(name, age); // 调用父类构造函数
     this.grade = grade;
   }
-  
+
   study() {
     return `${this.name}正在学习`;
   }
-  
+
   // 覆盖父类方法
   sayHello() {
     return `${super.sayHello()}，我是${this.grade}年级学生`;

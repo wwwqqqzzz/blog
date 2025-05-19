@@ -7,6 +7,9 @@ tags: [Vue, 前端开发, 路由, 状态管理]
 keywords: [Vue Router, Vuex, 前端路由, 状态管理, SPA]
 description: 全面介绍Vue Router和Vuex的核心概念和使用方法，包括路由配置、导航守卫、状态管理、模块化等，帮助开发者构建结构清晰、状态可控的单页应用。
 image: https://cdn.jsdelivr.net/gh/wwwqqqzzz/Image/img/1747555805842-af5b3817dcb9564c2feb229d68d1acf9.png
+collection: Vue.js系列
+collection_order: 4
+collection_description: 这个系列全面介绍Vue.js的核心概念和高级特性，包括Vue 2和Vue 3，以及相关生态系统（Vue Router、Vuex、Pinia等），帮助你掌握这个流行的渐进式JavaScript框架。
 ---
 
 <!-- truncate -->
@@ -123,8 +126,8 @@ const VideoView = {
 
 ```js
 const routes = [
-  { 
-    path: '/video/:id', 
+  {
+    path: '/video/:id',
     component: VideoView,
     props: true  // 将路由参数作为props传递给组件
   }

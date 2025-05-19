@@ -7,6 +7,9 @@ tags: [Vue, JavaScript, 前端开发, 响应式编程]
 keywords: [Vue响应式, 数据绑定, 计算属性, 侦听器, 虚拟DOM]
 description: 深入浅出地解析Vue响应式系统的工作原理，包括数据劫持、依赖收集、异步更新队列等核心概念，以及计算属性、侦听器的使用和常见陷阱的解决方案。
 image: https://cdn.jsdelivr.net/gh/wwwqqqzzz/Image/img/1747555805842-af5b3817dcb9564c2feb229d68d1acf9.png
+collection: Vue.js系列
+collection_order: 3
+collection_description: 这个系列全面介绍Vue.js的核心概念和高级特性，包括Vue 2和Vue 3，以及相关生态系统（Vue Router、Vuex、Pinia等），帮助你掌握这个流行的渐进式JavaScript框架。
 ---
 
 <!-- truncate -->
@@ -352,7 +355,7 @@ new Vue({
       <label for="confirmPassword">确认密码:</label>
       <input
         id="confirmPassword"
-        type="password" 
+        type="password"
         v-model="user.confirmPassword"
         @input="validateConfirmPassword"
       >

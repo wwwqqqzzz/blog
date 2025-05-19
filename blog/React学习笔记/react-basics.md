@@ -7,6 +7,9 @@ tags: [React, 前端开发, JavaScript, UI框架]
 keywords: [React基础, React组件, React Hooks, 状态管理, JSX]
 description: 全面介绍React的核心概念和基础知识，包括组件、JSX语法、状态管理、生命周期和Hooks等，帮助初学者快速掌握React开发技能并构建现代化的用户界面。
 image: https://cdn.jsdelivr.net/gh/wwwqqqzzz/Image/img/1747555805842-af5b3817dcb9564c2feb229d68d1acf9.png
+collection: React学习笔记
+collection_order: 2
+collection_description: 我的React学习之旅全记录。这个系列涵盖了React基础知识、Hooks使用技巧、状态管理方案、性能优化策略和实际项目案例分析。
 ---
 
 <!-- truncate -->
@@ -228,11 +231,11 @@ class Counter extends React.Component {
     super(props);
     this.state = { count: 0 };
   }
-  
+
   increment = () => {
     this.setState({ count: this.state.count + 1 });
   }
-  
+
   render() {
     return (
       <div>
@@ -251,11 +254,11 @@ import React, { useState } from 'react';
 
 function Counter() {
   const [count, setCount] = useState(0);
-  
+
   const increment = () => {
     setCount(count + 1);
   };
-  
+
   return (
     <div>
       <p>Count: {count}</p>
@@ -278,12 +281,12 @@ class LifecycleDemo extends React.Component {
     this.state = { data: null };
     console.log('1. Constructor');
   }
-  
+
   static getDerivedStateFromProps(props, state) {
     console.log('2. getDerivedStateFromProps');
     return null;
   }
-  
+
   componentDidMount() {
     console.log('4. componentDidMount');
     // 适合进行API调用
@@ -291,27 +294,27 @@ class LifecycleDemo extends React.Component {
       .then(response => response.json())
       .then(data => this.setState({ data }));
   }
-  
+
   shouldComponentUpdate(nextProps, nextState) {
     console.log('5. shouldComponentUpdate');
     return true; // 返回false会阻止更新
   }
-  
+
   getSnapshotBeforeUpdate(prevProps, prevState) {
     console.log('6. getSnapshotBeforeUpdate');
     return null;
   }
-  
+
   componentDidUpdate(prevProps, prevState, snapshot) {
     console.log('7. componentDidUpdate');
     // 可以在这里处理props或state的变化
   }
-  
+
   componentWillUnmount() {
     console.log('8. componentWillUnmount');
     // 清理工作：取消订阅、清除定时器等
   }
-  
+
   render() {
     console.log('3. render');
     return <div>Lifecycle Demo</div>;
@@ -331,7 +334,7 @@ import React, { useState } from 'react';
 function Counter() {
   // 声明一个状态变量和更新函数
   const [count, setCount] = useState(0);
-  
+
   return (
     <div>
       <p>Count: {count}</p>
@@ -351,7 +354,7 @@ import React, { useState, useEffect } from 'react';
 function DataFetcher() {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
-  
+
   // 相当于componentDidMount和componentDidUpdate的组合
   useEffect(() => {
     const fetchData = async () => {
@@ -366,18 +369,18 @@ function DataFetcher() {
         setLoading(false);
       }
     };
-    
+
     fetchData();
-    
+
     // 清理函数（相当于componentWillUnmount）
     return () => {
       console.log('Component unmounting, cleanup here');
     };
   }, []); // 空依赖数组表示只在组件挂载时运行一次
-  
+
   if (loading) return <div>Loading...</div>;
   if (!data) return <div>No data</div>;
-  
+
   return (
     <div>
       <h2>Data:</h2>
@@ -397,7 +400,7 @@ const ThemeContext = createContext('light');
 
 function App() {
   const [theme, setTheme] = useState('light');
-  
+
   return (
     <ThemeContext.Provider value={theme}>
       <div>
@@ -414,7 +417,7 @@ function App() {
 function Button() {
   // 使用上下文
   const theme = useContext(ThemeContext);
-  
+
   return (
     <button
       style={{
@@ -439,12 +442,12 @@ import React, { useRef, useEffect } from 'react';
 function TextInputWithFocus() {
   // 创建ref
   const inputRef = useRef(null);
-  
+
   // 组件挂载后自动聚焦
   useEffect(() => {
     inputRef.current.focus();
   }, []);
-  
+
   return (
     <div>
       <input ref={inputRef} type="text" />
@@ -465,12 +468,12 @@ function ExpensiveCalculation({ a, b }) {
     console.log('Computing expensive result...');
     return a * b;
   }, [a, b]);
-  
+
   // 只有当a变化时才创建新函数
   const handleClick = useCallback(() => {
     console.log(`Clicked with a=${a}`);
   }, [a]);
-  
+
   return (
     <div>
       <p>Result: {result}</p>
@@ -490,7 +493,7 @@ function Button() {
   const handleClick = () => {
     console.log('Button clicked!');
   };
-  
+
   return <button onClick={handleClick}>Click me</button>;
 }
 
@@ -499,7 +502,7 @@ function ItemList() {
   const handleItemClick = (id, event) => {
     console.log(`Item ${id} clicked`, event);
   };
-  
+
   return (
     <ul>
       <li onClick={(e) => handleItemClick(1, e)}>Item 1</li>
@@ -515,16 +518,16 @@ class Button extends React.Component {
     // 方法1：在构造函数中绑定
     this.handleClick = this.handleClick.bind(this);
   }
-  
+
   handleClick() {
     console.log('Button clicked!', this);
   }
-  
+
   // 方法2：使用箭头函数属性（推荐）
   handleAnotherClick = () => {
     console.log('Another button clicked!', this);
   };
-  
+
   render() {
     return (
       <div>
@@ -550,21 +553,21 @@ function ConditionalRendering({ isLoggedIn, count }) {
   } else {
     return <div>Please log in</div>;
   }
-  
+
   // 2. 三元运算符
   return (
     <div>
       {isLoggedIn ? <div>Welcome back!</div> : <div>Please log in</div>}
     </div>
   );
-  
+
   // 3. 逻辑与运算符（短路求值）
   return (
     <div>
       {count > 0 && <div>You have {count} unread messages</div>}
     </div>
   );
-  
+
   // 4. 立即执行函数
   return (
     <div>
@@ -624,7 +627,7 @@ function LoginForm() {
     password: '',
     rememberMe: false
   });
-  
+
   const handleChange = (event) => {
     const { name, value, type, checked } = event.target;
     setFormData({
@@ -632,13 +635,13 @@ function LoginForm() {
       [name]: type === 'checkbox' ? checked : value
     });
   };
-  
+
   const handleSubmit = (event) => {
     event.preventDefault();
     console.log('Form submitted:', formData);
     // 处理表单提交逻辑
   };
-  
+
   return (
     <form onSubmit={handleSubmit}>
       <div>
@@ -651,7 +654,7 @@ function LoginForm() {
           onChange={handleChange}
         />
       </div>
-      
+
       <div>
         <label htmlFor="password">Password:</label>
         <input
@@ -662,7 +665,7 @@ function LoginForm() {
           onChange={handleChange}
         />
       </div>
-      
+
       <div>
         <label>
           <input
@@ -674,7 +677,7 @@ function LoginForm() {
           Remember me
         </label>
       </div>
-      
+
       <button type="submit">Login</button>
     </form>
   );
@@ -690,14 +693,14 @@ import React, { useRef } from 'react';
 
 function FileUploadForm() {
   const fileInputRef = useRef(null);
-  
+
   const handleSubmit = (event) => {
     event.preventDefault();
     const file = fileInputRef.current.files[0];
     console.log('Selected file:', file);
     // 处理文件上传逻辑
   };
-  
+
   return (
     <form onSubmit={handleSubmit}>
       <div>
@@ -708,7 +711,7 @@ function FileUploadForm() {
           ref={fileInputRef}
         />
       </div>
-      
+
       <button type="submit">Upload</button>
     </form>
   );
@@ -741,7 +744,7 @@ function Parent() {
   const handleChildData = (data) => {
     console.log("Received from child:", data);
   };
-  
+
   return <Child onSendData={handleChildData} />;
 }
 
@@ -761,7 +764,7 @@ function Child({ onSendData }) {
 ```jsx
 function Parent() {
   const [sharedData, setSharedData] = useState("Initial data");
-  
+
   return (
     <div>
       <SiblingA sharedData={sharedData} />

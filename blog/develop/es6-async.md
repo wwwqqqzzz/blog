@@ -7,6 +7,9 @@ tags: [JavaScript, ES6, 前端开发, 异步编程]
 keywords: [Promise, async/await, 异步编程, JavaScript异步, 回调函数]
 description: 全面介绍ES6中的异步编程特性，包括Promise、async/await、Generator等，帮助开发者掌握现代JavaScript异步流程控制的核心概念和实践技巧。
 image: https://cdn.jsdelivr.net/gh/wwwqqqzzz/Image/img/1747555805842-af5b3817dcb9564c2feb229d68d1acf9.png
+collection: JavaScript基础系列
+collection_order: 5
+collection_description: 这个系列涵盖了JavaScript的核心概念、DOM操作、ES6+特性和异步编程等内容，帮助你从零开始掌握JavaScript编程。
 ---
 
 <!-- truncate -->
@@ -234,11 +237,11 @@ async function fetchUserData() {
     // await会暂停函数执行，直到Promise完成
     const response = await fetch('https://api.example.com/user');
     const userData = await response.json();
-    
+
     // 获取用户帖子
     const postsResponse = await fetch(`https://api.example.com/posts?userId=${userData.id}`);
     const posts = await postsResponse.json();
-    
+
     return { user: userData, posts: posts };
   } catch (error) {
     console.error("获取数据时出错:", error);
@@ -286,14 +289,14 @@ async function fetchAllData() {
       fetch('https://api.example.com/posts'),
       fetch('https://api.example.com/weather')
     ]);
-    
+
     // 并行执行所有json解析
     const [user, posts, weather] = await Promise.all([
       userResponse.json(),
       postsResponse.json(),
       weatherResponse.json()
     ]);
-    
+
     return { user, posts, weather };
   } catch (error) {
     console.error("获取数据时出错:", error);
@@ -429,13 +432,13 @@ async function fetchUserPostsComments() {
   try {
     const users = await fetchJSON('https://api.example.com/users');
     console.log('获取到用户列表:', users);
-    
+
     const posts = await fetchJSON(`https://api.example.com/users/${users[0].id}/posts`);
     console.log('获取到帖子列表:', posts);
-    
+
     const comments = await fetchJSON(`https://api.example.com/posts/${posts[0].id}/comments`);
     console.log('获取到评论列表:', comments);
-    
+
     return comments;
   } catch (error) {
     console.error('请求过程中出错:', error);
@@ -454,7 +457,7 @@ fetchUserPostsComments()
 function fetchWithTimeout(url, timeout = 5000) {
   return Promise.race([
     fetch(url),
-    new Promise((_, reject) => 
+    new Promise((_, reject) =>
       setTimeout(() => reject(new Error('请求超时')), timeout)
     )
   ]);

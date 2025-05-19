@@ -7,6 +7,9 @@ tags: [Vue, Pinia, 前端开发, 状态管理]
 keywords: [Pinia, Vue 3, 状态管理, Store, Vuex替代品]
 description: 全面介绍Pinia状态管理库的使用方法和最佳实践，包括Store的创建、状态管理、计算属性、Actions以及与Vuex的对比，帮助Vue开发者轻松掌握这一强大的状态管理工具。
 image: https://cdn.jsdelivr.net/gh/wwwqqqzzz/Image/img/1747555805842-af5b3817dcb9564c2feb229d68d1acf9.png
+collection: Vue.js系列
+collection_order: 5
+collection_description: 这个系列全面介绍Vue.js的核心概念和高级特性，包括Vue 2和Vue 3，以及相关生态系统（Vue Router、Vuex、Pinia等），帮助你掌握这个流行的渐进式JavaScript框架。
 ---
 
 <!-- truncate -->

@@ -7,6 +7,9 @@ tags: [Vue, 前端开发, 实战教程, TodoMVC]
 keywords: [Vue.js, TodoMVC, 待办事项, 前端项目, 组件化开发]
 description: 通过构建一个完整的TodoMVC应用，详细讲解Vue的核心概念和实践技巧，包括数据管理、组件通信、事件处理、条件渲染等，帮助初学者掌握Vue实战开发。
 image: https://cdn.jsdelivr.net/gh/wwwqqqzzz/Image/img/1747555805842-af5b3817dcb9564c2feb229d68d1acf9.png
+collection: Vue.js系列
+collection_order: 6
+collection_description: 这个系列全面介绍Vue.js的核心概念和高级特性，包括Vue 2和Vue 3，以及相关生态系统（Vue Router、Vuex、Pinia等），帮助你掌握这个流行的渐进式JavaScript框架。
 ---
 
 <!-- truncate -->

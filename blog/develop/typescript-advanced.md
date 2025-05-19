@@ -7,6 +7,9 @@ tags: [TypeScript, JavaScript, 前端开发, 编程语言]
 keywords: [TypeScript进阶, 泛型, 接口, 类, 命名空间, 抽象类]
 description: 深入探讨TypeScript的进阶特性，包括函数重载、接口继承、类与访问修饰符、泛型编程等高级概念，帮助开发者编写更健壮、可维护的TypeScript代码。
 image: https://cdn.jsdelivr.net/gh/wwwqqqzzz/Image/img/1747555805842-af5b3817dcb9564c2feb229d68d1acf9.png
+collection: TypeScript系列
+collection_order: 2
+collection_description: 这个系列深入讲解TypeScript的核心概念和高级特性，帮助你掌握这门强大的静态类型语言，提升代码质量和开发效率。
 ---
 
 <!-- truncate -->
@@ -131,19 +134,19 @@ namespace BlogModule {
         title: string;
         content: string;
     }
-    
+
     export class BlogPost implements Article {
         constructor(
             public title: string,
             public content: string,
             public author: string
         ) {}
-        
+
         publish() {
             console.log(`发布文章: ${this.title}`);
         }
     }
-    
+
     // 非导出成员只能在命名空间内部访问
     function formatTitle(title: string): string {
         return `《${title}》`;
@@ -180,11 +183,11 @@ class Article {
         this.status = 'draft';
         this.id = Math.random();
     }
-    
+
     private updateViews() {
         this.views++;
     }
-    
+
     public read() {
         this.updateViews();
         return this.content;
@@ -212,16 +215,16 @@ console.log(article.title);      // 正确：public成员
 class Article {
     title: string;
     content: string;
-    
+
     static count: number = 0;                // 静态属性
     private static readonly VERSION = '1.0'; // 私有只读静态属性
-    
+
     constructor(title: string, content: string) {
         this.title = title;
         this.content = content;
         Article.count++;  // 增加文章计数
     }
-    
+
     static getInfo() {
         return `文章系统 v${Article.VERSION}，当前共有${Article.count}篇文章`;
     }
@@ -290,7 +293,7 @@ class Article {
         public content: string,
         protected author: string
     ) {}
-    
+
     getInfo() {
         return `《${this.title}》 by ${this.author}`;
     }
@@ -305,12 +308,12 @@ class BlogPost extends Article {
     ) {
         super(title, content, author); // 调用父类构造函数
     }
-    
+
     // 重写父类方法
     getInfo() {
         return `${super.getInfo()} [${this.tags.join(', ')}]`;
     }
-    
+
     // 添加新方法
     getAuthorInfo() {
         return `作者: ${this.author}`; // 可以访问protected成员
@@ -349,11 +352,11 @@ class User {
         }
         this._password = newPass;
     }
-    
+
     get email(): string {
         return this._email;
     }
-    
+
     set email(value: string) {
         if (!value.includes('@')) {
             throw new Error('邮箱格式不正确');
@@ -400,7 +403,7 @@ class Cat extends Animal {
     makeSound(): void {                // 实现抽象方法
         console.log('喵喵喵');
     }
-    
+
     // 可以添加自己的方法
     scratch(): void {
         console.log('猫抓了一下');
@@ -443,11 +446,11 @@ class Dog implements Animal, Pet {
     makeSound(): void {
         console.log('汪汪汪');
     }
-    
+
     play(): void {
         console.log(`${this.name}和${this.owner}一起玩`);
     }
-    
+
     // 可以添加接口中未定义的方法
     fetch(): void {
         console.log('小狗去捡球了');
@@ -478,11 +481,11 @@ class Box<T> {
     constructor(value: T) {
         this.value = value;
     }
-    
+
     getValue(): T {
         return this.value;
     }
-    
+
     setValue(value: T): void {
         this.value = value;
     }

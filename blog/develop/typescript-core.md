@@ -7,6 +7,9 @@ tags: [TypeScript, JavaScript, 前端开发, 编程语言]
 keywords: [TypeScript, 类型系统, 接口, 泛型, 类型注解]
 description: 全面介绍TypeScript的核心语法和基本概念，包括类型系统、接口、泛型、类型断言等，帮助开发者快速掌握TypeScript并提升代码质量和开发效率。
 image: https://cdn.jsdelivr.net/gh/wwwqqqzzz/Image/img/1747555805842-af5b3817dcb9564c2feb229d68d1acf9.png
+collection: TypeScript系列
+collection_order: 1
+collection_description: 这个系列深入讲解TypeScript的核心概念和高级特性，帮助你掌握这门强大的静态类型语言，提升代码质量和开发效率。
 ---
 
 <!-- truncate -->
@@ -227,11 +230,11 @@ interface ClockInterface {
 
 class Clock implements ClockInterface {
   currentTime: Date = new Date();
-  
+
   setTime(d: Date): void {
     this.currentTime = d;
   }
-  
+
   constructor(h: number, m: number) {}
 }
 ```
@@ -358,13 +361,13 @@ class Person {
   // 属性
   name: string;
   age: number;
-  
+
   // 构造函数
   constructor(name: string, age: number) {
     this.name = name;
     this.age = age;
   }
-  
+
   // 方法
   greet(): string {
     return `Hello, my name is ${this.name} and I am ${this.age} years old.`;
@@ -385,24 +388,24 @@ class Employee {
   private salary: number;     // 私有属性，只能在类内部访问
   protected department: string; // 受保护属性，可在子类中访问
   readonly id: number;        // 只读属性
-  
+
   constructor(name: string, salary: number, department: string, id: number) {
     this.name = name;
     this.salary = salary;
     this.department = department;
     this.id = id;
   }
-  
+
   // 公共方法
   public getDetails(): string {
     return `${this.name} works in ${this.department}`;
   }
-  
+
   // 私有方法
   private calculateBonus(): number {
     return this.salary * 0.1;
   }
-  
+
   // 受保护方法
   protected getFullInfo(): string {
     return `${this.name}, ${this.department}, ${this.salary}`;
@@ -422,19 +425,19 @@ console.log(emp.name);        // "Bob"
 // 继承
 class Manager extends Employee {
   private subordinates: Employee[] = [];
-  
+
   constructor(name: string, salary: number, id: number) {
     super(name, salary, "Management", id);
   }
-  
+
   public addSubordinate(employee: Employee): void {
     this.subordinates.push(employee);
   }
-  
+
   public getSubordinateCount(): number {
     return this.subordinates.length;
   }
-  
+
   // 可以访问父类的受保护成员
   public getManagerInfo(): string {
     return this.getFullInfo();
@@ -448,14 +451,14 @@ class Manager extends Employee {
 // 抽象类
 abstract class Shape {
   color: string;
-  
+
   constructor(color: string) {
     this.color = color;
   }
-  
+
   // 抽象方法（必须在子类中实现）
   abstract calculateArea(): number;
-  
+
   // 具体方法
   getColor(): string {
     return this.color;
@@ -464,12 +467,12 @@ abstract class Shape {
 
 class Circle extends Shape {
   radius: number;
-  
+
   constructor(color: string, radius: number) {
     super(color);
     this.radius = radius;
   }
-  
+
   // 实现抽象方法
   calculateArea(): number {
     return Math.PI * this.radius * this.radius;
@@ -519,15 +522,15 @@ const myIdentity: GenericIdentityFn<number> = identity;
 // 泛型类
 class GenericBox<T> {
   private value: T;
-  
+
   constructor(value: T) {
     this.value = value;
   }
-  
+
   getValue(): T {
     return this.value;
   }
-  
+
   setValue(value: T): void {
     this.value = value;
   }
@@ -736,14 +739,14 @@ namespace Validation {
   export interface StringValidator {
     isValid(s: string): boolean;
   }
-  
+
   export class RegexValidator implements StringValidator {
     private regex: RegExp;
-    
+
     constructor(regex: RegExp) {
       this.regex = regex;
     }
-    
+
     isValid(s: string): boolean {
       return this.regex.test(s);
     }
@@ -772,11 +775,11 @@ function sealed(constructor: Function) {
 @sealed
 class Greeter {
   greeting: string;
-  
+
   constructor(message: string) {
     this.greeting = message;
   }
-  
+
   greet() {
     return "Hello, " + this.greeting;
   }
@@ -785,12 +788,12 @@ class Greeter {
 // 方法装饰器
 function log(target: any, propertyKey: string, descriptor: PropertyDescriptor) {
   const originalMethod = descriptor.value;
-  
+
   descriptor.value = function(...args: any[]) {
     console.log(`Calling ${propertyKey} with args: ${JSON.stringify(args)}`);
     return originalMethod.apply(this, args);
   };
-  
+
   return descriptor;
 }
 
