@@ -1,0 +1,28 @@
+# 忽略构建输出目录
+build/
+.docusaurus/
+node_modules/
+
+# 忽略静态资源
+static/js/disable-webpack-overlay.js
+static/js/telegram-notify.js
+
+# 忽略插件目录
+src/plugins/
+src/webpack.client.js
+
+# 忽略webpack配置
+webpack.config.js
+
+# 忽略示例组件
+src/components/YourComponent.tsx
+
+# 忽略根组件
+src/Root.tsx
+
+# 忽略主题组件
+src/theme/Layout.tsx
+src/theme/Root.tsx
+
+# 忽略工具函数
+src/utils/dev-proxy.ts

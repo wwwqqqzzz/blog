@@ -6,7 +6,7 @@
 export default function() {
   if (typeof window !== 'undefined' && process.env.NODE_ENV === 'development') {
     // 禁用webpack-dev-server错误覆盖层
-    
+
     // 方法1: 移除已存在的覆盖层
     function removeExistingOverlays() {
       // 移除iframe
@@ -16,8 +16,8 @@ export default function() {
       // 移除覆盖层容器
       document.querySelectorAll('body > div').forEach(div => {
         const style = window.getComputedStyle(div);
-        if (style.position === 'fixed' && 
-            style.zIndex === '2147483647' && 
+        if (style.position === 'fixed' &&
+            style.zIndex === '2147483647' &&
             (style.backgroundColor.includes('rgba(0, 0, 0') || style.backgroundColor.includes('rgb(0, 0, 0'))) {
           div.remove();
         }
@@ -54,13 +54,13 @@ export default function() {
         let message;
         try {
           message = JSON.parse(event.data);
-        } catch (error) {
+        } catch (_) {
           // 如果不是JSON，保持原样
           return originalOnMessage.call(this, event);
         }
 
         // 如果是错误消息，忽略它
-        if (message.type === 'errors' || message.type === 'error' || 
+        if (message.type === 'errors' || message.type === 'error' ||
             message.type === 'warnings' || message.type === 'warning') {
           console.log('[Webpack Overlay Disabled] Suppressed webpack error/warning message:', message);
           return; // 不调用原始处理程序

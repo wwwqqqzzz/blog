@@ -16,7 +16,7 @@
         let message;
         try {
           message = JSON.parse(event.data);
-        } catch (error) {
+        } catch (_) {
           // 如果不是JSON，保持原样
           return originalOnMessage.call(this, event);
         }
@@ -46,7 +46,7 @@
               console.log('[Webpack Overlay Disabled] Blocked sending error/warning to webpack-dev-server');
               return; // 不发送错误消息
             }
-          } catch (e) {
+          } catch (_) {
             // 不是JSON，继续正常发送
           }
         }

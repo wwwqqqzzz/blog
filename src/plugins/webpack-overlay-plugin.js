@@ -2,12 +2,12 @@
  * 自定义Docusaurus插件，用于禁用webpack-dev-server错误覆盖层
  */
 
-module.exports = function(context, options) {
+module.exports = function() {
   return {
     name: 'disable-webpack-overlay-plugin',
-    
+
     // 配置webpack
-    configureWebpack(config, isServer, utils) {
+    configureWebpack(config, isServer) {
       if (process.env.NODE_ENV === 'development' && !isServer) {
         return {
           devServer: {
@@ -19,7 +19,7 @@ module.exports = function(context, options) {
       }
       return {};
     },
-    
+
     // 注入客户端代码
     injectHtmlTags() {
       if (process.env.NODE_ENV === 'development') {
@@ -47,7 +47,7 @@ module.exports = function(context, options) {
                     }
                     return false;
                   };
-                  
+
                   // 覆盖console.error，防止webpack捕获错误
                   const originalConsoleError = console.error;
                   console.error = function() {
@@ -61,7 +61,7 @@ module.exports = function(context, options) {
                     // 对于其他错误，调用原始处理程序
                     return originalConsoleError.apply(console, arguments);
                   };
-                  
+
                   console.log('[Webpack Overlay Disabled] Error handlers patched');
                 })();
               `,
@@ -88,11 +88,11 @@ module.exports = function(context, options) {
       }
       return {};
     },
-    
+
     // 在客户端加载时执行
     getClientModules() {
-      return process.env.NODE_ENV === 'development' 
-        ? [require.resolve('./webpack-overlay-client.js')] 
+      return process.env.NODE_ENV === 'development'
+        ? [require.resolve('./webpack-overlay-client.js')]
         : [];
     },
   };
