@@ -6,7 +6,7 @@ authors: wqz
 tags: [JavaScript, ES6, 前端开发, 异步编程]
 keywords: [Promise, async/await, 异步编程, JavaScript异步, 回调函数]
 description: 全面介绍ES6中的异步编程特性，包括Promise、async/await、Generator等，帮助开发者掌握现代JavaScript异步流程控制的核心概念和实践技巧。
-image: https://cdn.jsdelivr.net/gh/wwwqqqzzz/Image/img/1747555805842-af5b3817dcb9564c2feb229d68d1acf9.png
+image: https://cdn.jsdelivr.net/gh/wwwqqqzzz/Image/img/1747654155834-e49a6875a87f9654fb9cc3c746b52a45.png
 collection: JavaScript基础系列
 collection_order: 5
 collection_description: 这个系列涵盖了JavaScript的核心概念、DOM操作、ES6+特性和异步编程等内容，帮助你从零开始掌握JavaScript编程。

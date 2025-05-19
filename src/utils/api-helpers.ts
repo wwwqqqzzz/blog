@@ -3,20 +3,24 @@
  * Provides fallback for local development and implements caching
  */
 
+// 导入开发环境代理
+import { devProxy } from './dev-proxy'
+
 // Check if we're in development mode
 const isDevelopment = process.env.NODE_ENV === 'development'
 
 // Base URL for API calls
 const getApiBaseUrl = () => {
-  // 在开发环境中，我们需要使用不同的方法，因为Vercel无服务器函数在开发环境中不可用
+  // 在开发和生产环境中都使用相对URL
   if (isDevelopment) {
-    console.log('开发环境: 使用模拟数据')
-    // 对于开发环境，我们将使用模拟数据而不是尝试调用API
-    return null
+    console.log('开发环境: 使用真实API数据')
   }
-  // 在生产环境中，使用带有空基本URL的已部署Vercel函数
+  // 返回空字符串以使用相对URL
   return ''
 }
+
+// 是否使用模拟数据（现在始终为false，因为我们想使用真实API）
+const useMockData = false
 
 // 默认位置配置
 const DEFAULT_LOCATION = {
@@ -132,9 +136,9 @@ async function fetchQWeatherDirectly(location: string = '101190101'): Promise<We
   try {
     const baseUrl = getApiBaseUrl()
 
-    // 如果我们处于开发模式，则返回模拟数据而不是进行API调用
-    if (baseUrl === null) {
-      console.log('开发环境: 使用模拟天气数据')
+    // 如果配置为使用模拟数据
+    if (useMockData) {
+      console.log('使用模拟天气数据')
       // 返回模拟数据
       return {
         code: '200',
@@ -360,10 +364,10 @@ async function getCityCode(city: string): Promise<string> {
   try {
     const baseUrl = getApiBaseUrl()
 
-    // If we're in development mode, return default code instead of making API calls
-    if (baseUrl === null) {
-      console.log('Development mode: Using default city code for', city)
-      // Default to Nanjing
+    // 如果配置为使用模拟数据
+    if (useMockData) {
+      console.log('使用默认城市代码:', city)
+      // 默认使用南京
       return '101190101'
     }
 
@@ -416,9 +420,9 @@ export async function fetchLocationData(): Promise<LocationData> {
 
     const baseUrl = getApiBaseUrl()
 
-    // If we're in development mode, use default location data
-    if (baseUrl === null) {
-      console.log('Development mode: Using default location data')
+    // 如果配置为使用模拟数据
+    if (useMockData) {
+      console.log('使用默认位置数据')
       locationData = DEFAULT_LOCATION
     }
     else {
@@ -478,9 +482,9 @@ async function fetchDailyQuoteFromApi(): Promise<DailyQuote> {
   try {
     const baseUrl = getApiBaseUrl()
 
-    // 如果我们处于开发模式，则返回模拟数据而不是进行API调用
-    if (baseUrl === null) {
-      console.log('开发环境: 使用模拟每日一句数据')
+    // 如果配置为使用模拟数据
+    if (useMockData) {
+      console.log('使用模拟每日一句数据')
 
       // 获取今天的日期以选择一句名言（确保全天显示相同的名言）
       const today = new Date()
@@ -550,32 +554,42 @@ async function fetchDailyQuoteFromApi(): Promise<DailyQuote> {
       }
     }
 
-    // 在生产环境中，使用API代理
+    // 根据环境选择不同的API调用方式
     try {
-      // 使用服务器端API代理，避免CORS问题
-      const apiUrl = `${baseUrl}/api/daily-quote`
-      console.log('正在从服务器端API代理获取每日一句:', apiUrl)
+      let data: any
 
-      // 添加随机参数，避免缓存
-      const urlWithCache = `${apiUrl}?_t=${Date.now()}`
+      if (isDevelopment) {
+        // 在开发环境中使用代理
+        console.log('开发环境: 使用开发环境代理获取每日一句')
+        data = await devProxy('/api/daily-quote')
+      }
+      else {
+        // 在生产环境中使用服务器端API代理
+        const apiUrl = `${baseUrl}/api/daily-quote`
+        console.log('生产环境: 正在从服务器端API代理获取每日一句:', apiUrl)
 
-      const response = await fetch(urlWithCache, {
-        method: 'GET',
-        headers: {
-          'Accept': 'application/json',
-          'Cache-Control': 'no-cache, no-store, must-revalidate',
-          'Pragma': 'no-cache',
-          'Expires': '0',
-        },
-        // 使用same-origin凭据，确保请求包含cookies
-        credentials: 'same-origin',
-      })
+        // 添加随机参数，避免缓存
+        const urlWithCache = `${apiUrl}?_t=${Date.now()}`
 
-      if (!response.ok) {
-        throw new Error(`每日一句API响应状态: ${response.status}`)
+        const response = await fetch(urlWithCache, {
+          method: 'GET',
+          headers: {
+            'Accept': 'application/json',
+            'Cache-Control': 'no-cache, no-store, must-revalidate',
+            'Pragma': 'no-cache',
+            'Expires': '0',
+          },
+          // 使用same-origin凭据，确保请求包含cookies
+          credentials: 'same-origin',
+        })
+
+        if (!response.ok) {
+          throw new Error(`每日一句API响应状态: ${response.status}`)
+        }
+
+        data = await response.json()
       }
 
-      const data = await response.json()
       console.log('收到每日一句数据:', data)
 
       // 检查是否是真实API数据
@@ -641,29 +655,18 @@ export async function fetchDailyQuote(): Promise<DailyQuote> {
     let quoteData: DailyQuote
     let isRealData = false
 
-    // 检查我们是否处于开发模式
-    const baseUrl = getApiBaseUrl()
-    const isDev = baseUrl === null
-
     try {
-      // 尝试从API代理获取数据（在开发环境中将返回模拟数据）
+      // 尝试从API代理获取数据
       quoteData = await fetchDailyQuoteFromApi()
 
-      // 在开发模式下，我们知道这是模拟数据
-      if (isDev) {
-        console.log('使用开发环境模拟数据作为每日一句')
-        isRealData = false
+      // 检查这是真实数据还是来自API的后备数据
+      isRealData = !(quoteData as any).fallback
+
+      if (isRealData) {
+        console.log('成功从API获取真实每日一句:', quoteData)
       }
       else {
-        // 在生产环境中，检查这是真实数据还是来自API的后备数据
-        isRealData = !(quoteData as any).fallback
-
-        if (isRealData) {
-          console.log('成功从API获取真实每日一句:', quoteData)
-        }
-        else {
-          console.log('API返回后备数据:', quoteData)
-        }
+        console.log('API返回后备数据:', quoteData)
       }
     }
     catch (fetchError) {

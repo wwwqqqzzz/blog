@@ -367,8 +367,834 @@ document.addEventListener('DOMContentLoaded', function() {
 
 - **manifest.json**: Chrome插件的配置文件，定义插件的名称、版本、权限等信息
 - **content scripts**: 注入到网页中的JavaScript和CSS，可以操作网页DOM
-- **background scripts**: 在后台运行的脚本，可以处理跨域请求等
 - **popup**: 点击插件图标时显示的弹出窗口
+
+### JavaScript技术
+
+- **DOM操作**: 创建、修改和删除DOM元素
+- **事件处理**: 监听和响应用户事件（点击、拖拽等）
+- **本地存储**: 使用chrome.storage.local保存数据
+- **消息传递**: 在popup和content script之间传递消息
+
+### CSS技术
+
+- **绝对定位**: 使用position: absolute定位便签
+- **盒子模型**: 使用padding、margin、border等属性设计便签样式
+- **阴影效果**: 使用box-shadow添加阴影效果
+- **过渡效果**: 使用transition添加平滑过渡效果
+
+## 第2部分：UI改进与控制面板
+
+在第1部分中，我们创建了一个基本的便签插件，实现了创建、拖拽、编辑和删除便签的功能。在这一部分中，我们将改进UI设计，添加悬浮控制面板和主题切换功能，使插件更加美观和易用。
+
+### 1. 改进便签设计
+
+首先，让我们改进便签的设计，使其更加现代化和美观。
+
+#### 1.1 更新styles.css
+
+```css
+/* 便签样式 */
+.sticky-todo-note {
+  position: absolute;
+  width: 240px;
+  min-height: 180px;
+  background-color: #ffeb3b;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+  z-index: 9999;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+/* 便签头部样式 */
+.sticky-todo-note-header {
+  background-color: #fdd835;
+  padding: 10px;
+  cursor: move;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+/* 便签标题 */
+.sticky-todo-note-title {
+  font-weight: 600;
+  font-size: 14px;
+  color: rgba(0, 0, 0, 0.8);
+  flex-grow: 1;
+  margin-right: 10px;
+}
+
+/* 便签控制按钮容器 */
+.sticky-todo-note-controls {
+  display: flex;
+  gap: 8px;
+}
+
+/* 便签控制按钮 */
+.sticky-todo-note-control {
+  cursor: pointer;
+  font-size: 16px;
+  color: rgba(0, 0, 0, 0.6);
+  transition: color 0.2s ease;
+}
+
+.sticky-todo-note-control:hover {
+  color: rgba(0, 0, 0, 0.9);
+}
+
+/* 删除按钮 */
+.sticky-todo-delete-button {
+  color: #f44336;
+}
+
+.sticky-todo-delete-button:hover {
+  color: #d32f2f;
+}
+
+/* 最小化按钮 */
+.sticky-todo-minimize-button {
+  color: #2196F3;
+}
+
+.sticky-todo-minimize-button:hover {
+  color: #1976D2;
+}
+
+/* 便签内容样式 */
+.sticky-todo-note-content {
+  padding: 15px;
+  min-height: 120px;
+  outline: none;
+  font-size: 14px;
+  line-height: 1.5;
+  color: rgba(0, 0, 0, 0.8);
+}
+
+/* 便签底部 */
+.sticky-todo-note-footer {
+  padding: 8px 15px;
+  display: flex;
+  justify-content: flex-end;
+  font-size: 12px;
+  color: rgba(0, 0, 0, 0.5);
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+/* 拖拽时的样式 */
+.sticky-todo-note.dragging {
+  opacity: 0.8;
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+  transform: scale(1.02);
+}
+
+/* 深色模式样式 */
+.sticky-todo-dark-mode .sticky-todo-note {
+  background-color: #424242;
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.sticky-todo-dark-mode .sticky-todo-note-header {
+  background-color: #303030;
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.sticky-todo-dark-mode .sticky-todo-note-title {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.sticky-todo-dark-mode .sticky-todo-note-control {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.sticky-todo-dark-mode .sticky-todo-note-control:hover {
+  color: rgba(255, 255, 255, 1);
+}
+
+.sticky-todo-dark-mode .sticky-todo-note-content {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.sticky-todo-dark-mode .sticky-todo-note-footer {
+  color: rgba(255, 255, 255, 0.5);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+```
+
+#### 1.2 更新便签创建函数
+
+现在我们需要更新`content.js`中的便签创建函数，以支持新的UI设计：
+
+```javascript
+// 创建便签函数
+function createStickyNote(content = '', x = 20, y = 20) {
+  // 创建便签容器
+  const stickyNote = document.createElement('div');
+  stickyNote.className = 'sticky-todo-note';
+  stickyNote.style.left = `${x}px`;
+  stickyNote.style.top = `${y}px`;
+
+  // 创建便签头部
+  const header = document.createElement('div');
+  header.className = 'sticky-todo-note-header';
+
+  // 创建便签标题
+  const title = document.createElement('div');
+  title.className = 'sticky-todo-note-title';
+  title.textContent = '便签';
+
+  // 创建控制按钮容器
+  const controls = document.createElement('div');
+  controls.className = 'sticky-todo-note-controls';
+
+  // 创建最小化按钮
+  const minimizeButton = document.createElement('div');
+  minimizeButton.className = 'sticky-todo-note-control sticky-todo-minimize-button';
+  minimizeButton.innerHTML = '&#8722;'; // 减号符号
+  minimizeButton.title = '最小化';
+  minimizeButton.addEventListener('click', function() {
+    toggleMinimize(stickyNote);
+  });
+
+  // 创建删除按钮
+  const deleteButton = document.createElement('div');
+  deleteButton.className = 'sticky-todo-note-control sticky-todo-delete-button';
+  deleteButton.innerHTML = '&times;'; // 乘号符号
+  deleteButton.title = '删除';
+  deleteButton.addEventListener('click', function() {
+    deleteStickyNote(stickyNote);
+  });
+
+  // 添加控制按钮到容器
+  controls.appendChild(minimizeButton);
+  controls.appendChild(deleteButton);
+
+  // 添加标题和控制按钮到头部
+  header.appendChild(title);
+  header.appendChild(controls);
+
+  // 添加拖拽事件
+  header.addEventListener('mousedown', function(e) {
+    dragStart(e, stickyNote);
+  });
+
+  // 创建便签内容
+  const noteContent = document.createElement('div');
+  noteContent.className = 'sticky-todo-note-content';
+  noteContent.contentEditable = 'true';
+  noteContent.textContent = content;
+  noteContent.addEventListener('input', function() {
+    saveStickyNotes();
+  });
+
+  // 创建便签底部
+  const footer = document.createElement('div');
+  footer.className = 'sticky-todo-note-footer';
+  footer.textContent = new Date().toLocaleDateString();
+
+  // 组装便签
+  stickyNote.appendChild(header);
+  stickyNote.appendChild(noteContent);
+  stickyNote.appendChild(footer);
+
+  // 添加到文档中
+  document.body.appendChild(stickyNote);
+
+  // 将便签添加到数组中
+  stickyNotes.push({
+    element: stickyNote,
+    content: content,
+    x: x,
+    y: y,
+    minimized: false
+  });
+
+  // 保存便签
+  saveStickyNotes();
+
+  return stickyNote;
+}
+```
+
+### 2. 添加最小化功能
+
+现在我们需要添加便签最小化功能，让用户可以暂时隐藏便签内容，只显示一个小图标。
+
+```javascript
+// 切换便签最小化状态
+function toggleMinimize(stickyNote) {
+  const noteContent = stickyNote.querySelector('.sticky-todo-note-content');
+  const footer = stickyNote.querySelector('.sticky-todo-note-footer');
+  const minimizeButton = stickyNote.querySelector('.sticky-todo-minimize-button');
+
+  // 查找便签在数组中的索引
+  const noteIndex = stickyNotes.findIndex(note => note.element === stickyNote);
+
+  if (noteIndex !== -1) {
+    // 切换最小化状态
+    stickyNotes[noteIndex].minimized = !stickyNotes[noteIndex].minimized;
+
+    if (stickyNotes[noteIndex].minimized) {
+      // 最小化便签
+      noteContent.style.display = 'none';
+      footer.style.display = 'none';
+      stickyNote.style.width = '40px';
+      stickyNote.style.height = '40px';
+      stickyNote.style.borderRadius = '50%';
+      stickyNote.classList.add('sticky-todo-minimized');
+      minimizeButton.innerHTML = '&#43;'; // 加号符号
+      minimizeButton.title = '展开';
+    } else {
+      // 展开便签
+      noteContent.style.display = 'block';
+      footer.style.display = 'flex';
+      stickyNote.style.width = '240px';
+      stickyNote.style.height = 'auto';
+      stickyNote.style.borderRadius = '8px';
+      stickyNote.classList.remove('sticky-todo-minimized');
+      minimizeButton.innerHTML = '&#8722;'; // 减号符号
+      minimizeButton.title = '最小化';
+    }
+
+    // 保存便签状态
+    saveStickyNotes();
+  }
+}
+```
+
+然后，我们需要在`styles.css`中添加最小化状态的样式：
+
+```css
+/* 最小化状态的便签 */
+.sticky-todo-minimized .sticky-todo-note-header {
+  height: 40px;
+  width: 40px;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+}
+
+.sticky-todo-minimized .sticky-todo-note-title,
+.sticky-todo-minimized .sticky-todo-delete-button {
+  display: none;
+}
+
+.sticky-todo-minimized .sticky-todo-note-controls {
+  margin: 0;
+}
+
+.sticky-todo-minimized .sticky-todo-minimize-button {
+  font-size: 20px;
+}
+```
+
+### 3. 创建悬浮控制面板
+
+接下来，我们将创建一个悬浮控制面板，让用户可以方便地创建新便签、切换主题和清除所有便签。
+
+#### 3.1 添加控制面板样式
+
+首先，在`styles.css`中添加控制面板的样式：
+
+```css
+/* 控制面板样式 */
+.sticky-todo-control-panel {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 10000;
+}
+
+/* 控制面板按钮 */
+.sticky-todo-control-panel button {
+  width: 180px;
+  padding: 10px;
+  border: none;
+  border-radius: 8px;
+  background-color: #4CAF50;
+  color: white;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.sticky-todo-control-panel button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* 添加按钮 */
+.sticky-todo-add-button {
+  background-color: #4CAF50 !important;
+}
+
+.sticky-todo-add-button:hover {
+  background-color: #45a049 !important;
+}
+
+/* 主题切换按钮 */
+.sticky-todo-theme-button {
+  background-color: #673AB7 !important;
+}
+
+.sticky-todo-theme-button:hover {
+  background-color: #5E35B1 !important;
+}
+
+/* 清除按钮 */
+.sticky-todo-clear-button {
+  background-color: #F44336 !important;
+}
+
+.sticky-todo-clear-button:hover {
+  background-color: #E53935 !important;
+}
+
+/* 深色模式下的控制面板 */
+.sticky-todo-dark-mode .sticky-todo-control-panel button {
+  background-color: #424242;
+  color: white;
+}
+```
+
+#### 3.2 创建控制面板
+
+接下来，在`content.js`中添加创建控制面板的函数：
+
+```javascript
+// 创建控制面板
+function createControlPanel() {
+  const controlPanel = document.createElement('div');
+  controlPanel.className = 'sticky-todo-control-panel';
+
+  // 添加新便签按钮
+  const addButton = document.createElement('button');
+  addButton.textContent = '+ 新便签';
+  addButton.className = 'sticky-todo-add-button';
+  addButton.addEventListener('click', createStickyNote);
+
+  // 主题切换按钮
+  const themeButton = document.createElement('button');
+  themeButton.textContent = '🌙 深色模式';
+  themeButton.className = 'sticky-todo-theme-button';
+  themeButton.addEventListener('click', toggleTheme);
+
+  // 清除所有便签按钮
+  const clearButton = document.createElement('button');
+  clearButton.textContent = '🗑️ 清除全部';
+  clearButton.className = 'sticky-todo-clear-button';
+  clearButton.addEventListener('click', clearAllNotes);
+
+  // 添加按钮到控制面板
+  controlPanel.appendChild(addButton);
+  controlPanel.appendChild(themeButton);
+  controlPanel.appendChild(clearButton);
+
+  // 添加控制面板到文档
+  document.body.appendChild(controlPanel);
+
+  // 从存储中加载主题设置
+  loadThemeSettings();
+}
+```
+
+### 4. 实现主题切换功能
+
+现在我们需要实现主题切换功能，让用户可以在深色模式和浅色模式之间切换。
+
+```javascript
+// 切换主题
+function toggleTheme() {
+  isDarkMode = !isDarkMode;
+
+  if (isDarkMode) {
+    document.body.classList.add('sticky-todo-dark-mode');
+    document.querySelector('.sticky-todo-theme-button').textContent = '☀️ 浅色模式';
+  } else {
+    document.body.classList.remove('sticky-todo-dark-mode');
+    document.querySelector('.sticky-todo-theme-button').textContent = '🌙 深色模式';
+  }
+
+  // 保存主题设置
+  chrome.storage.local.set({ 'stickyTodoDarkMode': isDarkMode });
+}
+
+// 加载主题设置
+function loadThemeSettings() {
+  chrome.storage.local.get('stickyTodoDarkMode', function(data) {
+    if (data.stickyTodoDarkMode) {
+      isDarkMode = true;
+      document.body.classList.add('sticky-todo-dark-mode');
+      document.querySelector('.sticky-todo-theme-button').textContent = '☀️ 浅色模式';
+    }
+  });
+}
+```
+
+### 5. 更新保存和加载函数
+
+最后，我们需要更新保存和加载函数，以支持新的便签属性（如最小化状态）：
+
+```javascript
+// 保存便签
+function saveStickyNotes() {
+  const notesData = stickyNotes.map(note => {
+    const content = note.element.querySelector('.sticky-todo-note-content').textContent;
+    const rect = note.element.getBoundingClientRect();
+    const x = parseInt(note.element.style.left);
+    const y = parseInt(note.element.style.top);
+
+    return {
+      content: content,
+      x: x,
+      y: y,
+      minimized: note.minimized
+    };
+  });
+
+  // 保存到chrome.storage
+  chrome.storage.local.set({ 'stickyTodoNotes': notesData });
+}
+
+// 加载便签
+function loadStickyNotes() {
+  chrome.storage.local.get('stickyTodoNotes', function(data) {
+    if (data.stickyTodoNotes && data.stickyTodoNotes.length > 0) {
+      data.stickyTodoNotes.forEach(noteData => {
+        const stickyNote = createStickyNote(noteData.content, noteData.x, noteData.y);
+
+        // 如果便签是最小化状态，则应用最小化样式
+        if (noteData.minimized) {
+          toggleMinimize(stickyNote);
+        }
+      });
+    }
+  });
+
+  // 创建控制面板
+  createControlPanel();
+}
+```
+
+### 6. 清除所有便签功能
+
+最后，我们需要实现清除所有便签的功能，并添加确认对话框，防止用户误操作：
+
+```javascript
+// 清除所有便签
+function clearAllNotes() {
+  // 如果没有便签，直接返回
+  if (stickyNotes.length === 0) {
+    return;
+  }
+
+  // 创建确认对话框
+  const confirmDialog = document.createElement('div');
+  confirmDialog.className = 'sticky-todo-confirm-dialog';
+  confirmDialog.innerHTML = `
+    <div class="sticky-todo-confirm-content">
+      <h3>确认删除</h3>
+      <p>确定要删除所有便签吗？此操作不可撤销。</p>
+      <div class="sticky-todo-confirm-buttons">
+        <button class="sticky-todo-cancel-button">取消</button>
+        <button class="sticky-todo-confirm-button">确定</button>
+      </div>
+    </div>
+  `;
+
+  // 添加确认对话框样式
+  const style = document.createElement('style');
+  style.textContent = `
+    .sticky-todo-confirm-dialog {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 10001;
+    }
+
+    .sticky-todo-confirm-content {
+      background-color: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      max-width: 400px;
+      width: 90%;
+    }
+
+    .sticky-todo-dark-mode .sticky-todo-confirm-content {
+      background-color: #333;
+      color: white;
+    }
+
+    .sticky-todo-confirm-content h3 {
+      margin-top: 0;
+      color: #f44336;
+    }
+
+    .sticky-todo-confirm-buttons {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .sticky-todo-confirm-buttons button {
+      padding: 8px 16px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .sticky-todo-cancel-button {
+      background-color: #e0e0e0;
+      color: #333;
+    }
+
+    .sticky-todo-confirm-button {
+      background-color: #f44336;
+      color: white;
+    }
+  `;
+
+  document.head.appendChild(style);
+  document.body.appendChild(confirmDialog);
+
+  // 添加按钮事件
+  confirmDialog.querySelector('.sticky-todo-cancel-button').addEventListener('click', function() {
+    confirmDialog.remove();
+  });
+
+  confirmDialog.querySelector('.sticky-todo-confirm-button').addEventListener('click', function() {
+    // 删除所有便签
+    stickyNotes.forEach(note => note.element.remove());
+    stickyNotes = [];
+
+    // 保存便签状态
+    saveStickyNotes();
+
+    // 关闭确认对话框
+    confirmDialog.remove();
+  });
+}
+```
+
+### 7. 测试UI改进
+
+现在我们已经完成了UI改进和控制面板的实现，让我们重新加载插件并测试这些新功能：
+
+1. 打开Chrome浏览器
+2. 在地址栏中输入 `chrome://extensions/`
+3. 找到我们的Sticky TODO插件
+4. 点击"重新加载"按钮
+5. 打开任意网页
+6. 你应该能看到右下角的悬浮控制面板
+7. 点击"+ 新便签"按钮创建一个新便签
+8. 尝试最小化和展开便签
+9. 尝试切换深色模式和浅色模式
+10. 尝试清除所有便签
+
+## 技术要点总结
+
+在这一部分中，我们学习了以下技术要点：
+
+### CSS技术
+
+- **Flexbox布局**: 使用flex布局创建灵活的UI组件
+- **CSS变量**: 使用CSS变量实现主题切换
+- **过渡和动画**: 使用transition和transform添加平滑过渡效果
+- **媒体查询**: 使用@media查询实现响应式设计
+
+### JavaScript技术
+
+- **DOM操作**: 创建和操作DOM元素
+- **事件处理**: 处理用户交互事件
+- **本地存储**: 使用chrome.storage.local保存用户设置
+- **状态管理**: 管理应用的状态（如深色模式、便签最小化状态等）
+
+### UI/UX设计
+
+- **现代UI设计**: 使用圆角、阴影、过渡效果等创建现代化的UI
+- **用户体验**: 添加确认对话框、悬浮控制面板等提升用户体验
+- **主题切换**: 实现深色模式和浅色模式切换
+- **响应式设计**: 确保UI在不同屏幕尺寸下都能正常显示
+
+## 第3部分：便签收缩与磁吸功能
+
+在前两部分中，我们创建了一个基本的便签插件，并改进了UI设计和用户体验。在这一部分中，我们将实现便签收缩和磁吸功能，进一步优化拖拽体验。
+
+### 1. 便签收缩功能
+
+便签收缩功能允许用户将便签收缩为一个小圆点，只显示便签的第一个字符，节省屏幕空间。
+
+#### 1.1 更新styles.css
+
+首先，我们需要在`styles.css`中添加收缩状态的样式：
+
+```css
+/* 收缩状态的便签 */
+.sticky-todo-collapsed {
+  width: 40px !important;
+  height: 40px !important;
+  border-radius: 50% !important;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 16px;
+  color: rgba(0, 0, 0, 0.8);
+  background-color: #ffeb3b;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease;
+}
+
+.sticky-todo-collapsed:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* 深色模式下的收缩便签 */
+.sticky-todo-dark-mode .sticky-todo-collapsed {
+  background-color: #424242;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+/* 收缩按钮 */
+.sticky-todo-collapse-button {
+  color: #ff9800;
+}
+
+.sticky-todo-collapse-button:hover {
+  color: #f57c00;
+}
+```
+
+#### 1.2 添加收缩功能
+
+接下来，我们需要更新便签创建函数，添加收缩按钮：
+
+```javascript
+// 创建便签函数（更新版）
+function createStickyNote(content = '', x = 20, y = 20) {
+  // 创建便签容器
+  const stickyNote = document.createElement('div');
+  stickyNote.className = 'sticky-todo-note';
+  stickyNote.style.left = `${x}px`;
+  stickyNote.style.top = `${y}px`;
+
+  // 创建便签头部
+  const header = document.createElement('div');
+  header.className = 'sticky-todo-note-header';
+
+  // 创建便签标题
+  const title = document.createElement('div');
+  title.className = 'sticky-todo-note-title';
+  title.textContent = '便签';
+
+  // 创建控制按钮容器
+  const controls = document.createElement('div');
+  controls.className = 'sticky-todo-note-controls';
+
+  // 创建收缩按钮
+  const collapseButton = document.createElement('div');
+  collapseButton.className = 'sticky-todo-note-control sticky-todo-collapse-button';
+  collapseButton.innerHTML = '&#8635;'; // 循环箭头符号
+  collapseButton.title = '收缩';
+  collapseButton.addEventListener('click', function() {
+    toggleCollapse(stickyNote);
+  });
+
+  // 创建最小化按钮
+  const minimizeButton = document.createElement('div');
+  minimizeButton.className = 'sticky-todo-note-control sticky-todo-minimize-button';
+  minimizeButton.innerHTML = '&#8722;'; // 减号符号
+  minimizeButton.title = '最小化';
+  minimizeButton.addEventListener('click', function() {
+    toggleMinimize(stickyNote);
+  });
+
+  // 创建删除按钮
+  const deleteButton = document.createElement('div');
+  deleteButton.className = 'sticky-todo-note-control sticky-todo-delete-button';
+  deleteButton.innerHTML = '&times;'; // 乘号符号
+  deleteButton.title = '删除';
+  deleteButton.addEventListener('click', function() {
+    deleteStickyNote(stickyNote);
+  });
+
+  // 添加控制按钮到容器
+  controls.appendChild(collapseButton);
+  controls.appendChild(minimizeButton);
+  controls.appendChild(deleteButton);
+
+  // 添加标题和控制按钮到头部
+  header.appendChild(title);
+  header.appendChild(controls);
+
+  // 添加拖拽事件
+  header.addEventListener('mousedown', function(e) {
+    dragStart(e, stickyNote);
+  });
+
+  // 创建便签内容
+  const noteContent = document.createElement('div');
+  noteContent.className = 'sticky-todo-note-content';
+  noteContent.contentEditable = 'true';
+  noteContent.textContent = content;
+  noteContent.addEventListener('input', function() {
+    saveStickyNotes();
+  });
+
+  // 创建便签底部
+  const footer = document.createElement('div');
+  footer.className = 'sticky-todo-note-footer';
+  footer.textContent = new Date().toLocaleDateString();
+
+  // 组装便签
+  stickyNote.appendChild(header);
+  stickyNote.appendChild(noteContent);
+  stickyNote.appendChild(footer);
+
+  // 添加到文档中
+  document.body.appendChild(stickyNote);
+
+  // 将便签添加到数组中
+  stickyNotes.push({
+    element: stickyNote,
+    content: content,
+    x: x,
+    y: y,
+    minimized: false,
+    collapsed: false
+  });
+
+  // 保存便签
+  saveStickyNotes();
+
+  return stickyNote;
+}
+```
 
 ### JavaScript技术
 

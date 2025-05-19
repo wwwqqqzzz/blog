@@ -3,19 +3,34 @@ import { ReadingProgressBar } from '@site/src/components/ui'
 import PageTransition from '@site/src/components/PageTransition'
 import { useLocation } from '@docusaurus/router'
 
+// 导入webpack客户端配置（用于禁用错误覆盖层）
+import '../webpack.client'
+
+// 错误边界状态接口
+interface ErrorBoundaryState {
+  hasError: boolean;
+  error: Error | null;
+  errorInfo: React.ErrorInfo | null;
+}
+
+// 错误边界属性接口
+interface ErrorBoundaryProps {
+  children: React.ReactNode;
+}
+
 // Global error boundary component
-class ErrorBoundary extends React.Component {
-  constructor(props) {
+class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundaryState> {
+  constructor(props: ErrorBoundaryProps) {
     super(props)
     this.state = { hasError: false, error: null, errorInfo: null }
   }
 
-  static getDerivedStateFromError(error) {
+  static getDerivedStateFromError(error: Error): Partial<ErrorBoundaryState> {
     // Update state so the next render will show the fallback UI
     return { hasError: true, error }
   }
 
-  componentDidCatch(error, errorInfo) {
+  override componentDidCatch(error: Error, errorInfo: React.ErrorInfo): void {
     // Log the error to console with detailed information
     console.error('React Error Boundary caught an error:')
     console.error('Error:', error)
@@ -24,7 +39,7 @@ class ErrorBoundary extends React.Component {
     this.setState({ errorInfo })
   }
 
-  render() {
+  override render(): React.ReactNode {
     if (this.state.hasError) {
       // You can render any custom fallback UI
       return (
@@ -52,15 +67,59 @@ class ErrorBoundary extends React.Component {
 }
 
 // Root组件：用于在应用程序外层添加全局功能
-export default function Root({ children }): React.ReactElement {
-  const location = useLocation()
+export default function Root({ children }: { children: React.ReactNode }): React.ReactElement {
+  // 我们不使用location，但保留它以便将来可能需要
+  const _location = useLocation()
 
   // 添加全局错误处理
   useEffect(() => {
     if (typeof window !== 'undefined') {
+      // 禁用webpack错误覆盖层
+      try {
+        // 查找并移除webpack错误覆盖层
+        const removeWebpackOverlay = () => {
+          const overlays = document.querySelectorAll('iframe[title="webpack-dev-server-client-overlay"]');
+          const overlayContainers = document.querySelectorAll('div:has(> iframe[title="webpack-dev-server-client-overlay"])');
+
+          overlays.forEach(overlay => overlay.remove());
+          overlayContainers.forEach(container => container.remove());
+
+          // 查找错误覆盖层的父元素
+          document.querySelectorAll('body > div').forEach(element => {
+            const div = element as HTMLDivElement;
+            if (div.style &&
+                div.style.position === 'fixed' &&
+                div.style.zIndex === '2147483647' &&
+                div.style.backgroundColor === 'rgba(0, 0, 0, 0.85)') {
+              div.remove();
+            }
+          });
+        };
+
+        // 立即执行一次
+        removeWebpackOverlay();
+
+        // 创建一个MutationObserver来监视DOM变化
+        const observer = new MutationObserver((mutations) => {
+          for (const mutation of mutations) {
+            if (mutation.addedNodes.length > 0) {
+              // 当有新节点添加时，检查并移除错误覆盖层
+              removeWebpackOverlay();
+            }
+          }
+        });
+
+        // 开始观察document.body的变化
+        observer.observe(document.body, { childList: true, subtree: true });
+
+        // 返回清理函数
+        return () => observer.disconnect();
+      } catch (e) {
+        console.error('Failed to disable webpack error overlay:', e);
+      }
       // 增强控制台错误日志
       const originalConsoleError = console.error
-      console.error = (...args) => {
+      console.error = (...args: any[]) => {
         // 使用原始console.error
         originalConsoleError.apply(console, args)
 
@@ -103,15 +162,34 @@ export default function Root({ children }): React.ReactElement {
 
       // 添加未处理的Promise拒绝处理器
       const originalOnUnhandledRejection = window.onunhandledrejection
-      window.onunhandledrejection = (event) => {
-        console.error('Unhandled Promise Rejection:', {
+      window.onunhandledrejection = (event: PromiseRejectionEvent) => {
+        // 忽略来自浏览器扩展的错误
+        const errorSource = event.reason?.stack || '';
+        const isExtensionError = errorSource.includes('chrome-extension://') ||
+                                errorSource.includes('inpage.js') ||
+                                (event.reason?.code === -32603);
+
+        if (isExtensionError) {
+          // 这是浏览器扩展的错误，我们可以安全地忽略它
+          console.warn('忽略浏览器扩展的错误:', {
+            reason: event.reason,
+            isExtensionError: true
+          });
+          // 阻止错误传播
+          event.preventDefault();
+          return false;
+        }
+
+        // 记录其他未处理的Promise拒绝
+        console.error('未处理的Promise拒绝:', {
           reason: event.reason,
           stack: event.reason?.stack || 'No stack trace',
-        })
+        });
 
         // 如果存在原始处理器则调用
         if (typeof originalOnUnhandledRejection === 'function') {
-          return originalOnUnhandledRejection(event)
+          // 使用call来确保this上下文正确
+          return originalOnUnhandledRejection.call(window, event);
         }
       }
 
@@ -122,6 +200,9 @@ export default function Root({ children }): React.ReactElement {
         window.onunhandledrejection = originalOnUnhandledRejection
       }
     }
+
+    // 如果window未定义，返回空清理函数
+    return () => {};
   }, [])
 
   // 添加主题切换动画类
@@ -150,6 +231,9 @@ export default function Root({ children }): React.ReactElement {
         document.documentElement.removeEventListener('transitionend', handleTransitionEnd)
       }
     }
+
+    // 如果document未定义，返回空清理函数
+    return () => {};
   }, [])
 
   return (

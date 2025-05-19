@@ -6,7 +6,7 @@ authors: wqz
 tags: [JavaScript, 前端开发, 函数式编程]
 keywords: [回调函数, callback, 高阶函数, JavaScript函数, 异步编程]
 description: 通过简单易懂的示例和图解，深入浅出地解释JavaScript回调函数的概念、工作原理和实际应用，帮助初学者克服理解障碍，掌握这一重要的编程模式。
-image: https://cdn.jsdelivr.net/gh/wwwqqqzzz/Image/img/1747555805842-af5b3817dcb9564c2feb229d68d1acf9.png
+image: https://cdn.jsdelivr.net/gh/wwwqqqzzz/Image/img/1747654475588-3d3644b4e6099c8ceb000c4a33e83a1a.png
 collection: JavaScript基础系列
 collection_order: 2
 collection_description: 这个系列涵盖了JavaScript的核心概念、DOM操作、ES6+特性和异步编程等内容，帮助你从零开始掌握JavaScript编程。

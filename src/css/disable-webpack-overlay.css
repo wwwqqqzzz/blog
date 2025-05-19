@@ -1,0 +1,31 @@
+/**
+ * 禁用webpack错误覆盖层的CSS
+ * 使用更精确的选择器，避免影响页面内容
+ */
+
+/* 隐藏webpack错误覆盖层 */
+iframe[title="webpack-dev-server-client-overlay"] {
+  display: none !important;
+}
+
+/* 隐藏webpack错误覆盖层的容器 - 只针对包含特定iframe的容器 */
+body > div:has(> iframe[title="webpack-dev-server-client-overlay"]) {
+  display: none !important;
+}
+
+/* 隐藏webpack错误覆盖层的黑色背景 - 更精确的选择器 */
+body > div[style*="position: fixed"][style*="z-index: 2147483647"][style*="background-color: rgba(0, 0, 0, 0.85)"]:not(:has(#__docusaurus)) {
+  display: none !important;
+}
+
+/* 确保主要内容容器可见 */
+#__docusaurus,
+#__docusaurus > div,
+.main-wrapper,
+main,
+.container {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  color: var(--ifm-text-color) !important;
+}

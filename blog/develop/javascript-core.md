@@ -6,7 +6,7 @@ authors: wqz
 tags: [JavaScript, 前端开发, 编程语言, Web开发]
 keywords: [JavaScript基础, JS教程, 前端编程, 变量, 函数, 对象, 数组]
 description: 全面介绍JavaScript的核心语法和基本概念，包括变量、数据类型、运算符、条件语句、循环、函数、对象和数组等，帮助初学者快速掌握JavaScript编程基础。
-image: https://cdn.jsdelivr.net/gh/wwwqqqzzz/Image/img/1747555805842-af5b3817dcb9564c2feb229d68d1acf9.png
+image: https://cdn.jsdelivr.net/gh/wwwqqqzzz/Image/img/1747670373178-f1d92384f111b2f6687e2b93b88d03dc.png
 collection: JavaScript基础系列
 collection_order: 1
 collection_description: 这个系列涵盖了JavaScript的核心概念、DOM操作、ES6+特性和异步编程等内容，帮助你从零开始掌握JavaScript编程。

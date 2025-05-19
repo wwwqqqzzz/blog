@@ -1,0 +1,52 @@
+/**
+ * 自定义博客样式
+ */
+
+/* 时间分割线样式 */
+.time-divider {
+  position: relative;
+  text-align: center;
+  margin: 2rem 0;
+  overflow: visible;
+}
+
+.time-divider::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--ifm-color-primary-lightest), transparent);
+  z-index: 1;
+}
+
+.time-marker {
+  position: relative;
+  display: inline-block;
+  padding: 0 1rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--ifm-color-primary);
+  background: var(--ifm-background-color);
+  border: 1px solid var(--ifm-color-primary-lighter);
+  border-radius: 1rem;
+  z-index: 2;
+  transition: all 0.3s ease;
+}
+
+.time-marker:hover {
+  background: var(--ifm-color-primary-lightest);
+  transform: translateY(-2px);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* 暗模式适配 */
+html[data-theme='dark'] .time-marker {
+  background: var(--ifm-background-color);
+  border-color: var(--ifm-color-primary-darker);
+}
+
+html[data-theme='dark'] .time-divider::before {
+  background: linear-gradient(90deg, transparent, var(--ifm-color-primary-darker), transparent);
+}

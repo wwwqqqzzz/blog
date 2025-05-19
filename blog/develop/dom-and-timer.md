@@ -6,7 +6,7 @@ authors: wqz
 tags: [JavaScript, DOM, 前端开发, 定时器]
 keywords: [DOM操作, JavaScript定时器, 事件处理, 网页交互]
 description: 全面介绍DOM操作和JavaScript定时器的基础知识与实践技巧，包括元素选择、属性操作、事件处理以及各类定时器的使用方法，帮助开发者构建交互丰富的Web应用。
-image: https://cdn.jsdelivr.net/gh/wwwqqqzzz/Image/img/1747555805842-af5b3817dcb9564c2feb229d68d1acf9.png
+image: https://cdn.jsdelivr.net/gh/wwwqqqzzz/Image/img/1747653755260-82cfbb8cd1d2dfd6053e76da932f1fb5.png
 collection: JavaScript基础系列
 collection_order: 3
 collection_description: 这个系列涵盖了JavaScript的核心概念、DOM操作、ES6+特性和异步编程等内容，帮助你从零开始掌握JavaScript编程。

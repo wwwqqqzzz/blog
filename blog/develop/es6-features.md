@@ -6,7 +6,7 @@ authors: wqz
 tags: [JavaScript, ES6, 前端开发, 编程语言]
 keywords: [ES6, JavaScript, 箭头函数, Promise, 解构赋值, 模块化]
 description: 全面详细介绍ES6及更高版本的JavaScript新特性，包括let/const声明、箭头函数、解构赋值、Promise异步处理等，帮助开发者快速掌握现代JavaScript编程技巧。
-image: https://cdn.jsdelivr.net/gh/wwwqqqzzz/Image/img/1747555805842-af5b3817dcb9564c2feb229d68d1acf9.png
+image: https://cdn.jsdelivr.net/gh/wwwqqqzzz/Image/img/1747654364522-eb079020eee1afdc4c67f998dbddf12b.png
 collection: JavaScript基础系列
 collection_order: 4
 collection_description: 这个系列涵盖了JavaScript的核心概念、DOM操作、ES6+特性和异步编程等内容，帮助你从零开始掌握JavaScript编程。

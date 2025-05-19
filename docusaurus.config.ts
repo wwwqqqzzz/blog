@@ -18,6 +18,7 @@ const config: Config = {
     bio: '技术探索之路',
     description:
       '这是王起哲的个人博客，主要分享编程、游戏开发和Web3技术等领域的知识和项目，该网站基于 React 驱动的静态网站生成器 Docusaurus 构建。',
+    disableWebpackOverlay: true, // 标记是否禁用webpack错误覆盖层
   },
   themeConfig: {
     // announcementBar: {
@@ -166,6 +167,8 @@ const config: Config = {
             './src/css/custom.css',
             './src/css/tweet-theme.css',
             './src/theme/Navbar/MobileSidebar/styles.css',
+            './src/css/disable-webpack-overlay.css', // 禁用webpack错误覆盖层的CSS
+            './src/css/custom-blog.css', // 自定义博客样式
           ],
         },
         sitemap: {
@@ -180,6 +183,8 @@ const config: Config = {
     ],
   ],
   plugins: [
+    // 自定义插件：禁用webpack错误覆盖层
+    process.env.NODE_ENV === 'development' ? require.resolve('./src/plugins/webpack-overlay-plugin') : null,
     'docusaurus-plugin-image-zoom',
     '@docusaurus/plugin-ideal-image',
     // ['docusaurus-plugin-baidu-tongji', { token: 'c9a3849aa75f9c4a4e65f846cd1a5155' }],
@@ -283,6 +288,15 @@ Love what you do and do what you love.
     'https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Medium.min.css',
     'https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Semibold.min.css',
   ],
+  // 添加自定义脚本
+  scripts: [
+    // 只在开发环境中加载禁用webpack覆盖层的脚本
+    process.env.NODE_ENV === 'development'
+      ? { src: '/js/disable-webpack-overlay.js', async: false, defer: false }
+      : null,
+    // 私密页面访问通知脚本
+    { src: '/js/telegram-notify.js', async: true, defer: false },
+  ].filter(Boolean), // 过滤掉null值
   i18n: {
     defaultLocale: 'zh-CN',
     locales: ['zh-CN'],
