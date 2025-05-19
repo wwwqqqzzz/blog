@@ -6,25 +6,33 @@
 // 在文档加载完成后执行
 document.addEventListener('DOMContentLoaded', function () {
   // 检查是否是密码保护的文章页面
-  const isPrivateBlogPage = document.querySelector('.password-wrapper') !== null
+  const isPrivateBlogPage = document.querySelector('.password-wrapper, .passwordContainer') !== null
+  console.log('Telegram通知脚本已加载，是否为私密页面:', isPrivateBlogPage)
 
   // 如果不是密码保护的文章页面，直接返回
   if (!isPrivateBlogPage) return
 
   // 监听密码验证成功事件
   document.addEventListener('password:success', function () {
+    console.log('密码验证成功事件触发，准备发送通知')
     // 发送访问通知
     sendAccessNotification()
   })
+
+  // 添加调试信息
+  console.log('Telegram通知脚本初始化完成，等待密码验证成功事件')
 })
 
 /**
  * 发送访问通知到 Telegram
  */
 function sendAccessNotification() {
+  console.log('开始发送访问通知')
+
   // 获取页面信息
   const pageTitle = document.title
   const pageUrl = window.location.href
+  console.log('页面信息:', { pageTitle, pageUrl })
   const timestamp = new Date().toLocaleString('zh-CN', {
     timeZone: 'Asia/Shanghai',
     year: 'numeric',
@@ -77,25 +85,37 @@ function sendAccessNotification() {
     return
   }
 
+  // 准备请求数据
+  const requestUrl = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`
+  const requestData = {
+    chat_id: CHAT_ID,
+    text: messageText,
+    parse_mode: 'Markdown',
+  }
+
+  console.log('准备发送Telegram请求:', {
+    url: requestUrl,
+    data: requestData
+  })
+
   // 发送请求到 Telegram Bot API
-  fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+  fetch(requestUrl, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({
-      chat_id: CHAT_ID,
-      text: messageText,
-      parse_mode: 'Markdown',
-    }),
+    body: JSON.stringify(requestData),
   })
-    .then(response => response.json())
+    .then(response => {
+      console.log('Telegram API响应状态:', response.status)
+      return response.json()
+    })
     .then((data) => {
       if (data.ok) {
-        console.log('访问通知已发送到Telegram')
+        console.log('访问通知已成功发送到Telegram:', data)
       }
       else {
-        console.error('发送通知失败:', data.description)
+        console.error('发送通知失败:', data)
       }
     })
     .catch((error) => {

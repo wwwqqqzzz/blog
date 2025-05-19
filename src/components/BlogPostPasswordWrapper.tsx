@@ -79,6 +79,10 @@ const BlogPostPasswordWrapper: React.FC<BlogPostPasswordWrapperProps> = ({ child
       setIsAuthenticated(true)
       setShowLogout(true)
       setError(false)
+
+      // 触发密码验证成功事件，用于通知脚本
+      const passwordSuccessEvent = new CustomEvent('password:success')
+      document.dispatchEvent(passwordSuccessEvent)
     }
     else {
       setError(true)
