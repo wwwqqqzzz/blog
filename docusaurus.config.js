@@ -66,10 +66,10 @@ const config = {
             { label: '私密博客', to: 'private' },
           ],
         },
-        // {
-        //   type: 'localeDropdown',
-        //   position: 'right',
-        // },
+        {
+          type: 'localeDropdown',
+          position: 'right',
+        },
       ],
     },
     footer: {
@@ -298,9 +298,38 @@ Love what you do and do what you love.
   ].filter(Boolean), // 过滤掉null值
   i18n: {
     defaultLocale: 'zh-CN',
-    locales: ['zh-CN'],
+    locales: ['zh-CN', 'en'],
+    localeConfigs: {
+      'zh-CN': {
+        label: '简体中文',
+        direction: 'ltr',
+      },
+      en: {
+        label: 'English',
+        direction: 'ltr',
+      },
+    },
   },
   onBrokenLinks: 'warn',
+  // 添加PlantUML支持的配置
+  markdown: {
+    mermaid: true, // 启用Mermaid图表支持
+  },
+  markdownPlugins: [
+    // 添加PlantUML支持
+    (md) => {
+      try {
+        require('remarkable-plantuml')(md, {
+          base_path: './static', // 静态文件路径
+          format: 'png', // 输出格式
+          url: 'https://www.plantuml.com/plantuml/' // PlantUML服务器
+        });
+        console.log('PlantUML plugin loaded successfully');
+      } catch (error) {
+        console.warn('Failed to load PlantUML plugin:', error.message);
+      }
+    }
+  ],
 };
 
 module.exports = config;
