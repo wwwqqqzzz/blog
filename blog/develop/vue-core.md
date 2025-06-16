@@ -6,7 +6,7 @@ authors: wqz
 tags: [Vue, JavaScript, 前端开发, 框架]
 keywords: [Vue.js, 响应式, 组件化, 前端框架, MVVM]
 description: 全面介绍Vue.js的核心概念和基础知识，包括Vue实例、模板语法、组件、生命周期等，帮助初学者快速掌握Vue开发并构建现代化的交互式Web应用。
-image: https://cdn.jsdelivr.net/gh/wwwqqqzzz/Image/img/1748273245127-5942e529f0edba825ff9a0365ce6b7ba.png
+image: https://cdn.jsdelivr.net/gh/wwwqqqzzz/Image/img/1748273471681-5009c3ac088275a6600a29b3e7c72c84.png
 collection: Vue.js系列
 collection_order: 1
 collection_description: 这个系列全面介绍Vue.js的核心概念和高级特性，包括Vue 2和Vue 3，以及相关生态系统（Vue Router、Vuex、Pinia等），帮助你掌握这个流行的渐进式JavaScript框架。

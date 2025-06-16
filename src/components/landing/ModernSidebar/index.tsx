@@ -358,7 +358,7 @@ function ModernSidebarComponent({
       {/* 1. 图片展示区 */}
       <div className="overflow-hidden rounded-xl shadow-md sm:max-h-[120px] md:max-h-[150px] lg:max-h-none">
         <img
-          src="https://cdn.jsdelivr.net/gh/wwwqqqzzz/Image/img/1747492894469-cd9d1672a6650fcd9f1e7757d49a40cd.gif"
+          src="https://cdn.jsdelivr.net/gh/wwwqqqzzz/Image/img/1750104497821-f9398baba1501db8ccbe9623d92361ec.gif"
           alt="动态展示"
           className="h-auto w-full object-cover sm:object-contain md:object-cover"
           loading="lazy"
