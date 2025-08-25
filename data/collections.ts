@@ -76,6 +76,11 @@ export const collections: CollectionData[] = [
     description: '微前端架构设计与实践指南。本系列深入探讨微前端的核心理念、技术选型、实现方案和最佳实践。从基础概念到框架对比，从路由集成到应用通信，从构建配置到部署策略，全面解析如何将庞大的前端应用拆分为独立开发、独立部署的微应用，以提高团队并行开发效率，降低系统复杂度，实现渐进式技术栈演进。',
     image: 'https://images.unsplash.com/photo-1558050032-160f36233a07?q=80&w=1200&auto=format&fit=crop',
   },
+  {
+    id: '量化交易系列',
+    description: '从零开始的量化交易学习系列，系统讲解 Alpha 概念、平台设置、股票池、仓位与中性化、技术分析与 PV 数据、基本面与期权等核心主题，配合直观示例与实操思路，帮助你建立完整的量化交易认知体系。',
+    image: 'https://images.unsplash.com/photo-1559526324-593bc073d938?q=80&w=1200&auto=format&fit=crop',
+  },
 ]
 
 /**
