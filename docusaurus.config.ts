@@ -291,12 +291,14 @@ Love what you do and do what you love.
   // 添加自定义脚本
   scripts: [
     // 只在开发环境中加载禁用webpack覆盖层的脚本
-    process.env.NODE_ENV === 'development'
-      ? { src: '/js/disable-webpack-overlay.js', async: false, defer: false }
-      : null,
+    ...(process.env.NODE_ENV === 'development'
+      ? [{ src: '/js/disable-webpack-overlay.js', async: false, defer: false }]
+      : []),
     // 私密页面访问通知脚本
     { src: '/js/telegram-notify.js', async: true, defer: false },
-  ].filter(Boolean), // 过滤掉null值
+    // Umami 分析跟踪
+    { src: 'https://cloud.umami.is/script.js', defer: true, 'data-website-id': 'dcd2c62c-f310-4c32-91f9-cca5998b7668' },
+  ],
   i18n: {
     defaultLocale: 'zh-CN',
     locales: ['zh-CN'],
