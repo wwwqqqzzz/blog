@@ -282,6 +282,17 @@ Love what you do and do what you love.
         content: '王起哲的个人博客',
       },
     },
+    {
+      tagName: 'script',
+      innerHTML: `
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?6b15ae5b3d5dbf9156bf43edbbbcf572";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();`,
+    },
   ],
   stylesheets: [
     'https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Normal.min.css',
