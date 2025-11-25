@@ -5,16 +5,16 @@
 @layer base {
   :root {
     /* 设计系统主色调 */
-    --color-primary-50: #ECFDF5;
-    --color-primary-100: #D1FAE5;
-    --color-primary-200: #A7F3D0;
-    --color-primary-300: #6EE7B7;
-    --color-primary-400: #34D399;
-    --color-primary-500: #10B981;
-    --color-primary-600: #059669;
-    --color-primary-700: #047857;
-    --color-primary-800: #065F46;
-    --color-primary-900: #064E3B;
+    --color-primary-50: #E6F7FF;
+    --color-primary-100: #BAE7FF;
+    --color-primary-200: #91D5FF;
+    --color-primary-300: #69C0FF;
+    --color-primary-400: #40A9FF;
+    --color-primary-500: #12AFFA;
+    --color-primary-600: #0E9FE5;
+    --color-primary-700: #0A81BC;
+    --color-primary-800: #086293;
+    --color-primary-900: #0B5A82;
 
     /* 辅助色 */
     --color-accent-50: #EEF2FF;
@@ -47,13 +47,13 @@
 
     /* 主题变量 */
     --content-background: #fefefe;
-    --ifm-color-primary: #10B981;
-    --ifm-color-primary-dark: #0FA06C;
-    --ifm-color-primary-darker: #0D8E61;
-    --ifm-color-primary-darkest: #0A6B4A;
-    --ifm-color-primary-light: #34D399;
-    --ifm-color-primary-lighter: #6EE7B7;
-    --ifm-color-primary-lightest: #A7F3D0;
+    --ifm-color-primary: #10b981;
+    --ifm-color-primary-dark: #0ea66f;
+    --ifm-color-primary-darker: #0b8f5e;
+    --ifm-color-primary-darkest: #0a704b;
+    --ifm-color-primary-light: #34d399;
+    --ifm-color-primary-lighter: #6ee7b7;
+    --ifm-color-primary-lightest: #d1fae5;
     --ifm-code-font-size: 95%;
     --ifm-font-family-base: misans, ui-sans-serif, system-ui, -apple-system;
 
@@ -81,8 +81,8 @@
     --ifm-border-color: #E5E7EB;
     --ifm-toc-border-color: var(--ifm-border-color);
 
-    --site-primary-hue-saturation: 158 70%;
-    --site-primary-hue-saturation-light: 158 56%;
+    --site-primary-hue-saturation: 167 68%;
+    --site-primary-hue-saturation-light: 167 56%;
 
     --site-color-favorite-background: #f6fdfd;
     --site-color-tooltip: #fff;
@@ -92,7 +92,7 @@
 
     --ifm-container-width: 1024px;
 
-    --ifm-heading-color: hsl(158deg 70% 20%);
+    --ifm-heading-color: hsl(214deg 78% 17%);
     --ifm-heading-font-weight: 500;
     --ifm-font-weight-bold: 520;
 
@@ -121,8 +121,8 @@
   html[data-theme='dark'] {
     /* 暗色模式主题变量 */
     --content-background: #18181b;
-    --ifm-color-primary: hsl(158deg 64% 45%);
-    --ifm-color-primary-light: hsl(158deg 64% 60%);
+    --ifm-color-primary: hsl(142deg 72% 45%);
+    --ifm-color-primary-light: hsl(142deg 72% 62%);
 
     /* 文本颜色 - 暗色模式 */
     --ifm-text-color: #F9FAFB;
