@@ -3,7 +3,9 @@ import Translate from '@docusaurus/Translate'
 import { Icon } from '@iconify/react'
 import { useEffect, useState } from 'react'
 import SocialLinks from '@site/src/components/SocialLinks'
+import { projects } from '@site/data/projects'
 import styles from './styles.module.css'
+import React from 'react'
 
 const variants: Variants = {
   visible: i => ({
@@ -132,15 +134,29 @@ export default function Hero() {
                 className="max-lg:px-4"
               >
                 <Translate id="homepage.hero.text">
-                  在这里我分享项目与技术实践，记录问题与解决方案，输出可复用的工程经验。
+                  专注工程化与高质量交付，聚焦可复用的技术实践与项目落地经验。
                 </Translate>
               </motion.p>
+              <div className={styles.metrics}>
+                <span className={styles.metric}>
+                  <Icon icon="mdi:briefcase" />
+                  项目 {projects.length}
+                </span>
+                <span className={styles.metric}>
+                  <Icon icon="mdi:file-document-edit" />
+                  技术写作
+                </span>
+                <span className={styles.metric}>
+                  <Icon icon="mdi:github" />
+                  开源贡献
+                </span>
+              </div>
               <motion.div
                 custom={3}
                 initial="hidden"
                 animate="visible"
                 variants={variants}
-                className="relative mt-4 mb-4 flex w-full flex-wrap items-center justify-center"
+                className="relative mt-4 mb-4 flex w-full flex-wrap items-center justify-start"
               >
                 <SocialLinks className="social-links-hero" />
               </motion.div>
