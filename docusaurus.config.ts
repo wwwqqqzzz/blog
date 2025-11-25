@@ -165,7 +165,6 @@ const config: Config = {
         theme: {
           customCss: [
             './src/css/custom.css',
-            './src/css/tweet-theme.css',
             './src/theme/Navbar/MobileSidebar/styles.css',
             './src/css/disable-webpack-overlay.css', // 禁用webpack错误覆盖层的CSS
             './src/css/custom-blog.css', // 自定义博客样式
