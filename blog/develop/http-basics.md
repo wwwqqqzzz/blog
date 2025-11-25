@@ -649,7 +649,7 @@ xhr.upload.onprogress = function(e) {
 
 ## 下一步学习
 
-现在你已经掌握了原生网络请求的基础，准备好了解更强大的[Axios请求库](/blog/develop/axios-guide)了吗？它能让你的代码更简洁，功能更强大！
+现在你已经掌握了原生网络请求的基础，准备好了解更强大的[Axios请求库](/blog/axios-guide)了吗？它能让你的代码更简洁，功能更强大！
 
 ## 实用资源
 

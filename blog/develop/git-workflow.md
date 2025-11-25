@@ -561,7 +561,7 @@ GitLab Flow包含以下分支：
 
 最重要的是，无论选择哪种工作流，都应确保团队成员理解并一致地遵循它，同时配合良好的自动化测试和持续集成实践。这样才能充分发挥Git的强大功能，提高团队协作效率和代码质量。
 
-在基础的[Git基础教程](/blog/develop/git-basic-guide)和进阶的[Git高级技巧](/blog/develop/git-advanced-techniques)之上，掌握这些工作流模型将使你能够更有效地管理团队协作和代码版本控制。
+在基础的[Git基础教程](/blog/git-basic-guide)和进阶的[Git高级技巧](/blog/git-advanced-techniques)之上，掌握这些工作流模型将使你能够更有效地管理团队协作和代码版本控制。
 
 ## 参考资源
 
