@@ -119,57 +119,102 @@ export default function Hero() {
 
   return (
     <motion.div className={styles.hero}>
-      <div className={styles.intro}>
-        <Name />
-        <motion.p
-          custom={2}
-          initial="hidden"
-          animate="visible"
-          variants={variants}
-          className="max-lg:px-4"
-        >
-          <Translate id="homepage.hero.text">
-            在这里我会分享各类技术栈所遇到问题与解决方案，带你了解最新的技术栈以及实际开发中如何应用，并希望我的开发经历对你有所启发。
-          </Translate>
-        </motion.p>
-        <motion.div
-          custom={3}
-          initial="hidden"
-          animate="visible"
-          variants={variants}
-          className="relative mt-4 mb-4 flex w-full flex-wrap items-center justify-center"
-        >
-          <SocialLinks className="social-links-hero" />
-        </motion.div>
-
-        <motion.div
-          className="mt-6 flex flex-wrap justify-center gap-3 md:mt-8"
-          custom={4}
-          initial="hidden"
-          animate="visible"
-          variants={variants}
-        >
-          <a
-            href="/project"
-            className="rounded-xl border border-primary/30 bg-primary/10 px-5 py-2 text-sm font-semibold text-primary transition-all hover:bg-primary/20 md:text-base"
-          >
-            查看项目
-          </a>
-          <a
-            href="/about"
-            className="rounded-xl border border-primary/20 bg-background px-5 py-2 text-sm font-semibold transition-all hover:border-primary/40 md:text-base"
-          >
-            关于我
-          </a>
-          <a
-            href="/blog"
-            className="rounded-xl border border-primary/20 bg-background px-5 py-2 text-sm font-semibold transition-all hover:border-primary/40 md:text-base"
-          >
-            最近写作
-          </a>
-        </motion.div>
-
-        <TechChips />
+      <div className="mx-auto w-full max-w-6xl px-4">
+        <div className="flex flex-col gap-8">
+          <div>
+            <div className={styles.intro}>
+              <Name />
+              <motion.p
+                custom={2}
+                initial="hidden"
+                animate="visible"
+                variants={variants}
+                className="max-lg:px-4"
+              >
+                <Translate id="homepage.hero.text">
+                  在这里我分享项目与技术实践，记录问题与解决方案，输出可复用的工程经验。
+                </Translate>
+              </motion.p>
+              <motion.div
+                custom={3}
+                initial="hidden"
+                animate="visible"
+                variants={variants}
+                className="relative mt-4 mb-4 flex w-full flex-wrap items-center justify-center"
+              >
+                <SocialLinks className="social-links-hero" />
+              </motion.div>
+              <motion.div
+                className="mt-6 flex flex-wrap justify-center gap-3 md:mt-8"
+                custom={4}
+                initial="hidden"
+                animate="visible"
+                variants={variants}
+              >
+                <a
+                  href="/project"
+                  className="rounded-xl border border-primary/30 bg-primary/10 px-5 py-2 text-sm font-semibold text-primary transition-all hover:bg-primary/20 md:text-base"
+                >
+                  查看项目
+                </a>
+                <a
+                  href="/about"
+                  className="rounded-xl border border-primary/20 bg-background px-5 py-2 text-sm font-semibold transition-all hover:border-primary/40 md:text-base"
+                >
+                  关于我
+                </a>
+                <a
+                  href="/blog"
+                  className="rounded-xl border border-primary/20 bg-background px-5 py-2 text-sm font-semibold transition-all hover:border-primary/40 md:text-base"
+                >
+                  最近写作
+                </a>
+              </motion.div>
+              <TechChips />
+            </div>
+          </div>
+          <div>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+              className="rounded-2xl border border-primary/20 bg-card/60 p-6 shadow-sm backdrop-blur"
+            >
+              <div className="flex items-start gap-4">
+                <img
+                  src="https://cdn.jsdelivr.net/gh/wwwqqqzzz/Image/img/49bd6f9e-4246-447e-b2f1-c51b8930e964.png"
+                  alt="avatar"
+                  className="h-20 w-20 rounded-xl object-cover"
+                />
+                <div className="flex-1">
+                  <h3 className="mb-1 text-xl font-semibold">关于我</h3>
+                  <p className="text-sm text-muted-foreground">
+                    专注前端与全栈实践，偏好工程化与高质量交付，热爱将想法转化为可用产品。
+                  </p>
+                  <div className="mt-3 flex flex-wrap gap-2 text-xs">
+                    <span className="rounded-full border border-primary/30 px-2 py-1 text-primary">React/TypeScript</span>
+                    <span className="rounded-full border border-primary/30 px-2 py-1 text-primary">Node.js</span>
+                    <span className="rounded-full border border-primary/30 px-2 py-1 text-primary">Tailwind</span>
+                  </div>
+                  <div className="mt-4 flex flex-wrap gap-3">
+                    <a
+                      href="/project"
+                      className="rounded-lg border border-primary/30 bg-primary/10 px-3 py-1.5 text-sm font-medium text-primary hover:bg-primary/20"
+                    >
+                      查看项目
+                    </a>
+                    <a
+                      href="/about"
+                      className="rounded-lg border border-primary/20 px-3 py-1.5 text-sm font-medium hover:border-primary/40"
+                    >
+                      详细简介
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        </div>
       </div>
     </motion.div>
   )
