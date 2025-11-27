@@ -109,7 +109,7 @@ collection_order: 1
 
   
 
-   ```jsx
+```jsx
 
    // 举个例子，我可以轻松创建自定义React组件
 
@@ -133,7 +133,7 @@ collection_order: 1
 
    }
 
-   ```
+```
 
   
 
@@ -163,7 +163,7 @@ collection_order: 1
 
   
 
-   ```mdx
+```mdx
 
    # 我的文章标题
 
@@ -179,7 +179,7 @@ collection_order: 1
 
    继续写Markdown内容...
 
-   ```
+```
 
   
 
