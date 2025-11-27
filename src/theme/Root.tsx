@@ -2,9 +2,9 @@ import React, { useEffect } from 'react'
 import { ReadingProgressBar } from '@site/src/components/ui'
 import PageTransition from '@site/src/components/PageTransition'
 import { useLocation } from '@docusaurus/router'
+import CustomCursor from '@site/src/components/ui/CustomCursor'
 
 // 导入webpack客户端配置（用于禁用错误覆盖层）
-import '../webpack.client'
 
 // 错误边界状态接口
 interface ErrorBoundaryState {
@@ -74,49 +74,6 @@ export default function Root({ children }: { children: React.ReactNode }): React
   // 添加全局错误处理
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      // 禁用webpack错误覆盖层
-      try {
-        // 查找并移除webpack错误覆盖层
-        const removeWebpackOverlay = () => {
-          const overlays = document.querySelectorAll('iframe[title="webpack-dev-server-client-overlay"]');
-          const overlayContainers = document.querySelectorAll('div:has(> iframe[title="webpack-dev-server-client-overlay"])');
-
-          overlays.forEach(overlay => overlay.remove());
-          overlayContainers.forEach(container => container.remove());
-
-          // 查找错误覆盖层的父元素
-          document.querySelectorAll('body > div').forEach(element => {
-            const div = element as HTMLDivElement;
-            if (div.style &&
-                div.style.position === 'fixed' &&
-                div.style.zIndex === '2147483647' &&
-                div.style.backgroundColor === 'rgba(0, 0, 0, 0.85)') {
-              div.remove();
-            }
-          });
-        };
-
-        // 立即执行一次
-        removeWebpackOverlay();
-
-        // 创建一个MutationObserver来监视DOM变化
-        const observer = new MutationObserver((mutations) => {
-          for (const mutation of mutations) {
-            if (mutation.addedNodes.length > 0) {
-              // 当有新节点添加时，检查并移除错误覆盖层
-              removeWebpackOverlay();
-            }
-          }
-        });
-
-        // 开始观察document.body的变化
-        observer.observe(document.body, { childList: true, subtree: true });
-
-        // 返回清理函数
-        return () => observer.disconnect();
-      } catch (e) {
-        console.error('Failed to disable webpack error overlay:', e);
-      }
       // 增强控制台错误日志
       const originalConsoleError = console.error
       console.error = (...args: any[]) => {
@@ -241,6 +198,7 @@ export default function Root({ children }: { children: React.ReactNode }): React
       <>
         {/* 全局阅读进度条 */}
         <ReadingProgressBar showPercentage position="top" height={3} />
+        <CustomCursor />
 
         {/* 页面过渡动画 */}
         <PageTransition type="fade">

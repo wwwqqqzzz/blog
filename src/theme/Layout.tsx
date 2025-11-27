@@ -4,6 +4,7 @@
 
 import React, { useEffect } from 'react';
 import Layout from '@theme-original/Layout';
+import Background from '@site/src/components/Background';
 import type { Props } from '@theme/Layout';
 import Head from '@docusaurus/Head';
 
@@ -167,6 +168,7 @@ export default function LayoutWrapper(props: Props): JSX.Element {
           </>
         )}
       </Head>
+      <Background />
       <Layout {...props} />
     </>
   );

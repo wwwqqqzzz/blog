@@ -1,6 +1,32 @@
 /* 移动端导航栏样式修复 */
 .navbar-sidebar {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 10000;
   overflow-y: auto;
+  background: rgba(9, 98, 72, 0.18);
+  backdrop-filter: blur(14px) saturate(1.08);
+}
+
+.navbar-sidebar::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(
+      ellipse 120% 140% at 20% 10%,
+      rgba(255, 255, 255, 0.24) 0%,
+      rgba(255, 255, 255, 0.12) 35%,
+      transparent 60%
+    ),
+    radial-gradient(
+      ellipse 120% 140% at 80% 90%,
+      rgba(255, 255, 255, 0.18) 0%,
+      rgba(255, 255, 255, 0.08) 30%,
+      transparent 60%
+    );
 }
 
 /* 用户卡片容器 */
@@ -10,6 +36,34 @@
 }
 
 /* 确保社交链接在移动端正确显示 */
+.navbar-sidebar__brand {
+  position: sticky;
+  top: 0;
+  z-index: 11;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1rem;
+  background: linear-gradient(
+    to bottom,
+    rgba(9, 98, 72, 0.32),
+    rgba(9, 98, 72, 0.24)
+  );
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid rgba(9, 98, 72, 0.55);
+}
+
+.app-blur .main-wrapper {
+  filter: blur(12px) saturate(1.06);
+  transition: filter 200ms ease;
+  pointer-events: none;
+}
+.app-blur footer {
+  filter: blur(12px) saturate(1.06);
+  transition: filter 200ms ease;
+  pointer-events: none;
+}
+
 .navbar-sidebar .socialLinks_nm_K {
   display: flex;
   flex-wrap: wrap;

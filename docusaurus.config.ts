@@ -165,9 +165,7 @@ const config: Config = {
         theme: {
           customCss: [
             './src/css/custom.css',
-            './src/css/tweet-theme.css',
             './src/theme/Navbar/MobileSidebar/styles.css',
-            './src/css/disable-webpack-overlay.css', // 禁用webpack错误覆盖层的CSS
             './src/css/custom-blog.css', // 自定义博客样式
           ],
         },
@@ -183,8 +181,6 @@ const config: Config = {
     ],
   ],
   plugins: [
-    // 自定义插件：禁用webpack错误覆盖层
-    process.env.NODE_ENV === 'development' ? require.resolve('./src/plugins/webpack-overlay-plugin') : null,
     'docusaurus-plugin-image-zoom',
     '@docusaurus/plugin-ideal-image',
     // ['docusaurus-plugin-baidu-tongji', { token: 'c9a3849aa75f9c4a4e65f846cd1a5155' }],

@@ -1,18 +1,18 @@
-import { type Variants, motion, useScroll, useTransform } from 'framer-motion'
-import Translate from '@docusaurus/Translate'
-import { Icon } from '@iconify/react'
-import { useEffect, useRef, useState } from 'react'
-import SocialLinks from '@site/src/components/SocialLinks'
-import { MovingButton } from '../../magicui/moving-border'
-import { DoodleDecoration } from '../../ui/doodle-decoration'
-import styles from './styles.module.css'
+import { type Variants, motion, AnimatePresence } from "framer-motion";
+import Translate from "@docusaurus/Translate";
+import { Icon } from "@iconify/react";
+import { useEffect, useState } from "react";
+import SocialLinks from "@site/src/components/SocialLinks";
+import social from "@site/data/social";
+import styles from "./styles.module.css";
+import TechMarquee from "./TechMarquee";
 
 const variants: Variants = {
-  visible: i => ({
+  visible: (i) => ({
     opacity: 1,
     y: 0,
     transition: {
-      type: 'spring',
+      type: "spring",
       damping: 25,
       stiffness: 100,
       duration: 0.3,
@@ -20,26 +20,33 @@ const variants: Variants = {
     },
   }),
   hidden: { opacity: 0, y: 30 },
-}
+};
 
-// 技术图标，响应式处理
 const techIcons = [
-  { icon: 'logos:react', title: 'React' },
-  { icon: 'logos:typescript-icon', title: 'TypeScript' },
-  { icon: 'logos:nodejs-icon', title: 'Node.js' },
-  { icon: 'logos:vue', title: 'Vue' },
-  { icon: 'logos:tailwindcss-icon', title: 'Tailwind CSS' },
-  { icon: 'logos:nextjs-icon', title: 'Next.js' },
-  { icon: 'logos:javascript', title: 'JavaScript' },
-  { icon: 'logos:git-icon', title: 'Git' },
-  { icon: 'logos:python', title: 'Python' },
-  { icon: 'logos:webpack', title: 'Webpack' },
-]
+  { icon: "logos:react", title: "React" },
+  { icon: "logos:typescript-icon", title: "TypeScript" },
+  { icon: "logos:vue", title: "Vue" },
+  { icon: "logos:nextjs-icon", title: "Next.js" },
+  { icon: "logos:tailwindcss-icon", title: "Tailwind CSS" },
+  { icon: "logos:astro", title: "Astro" },
+  { icon: "logos:nodejs-icon", title: "Node.js" },
+  { icon: "logos:python", title: "Python" },
+  { icon: "logos:mongodb-icon", title: "MongoDB" },
+  { icon: "logos:postgresql", title: "PostgreSQL" },
+  { icon: "logos:docker-icon", title: "Docker" },
+  { icon: "logos:redis", title: "Redis" },
+  { icon: "logos:git-icon", title: "Git" },
+  { icon: "logos:webpack", title: "Webpack" },
+  { icon: "logos:eslint", title: "ESLint" },
+  { icon: "logos:prettier", title: "Prettier" },
+  { icon: "logos:vitejs", title: "Vite" },
+  { icon: "logos:pnpm", title: "pnpm" },
+];
 
 type TechIcon = {
-  icon: string
-  title: string
-}
+  icon: string;
+  title: string;
+};
 
 function Name() {
   return (
@@ -54,130 +61,181 @@ function Name() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.2 }}
-        className="mb-4 text-xl text-blue-400"
+        className="mb-2 flex justify-center"
       >
-        王起哲.dev
+        <span className="inline-flex items-center gap-2 rounded-full border border-[color:var(--ifm-color-primary)]/30 bg-[color:var(--ifm-color-primary)]/12 shadow-[0_0_0_1px_rgba(16,185,129,0.18)] px-4 py-1.5 uppercase tracking-[0.2em] text-[12px] font-semibold text-[color:var(--ifm-color-primary)]">
+          <span className="inline-block h-2.5 w-2.5 rounded-full bg-[color:var(--ifm-color-primary)]" />
+          Full‑stack Engineer
+        </span>
       </motion.div>
-      <motion.div className="flex items-center justify-center gap-3">
-        <span className={styles.name}>全栈开发者</span>
-        <motion.span
-          className="inline-block text-4xl"
-          animate={{
-            rotate: [0, 15, 0],
-            scale: [1, 1.2, 1],
-          }}
-          transition={{
-            repeat: Infinity,
-            duration: 1.5,
-            repeatType: 'reverse',
-            ease: 'easeInOut',
-          }}
-        >
-          👋
-        </motion.span>
+      <motion.h1
+        className={`${styles.hero_title} mx-auto max-w-4xl text-center md:text-6xl text-4xl`}
+      >
+        <span>我是 </span>
+        <span className={styles.hero_emphasis}>王起哲</span>
+      </motion.h1>
+      <motion.div
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, delay: 0.2 }}
+        className={`${styles.hero_title_en} mt-3 text-center`}
+      >
+        BUILD RELIABLE WEB & ENGINEERING SYSTEMS
       </motion.div>
     </motion.div>
-  )
+  );
 }
 
-function DecorativeIcons({ isMobile }) {
-  // 使用所有图标，两行显示，每行5个
+const iconScale: Record<string, number> = {
+  "logos:tailwindcss-icon": 0.86,
+  "logos:typescript-icon": 0.92,
+  "logos:nextjs-icon": 0.92,
+  "logos:webpack": 0.9,
+  "logos:javascript": 0.92,
+  "logos:eslint": 0.92,
+  "logos:prettier": 0.92,
+  "logos:docker-icon": 0.9,
+  "logos:mongodb-icon": 0.9,
+  "logos:postgresql": 0.9,
+  "logos:redis": 0.9,
+  "logos:vitejs": 0.92,
+  "logos:pnpm": 0.92,
+  "logos:astro": 0.92,
+};
+
+function TechItem({ icon }: TechIcon) {
+  const scale = iconScale[icon] ?? 1;
+  return (
+    <div className="flex w-16 items-center justify-center md:w-20">
+      <span className="inline-flex h-14 w-14 items-center justify-center rounded-xl bg-[color:var(--ifm-background-surface-color)]/50 ring-1 ring-[color:var(--ifm-color-primary)]/30 md:h-16 md:w-16">
+        <Icon
+          icon={icon}
+          className="text-xl md:text-2xl opacity-85"
+          style={{ transform: `scale(${scale})` }}
+        />
+      </span>
+    </div>
+  );
+}
+
+function IconsRow() {
   return (
     <motion.div
-      className={styles.decorative_icons}
-      custom={3}
-      initial="hidden"
-      animate="visible"
-      variants={variants}
+      className="mx-auto mt-8 grid w-full max-w-5xl grid-cols-1 gap-8 px-4 md:grid-cols-3"
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4, delay: 0.35 }}
+      aria-label="技术栈"
     >
-      {techIcons.map(tech => (
-        <motion.div
-          key={tech.icon}
-          className={styles.icon_wrapper}
-          whileHover={{ scale: 1.05, y: -5 }}
-          transition={{ type: 'spring', stiffness: 300 }}
-          title={tech.title}
-        >
-          <Icon icon={tech.icon} className={styles.tech_icon} />
-        </motion.div>
-      ))}
+      <div className="flex flex-col items-center gap-3">
+        <div className="text-xs font-semibold uppercase tracking-widest text-[color:var(--ifm-color-primary)]">
+          Frontend
+        </div>
+        <div className="grid grid-cols-6 gap-3 md:gap-5">
+          {[
+            { icon: "logos:react", title: "React" },
+            { icon: "logos:typescript-icon", title: "TypeScript" },
+            { icon: "logos:vue", title: "Vue" },
+            { icon: "logos:nextjs-icon", title: "Next.js" },
+            { icon: "logos:tailwindcss-icon", title: "Tailwind" },
+            { icon: "logos:astro", title: "Astro" },
+          ].map((t) => (
+            <TechItem key={t.icon} icon={t.icon} />
+          ))}
+        </div>
+      </div>
+      <div className="flex flex-col items-center gap-3">
+        <div className="text-xs font-semibold uppercase tracking-widest text-[color:var(--ifm-color-primary)]">
+          Backend
+        </div>
+        <div className="grid grid-cols-6 gap-3 md:gap-5">
+          {[
+            { icon: "logos:nodejs-icon", title: "Node.js" },
+            { icon: "logos:python", title: "Python" },
+            { icon: "logos:mongodb-icon", title: "MongoDB" },
+            { icon: "logos:postgresql", title: "PostgreSQL" },
+            { icon: "logos:docker-icon", title: "Docker" },
+            { icon: "logos:redis", title: "Redis" },
+          ].map((t) => (
+            <TechItem key={t.icon} icon={t.icon} />
+          ))}
+        </div>
+      </div>
+      <div className="flex flex-col items-center gap-3">
+        <div className="text-xs font-semibold uppercase tracking-widest text-[color:var(--ifm-color-primary)]">
+          Tooling
+        </div>
+        <div className="grid grid-cols-6 gap-3 md:gap-5">
+          {[
+            { icon: "logos:git-icon", title: "Git" },
+            { icon: "logos:webpack", title: "Webpack" },
+            { icon: "logos:eslint", title: "ESLint" },
+            { icon: "logos:prettier", title: "Prettier" },
+            { icon: "logos:vitejs", title: "Vite" },
+            { icon: "logos:pnpm", title: "pnpm" },
+          ].map((t) => (
+            <TechItem key={t.icon} icon={t.icon} />
+          ))}
+        </div>
+      </div>
     </motion.div>
-  )
+  );
 }
 
 export default function Hero() {
-  const gridRef = useRef<HTMLDivElement>(null)
-  const [isMobile, setIsMobile] = useState(false)
+  const [isMobile, setIsMobile] = useState(false);
+  const phrases = [
+    "欢迎光临！这里一半是干货，一半是我的碎碎念。祝你能分清它们。",
+    "while (!success) { tryAgain(); }",
+    "我正在把“胡思乱想”变成“字”，并为此感到骄傲。",
+    "Hello, World! 哦不对，是 Hello, Reader!",
+  ];
+  const [phraseIndex, setPhraseIndex] = useState(0);
 
   useEffect(() => {
     const handleResize = () => {
-      setIsMobile(window.innerWidth < 768)
-    }
+      setIsMobile(window.innerWidth < 768);
+    };
 
     // 初始化
-    handleResize()
+    handleResize();
 
     // 监听窗口大小变化
-    window.addEventListener('resize', handleResize)
-    return () => window.removeEventListener('resize', handleResize)
-  }, [])
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   useEffect(() => {
-    // 只在非移动设备上启用鼠标跟踪效果
-    if (isMobile) return
-
-    const grid = gridRef.current
-    if (!grid) return
-
-    const handleMouseMove = (e: MouseEvent) => {
-      const rect = grid.getBoundingClientRect()
-      const x = e.clientX - rect.left
-      const y = e.clientY - rect.top
-
-      // 计算当前鼠标所在的格子位置
-      const cellSize = 32 // 格子大小
-      const cellX = Math.floor(x / cellSize) * cellSize
-      const cellY = Math.floor(y / cellSize) * cellSize
-
-      grid.style.setProperty('--mouse-x', `${cellX}px`)
-      grid.style.setProperty('--mouse-y', `${cellY}px`)
-
-      const glow = grid.querySelector('::before') as HTMLElement
-      if (glow) {
-        glow.style.transform = `translate(${x}px, ${y}px)`
-        glow.style.opacity = '1'
-      }
-    }
-
-    const handleMouseLeave = () => {
-      const glow = grid.querySelector('::before') as HTMLElement
-      if (glow) {
-        glow.style.opacity = '0'
-      }
-    }
-
-    grid.addEventListener('mousemove', handleMouseMove)
-    grid.addEventListener('mouseleave', handleMouseLeave)
-
-    return () => {
-      grid.removeEventListener('mousemove', handleMouseMove)
-      grid.removeEventListener('mouseleave', handleMouseLeave)
-    }
-  }, [isMobile])
+    const mq =
+      typeof window !== "undefined" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)");
+    if (mq && mq.matches) return;
+    const id = setInterval(() => {
+      setPhraseIndex((i) => (i + 1) % phrases.length);
+    }, 4000);
+    return () => clearInterval(id);
+  }, [phrases.length]);
 
   return (
     <motion.div className={styles.hero}>
-      {/* 网格背景 */}
-      <div ref={gridRef} className={styles.grid_background} />
-
-      {/* 手绘装饰 */}
-      <DoodleDecoration />
-
-      {/* 装饰性几何图形 */}
-      <div className={styles.geometric_shapes} />
-
       <div className={styles.intro}>
         <Name />
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={phrases[phraseIndex]}
+            initial={{ opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -6 }}
+            transition={{ duration: 0.35 }}
+            className={`${styles.codePill} mt-3 inline-flex items-center gap-2`}
+          >
+            <span className="font-mono text-[12px] opacity-70">&gt;_</span>
+            <span className="font-mono text-[10px]">
+              {phrases[phraseIndex]}
+            </span>
+            <span className={styles.cursor}>|</span>
+          </motion.div>
+        </AnimatePresence>
         <motion.p
           custom={2}
           initial="hidden"
@@ -194,70 +252,111 @@ export default function Hero() {
           initial="hidden"
           animate="visible"
           variants={variants}
-          className="relative flex w-full flex-wrap items-center justify-center"
-          style={{
-            zIndex: 100, // 确保容器也有高z-index
-            position: 'relative',
-            marginTop: '1rem',
-            marginBottom: '1rem',
-          }}
+          className="relative mt-4 mb-4 flex w-full flex-wrap items-center justify-center"
         >
-          {/* 社交媒体链接容器 */}
-          <div className="social-links-container" style={{ position: 'relative', zIndex: 200 }}>
-            <SocialLinks className="social-links-hero" />
-          </div>
+          <SocialLinks className="social-links-hero" />
         </motion.div>
 
         <motion.div
-          className="mt-6 flex justify-center gap-3 md:mt-8"
+          className="mt-16 flex flex-wrap justify-center gap-6 md:mt-20"
           custom={4}
           initial="hidden"
           animate="visible"
           variants={variants}
         >
-          <MovingButton
-            borderRadius={isMobile ? '1rem' : '1.25rem'}
-            className="relative z-10 flex items-center rounded-2xl border border-solid border-blue-500 bg-blue-500/10 px-4 py-2 text-center text-sm font-semibold text-blue-400 transition-all hover:bg-blue-500/20 hover:shadow-lg md:px-6 md:py-3 md:text-base"
+          <a
+            href="/project"
+            data-cursor="button"
+            className="group relative inline-flex items-center gap-3 px-8 py-4 rounded-2xl bg-white border-2 border-[color:var(--ifm-color-primary)]/30 shadow-[0_6px_0_0_rgba(16,185,129,0.25)] transition-all duration-200 hover:shadow-[0_2px_0_0_rgba(16,185,129,0.25)] hover:translate-y-1 active:shadow-[0_0_0_0_rgba(16,185,129,0.25)] active:translate-y-1.5"
           >
-            <a href="/about" className="font-semibold">
-              <Translate id="hompage.hero.introduce">了解更多</Translate>
-            </a>
-          </MovingButton>
+            <Icon
+              icon="ri:folder-line"
+              className="text-xl text-[color:var(--ifm-color-primary)]"
+            />
+            <span className="font-semibold text-gray-700 dark:text-gray-200">
+              Browse Projects
+            </span>
+            <Icon
+              icon="ri:arrow-right-line"
+              className="text-lg text-[color:var(--ifm-color-primary)] transition-transform group-hover:translate-x-1"
+            />
+          </a>
+          <a
+            href={social.email?.href ?? "mailto:2158588419@qq.com"}
+            data-cursor="button"
+            className="group relative inline-flex items-center gap-3 px-8 py-4 rounded-2xl bg-gradient-to-b from-[color:var(--ifm-color-primary)] to-[color:var(--ifm-color-primary-dark)] border-2 border-[color:var(--ifm-color-primary)] shadow-[0_6px_0_0_rgba(16,185,129,0.6)] transition-all duration-200 hover:shadow-[0_2px_0_0_rgba(16,185,129,0.6)] hover:translate-y-1 active:shadow-[0_0_0_0_rgba(16,185,129,0.6)] active:translate-y-1.5"
+          >
+            <Icon icon="ri:mail-send-line" className="text-xl text-white" />
+            <span className="font-semibold text-white">Contact Me</span>
+            <Icon
+              icon="ri:arrow-right-line"
+              className="text-lg text-white transition-transform group-hover:translate-x-1"
+            />
+          </a>
         </motion.div>
 
-        <DecorativeIcons isMobile={isMobile} />
-      </div>
-
-      {/* 平滑过渡元素 */}
-      <motion.div
-        className={styles.smooth_transition}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: isMobile ? 0.5 : 1, duration: 0.8 }}
-      >
-        <div className={styles.transition_wave}>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 1440 200"
-            preserveAspectRatio="none"
-            className={styles.wave_svg}
+        <div
+          className={`${styles.techArea} mx-auto mt-[24rem] md:mt-[26rem] grid w-full max-w-5xl grid-cols-1 gap-6 px-4`}
+        >
+          <div
+            className={`${styles.techGroup} flex flex-col items-center gap-2`}
           >
-            {/* 使用更平滑的曲线路径 */}
-            <path
-              d="M0,160 C240,100 480,180 720,150 C960,120 1200,160 1440,140 L1440,200 L0,200 Z"
-              fill="var(--ifm-background-color)"
-              fillOpacity="0.95"
+            <div className="text-xs font-semibold uppercase tracking-widest text-[color:var(--ifm-color-primary)]">
+              Frontend
+            </div>
+            <TechMarquee
+              items={[
+                { icon: "logos:react", title: "React" },
+                { icon: "logos:typescript-icon", title: "TypeScript" },
+                { icon: "logos:vue", title: "Vue" },
+                { icon: "logos:nextjs-icon", title: "Next.js" },
+                { icon: "logos:tailwindcss-icon", title: "Tailwind" },
+                { icon: "logos:astro", title: "Astro" },
+              ]}
+              direction="left"
+              durationMs={35000}
             />
-            <path
-              d="M0,180 C320,150 720,190 1200,160 C1280,150 1360,180 1440,170 L1440,200 L0,200 Z"
-              fill="var(--ifm-background-color)"
-              fillOpacity="1"
+          </div>
+          <div
+            className={`${styles.techGroup} flex flex-col items-center gap-2`}
+          >
+            <div className="text-xs font-semibold uppercase tracking-widest text-[color:var(--ifm-color-primary)]">
+              Backend
+            </div>
+            <TechMarquee
+              items={[
+                { icon: "logos:nodejs-icon", title: "Node.js" },
+                { icon: "logos:python", title: "Python" },
+                { icon: "logos:mongodb-icon", title: "MongoDB" },
+                { icon: "logos:postgresql", title: "PostgreSQL" },
+                { icon: "logos:docker-icon", title: "Docker" },
+                { icon: "logos:redis", title: "Redis" },
+              ]}
+              direction="right"
+              durationMs={35000}
             />
-          </svg>
+          </div>
+          <div
+            className={`${styles.techGroup} flex flex-col items-center gap-2`}
+          >
+            <div className="text-xs font-semibold uppercase tracking-widest text-[color:var(--ifm-color-primary)]">
+              Tooling
+            </div>
+            <TechMarquee
+              items={[
+                { icon: "logos:git-icon", title: "Git" },
+                { icon: "logos:webpack", title: "Webpack" },
+                { icon: "logos:eslint", title: "ESLint" },
+                { icon: "logos:prettier", title: "Prettier" },
+                { icon: "logos:vitejs", title: "Vite" },
+                { icon: "logos:pnpm", title: "pnpm" },
+              ]}
+              direction="left"
+              durationMs={35000}
+            />
+          </div>
         </div>
-        <div className={styles.transition_gradient}></div>
-        <div className={styles.transition_line}></div>
-      </motion.div>
+      </div>
     </motion.div>
-  )
+  );
 }
