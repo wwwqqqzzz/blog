@@ -5,45 +5,45 @@
 @layer base {
   :root {
     /* 设计系统主色调 */
-    --color-primary-50: #E6F7FF;
-    --color-primary-100: #BAE7FF;
-    --color-primary-200: #91D5FF;
-    --color-primary-300: #69C0FF;
-    --color-primary-400: #40A9FF;
-    --color-primary-500: #12AFFA;
-    --color-primary-600: #0E9FE5;
-    --color-primary-700: #0A81BC;
+    --color-primary-50: #e6f7ff;
+    --color-primary-100: #bae7ff;
+    --color-primary-200: #91d5ff;
+    --color-primary-300: #69c0ff;
+    --color-primary-400: #40a9ff;
+    --color-primary-500: #12affa;
+    --color-primary-600: #0e9fe5;
+    --color-primary-700: #0a81bc;
     --color-primary-800: #086293;
-    --color-primary-900: #0B5A82;
+    --color-primary-900: #0b5a82;
 
     /* 辅助色 */
-    --color-accent-50: #EEF2FF;
-    --color-accent-100: #E0E7FF;
-    --color-accent-200: #C7D2FE;
-    --color-accent-300: #A5B4FC;
-    --color-accent-400: #818CF8;
-    --color-accent-500: #6366F1;
-    --color-accent-600: #4F46E5;
-    --color-accent-700: #4338CA;
-    --color-accent-800: #3730A3;
-    --color-accent-900: #312E81;
+    --color-accent-50: #eef2ff;
+    --color-accent-100: #e0e7ff;
+    --color-accent-200: #c7d2fe;
+    --color-accent-300: #a5b4fc;
+    --color-accent-400: #818cf8;
+    --color-accent-500: #6366f1;
+    --color-accent-600: #4f46e5;
+    --color-accent-700: #4338ca;
+    --color-accent-800: #3730a3;
+    --color-accent-900: #312e81;
 
     /* 功能色 */
-    --color-success-50: #ECFDF5;
-    --color-success-500: #10B981;
+    --color-success-50: #ecfdf5;
+    --color-success-500: #10b981;
     --color-success-600: #059669;
 
-    --color-warning-50: #FFFBEB;
-    --color-warning-500: #F59E0B;
-    --color-warning-600: #D97706;
+    --color-warning-50: #fffbeb;
+    --color-warning-500: #f59e0b;
+    --color-warning-600: #d97706;
 
-    --color-error-50: #FEF2F2;
-    --color-error-500: #EF4444;
-    --color-error-600: #DC2626;
+    --color-error-50: #fef2f2;
+    --color-error-500: #ef4444;
+    --color-error-600: #dc2626;
 
-    --color-info-50: #EFF6FF;
-    --color-info-500: #3B82F6;
-    --color-info-600: #2563EB;
+    --color-info-50: #eff6ff;
+    --color-info-500: #3b82f6;
+    --color-info-600: #2563eb;
 
     /* 主题变量 */
     --content-background: #fefefe;
@@ -55,9 +55,10 @@
     --ifm-color-primary-lighter: #6ee7b7;
     --ifm-color-primary-lightest: #d1fae5;
     --ifm-code-font-size: 95%;
-    --ifm-font-family-base: misans, ui-sans-serif, system-ui, -apple-system;
-
-    --ifm-heading-font-family: ui-sans-serif, system-ui, -apple-system;
+    @import url("https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;600;700&display=swap");
+    --ifm-font-family-base: "Manrope", ui-sans-serif, system-ui, -apple-system;
+    --ifm-heading-font-family: "Space Grotesk", "Manrope", ui-sans-serif,
+      system-ui, -apple-system;
 
     --ifm-navbar-background-color: white;
     --ifm-navbar-shadow: 0 4px 28px rgb(0 0 0 / 10%);
@@ -70,19 +71,19 @@
     --ifm-code-padding-vertical: 0.2rem;
 
     /* 文本颜色 */
-    --ifm-text-color: #1F2937;
-    --ifm-secondary-text-color: #4B5563;
+    --ifm-text-color: #1f2937;
+    --ifm-secondary-text-color: #4b5563;
 
     /* 背景颜色 */
-    --ifm-background-color: #FFFFFF;
-    --ifm-background-surface-color: #F9FAFB;
+    --ifm-background-color: #ffffff;
+    --ifm-background-surface-color: #f9fafb;
 
     /* 边框颜色 */
-    --ifm-border-color: #E5E7EB;
+    --ifm-border-color: #e5e7eb;
     --ifm-toc-border-color: var(--ifm-border-color);
 
-    --site-primary-hue-saturation: 167 68%;
-    --site-primary-hue-saturation-light: 167 56%;
+    --site-primary-hue-saturation: 142 72%;
+    --site-primary-hue-saturation-light: 142 62%;
 
     --site-color-favorite-background: #f6fdfd;
     --site-color-tooltip: #fff;
@@ -92,7 +93,7 @@
 
     --ifm-container-width: 1024px;
 
-    --ifm-heading-color: hsl(214deg 78% 17%);
+    --ifm-heading-color: #0f172a;
     --ifm-heading-font-weight: 500;
     --ifm-font-weight-bold: 520;
 
@@ -102,8 +103,10 @@
 
     /* 阴影 */
     --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+      0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+      0 4px 6px -2px rgba(0, 0, 0, 0.05);
 
     /* AI 小助手颜色变量 */
     --ai-terminal-bg: #0f172a;
@@ -118,15 +121,15 @@
     --navbar-sidebar-background: rgba(80, 117, 177, 0.5);
   }
 
-  html[data-theme='dark'] {
+  html[data-theme="dark"] {
     /* 暗色模式主题变量 */
     --content-background: #18181b;
     --ifm-color-primary: hsl(142deg 72% 45%);
     --ifm-color-primary-light: hsl(142deg 72% 62%);
 
     /* 文本颜色 - 暗色模式 */
-    --ifm-text-color: #F9FAFB;
-    --ifm-secondary-text-color: #9CA3AF;
+    --ifm-text-color: #f9fafb;
+    --ifm-secondary-text-color: #9ca3af;
     --ifm-heading-color: hsl(0deg 0% 100%);
 
     /* 菜单颜色 */
@@ -134,7 +137,7 @@
 
     /* 背景颜色 - 暗色模式 */
     --ifm-background-color: #121212;
-    --ifm-background-surface-color: #1E1E1E;
+    --ifm-background-surface-color: #1e1e1e;
 
     /* 边框颜色 - 暗色模式 */
     --ifm-border-color: #374151;
@@ -149,8 +152,10 @@
 
     /* 阴影 - 暗色模式 */
     --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.15);
-    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.2), 0 2px 4px -1px rgba(0, 0, 0, 0.15);
-    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.2), 0 4px 6px -2px rgba(0, 0, 0, 0.15);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.2),
+      0 2px 4px -1px rgba(0, 0, 0, 0.15);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.2),
+      0 4px 6px -2px rgba(0, 0, 0, 0.15);
 
     /* AI 小助手暗色模式颜色变量 */
     --ai-terminal-bg: #0f172a;
@@ -215,7 +220,8 @@ a:hover {
 
 /* 动画关键帧 */
 @keyframes blink {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 1;
   }
   50% {
@@ -224,7 +230,8 @@ a:hover {
 }
 
 @keyframes pulse {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 1;
   }
   50% {
@@ -238,8 +245,8 @@ body {
 }
 
 body {
-  font-family: misans, system-ui, -apple-system, 'PingFang SC',
-    'Microsoft YaHei';
+  font-family: misans, system-ui, -apple-system, "PingFang SC",
+    "Microsoft YaHei";
 }
 
 .navbar__item {
@@ -254,7 +261,7 @@ body {
   --prism-background-color: #f6f8fa !important;
 }
 
-html[data-theme='dark'] .theme-code-block {
+html[data-theme="dark"] .theme-code-block {
   --prism-background-color: #1e1e1e !important;
 }
 
@@ -318,7 +325,7 @@ article p > span > a {
   line-height: 1.5rem;
 }
 
-:where(html[data-theme='dark']) article .markdown strong {
+:where(html[data-theme="dark"]) article .markdown strong {
   color: #fff;
 }
 
@@ -373,7 +380,7 @@ code {
   color: var(--ifm-code-color);
 }
 
-div[class^='announcementBar_'] {
+div[class^="announcementBar_"] {
   background: repeating-linear-gradient(
     -35deg,
     var(--ifm-color-primary-lighter),
@@ -396,7 +403,7 @@ div[class^='announcementBar_'] {
 }
 
 .tag::after {
-  content: '';
+  content: "";
   position: absolute;
   bottom: 0;
   left: 0;
@@ -417,28 +424,28 @@ div[class^='announcementBar_'] {
   display: none;
 }
 
-.prose :where(img):not(:where([class~='not-prose'], [class~='not-prose'] *)) {
+.prose :where(img):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
   margin: 0;
 }
 
 .prose
-  :where(strong):not(:where([class~='not-prose'], [class~='not-prose'] *)) {
+  :where(strong):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
   color: var(--tw-prose-bold);
   font-weight: 520;
 }
 
 .prose
   :where(code):not(
-    :where([class~='not-prose'], [class~='not-prose'] *)
+    :where([class~="not-prose"], [class~="not-prose"] *)
   )::before {
-  content: '';
+  content: "";
 }
 
 .prose
   :where(code):not(
-    :where([class~='not-prose'], [class~='not-prose'] *)
+    :where([class~="not-prose"], [class~="not-prose"] *)
   )::after {
-  content: '';
+  content: "";
 }
 
 .navbar-sidebar {
@@ -459,34 +466,37 @@ div[class^='announcementBar_'] {
 }
 
 .theme-transition-active * {
-  transition-property: color, background-color, border-color, outline-color, fill, stroke, opacity, box-shadow, transform;
+  transition-property: color, background-color, border-color, outline-color,
+    fill, stroke, opacity, box-shadow, transform;
   transition-duration: 0.3s !important;
   transition-timing-function: ease !important;
 }
 
 /* 增强暗模式阴影效果 */
-html[data-theme='dark'] .shadow-md {
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -2px rgba(0, 0, 0, 0.2);
+html[data-theme="dark"] .shadow-md {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3),
+    0 2px 4px -2px rgba(0, 0, 0, 0.2);
 }
 
-html[data-theme='dark'] .shadow-lg {
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -4px rgba(0, 0, 0, 0.3);
+html[data-theme="dark"] .shadow-lg {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.4),
+    0 4px 6px -4px rgba(0, 0, 0, 0.3);
 }
 
 /* 优化暗模式下的图片亮度 */
-html[data-theme='dark'] img:not([class*="dark-img"]) {
+html[data-theme="dark"] img:not([class*="dark-img"]) {
   filter: brightness(0.9);
 }
 
 /* 增强暗模式下的文本可读性 */
-html[data-theme='dark'] {
+html[data-theme="dark"] {
   font-weight: 350;
   -webkit-font-smoothing: antialiased;
 }
 
 /* 优化暗模式下的代码块 */
-html[data-theme='dark'] pre,
-html[data-theme='dark'] code {
+html[data-theme="dark"] pre,
+html[data-theme="dark"] code {
   /* 稍微增加暗模式下代码的对比度 */
   filter: contrast(1.05);
 }
@@ -564,13 +574,13 @@ html[data-theme='dark'] code {
 }
 
 /* 暗模式优化 */
-html[data-theme='dark'].immersive-mode .theme-doc-markdown {
+html[data-theme="dark"].immersive-mode .theme-doc-markdown {
   color: rgba(255, 255, 255, 0.95);
 }
 
 /* 增强暗模式可读性 */
 @media (prefers-color-scheme: dark) {
-  html[data-theme='dark'] {
+  html[data-theme="dark"] {
     --ifm-font-weight-semibold: 600;
     --ifm-heading-font-weight: 600;
     --ifm-color-emphasis-500: #adb5bd;
@@ -580,66 +590,71 @@ html[data-theme='dark'].immersive-mode .theme-doc-markdown {
 }
 
 /* 增强暗模式图片处理 */
-html[data-theme='dark'] .markdown img:not(.dark-image-unset):not([src*=".svg"]) {
+html[data-theme="dark"]
+  .markdown
+  img:not(.dark-image-unset):not([src*=".svg"]) {
   filter: brightness(0.85) contrast(1.05);
   transition: filter 0.3s ease;
 }
 
-html[data-theme='dark'] .markdown img:not(.dark-image-unset):not([src*=".svg"]):hover {
+html[data-theme="dark"]
+  .markdown
+  img:not(.dark-image-unset):not([src*=".svg"]):hover {
   filter: brightness(0.95) contrast(1.05);
 }
 
 /* 优化暗模式下的代码高亮 */
-html[data-theme='dark'] pre code {
+html[data-theme="dark"] pre code {
   --ifm-code-background: #1e1e2e;
   background-color: #1e1e2e;
 }
 
-html[data-theme='dark'] pre {
+html[data-theme="dark"] pre {
   background-color: #1e1e2e;
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 /* 增强暗模式下链接的可见性 */
-html[data-theme='dark'] a:not(.button):not(.navbar__item):not(.menu__link) {
+html[data-theme="dark"] a:not(.button):not(.navbar__item):not(.menu__link) {
   text-decoration-color: var(--ifm-color-primary-light);
   text-decoration-thickness: 1px;
   text-underline-offset: 2px;
 }
 
-html[data-theme='dark'] a:not(.button):not(.navbar__item):not(.menu__link):hover {
+html[data-theme="dark"]
+  a:not(.button):not(.navbar__item):not(.menu__link):hover {
   text-decoration-thickness: 2px;
 }
 
 /* 优化暗模式下的表格 */
-html[data-theme='dark'] .markdown table {
+html[data-theme="dark"] .markdown table {
   border-color: rgba(255, 255, 255, 0.1);
 }
 
-html[data-theme='dark'] .markdown table tr {
+html[data-theme="dark"] .markdown table tr {
   background-color: transparent;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-html[data-theme='dark'] .markdown table tr:nth-child(2n) {
+html[data-theme="dark"] .markdown table tr:nth-child(2n) {
   background-color: rgba(255, 255, 255, 0.05);
 }
 
-html[data-theme='dark'] .markdown table th,
-html[data-theme='dark'] .markdown table td {
+html[data-theme="dark"] .markdown table th,
+html[data-theme="dark"] .markdown table td {
   border-color: rgba(255, 255, 255, 0.1);
 }
 
 /* 优化暗模式下的滚动条 */
-html[data-theme='dark'] ::-webkit-scrollbar-track {
+html[data-theme="dark"] ::-webkit-scrollbar-track {
   background: rgba(255, 255, 255, 0.05);
 }
 
-html[data-theme='dark'] ::-webkit-scrollbar-thumb {
+html[data-theme="dark"] ::-webkit-scrollbar-thumb {
   background-color: rgba(255, 255, 255, 0.2);
 }
 
-html[data-theme='dark'] ::-webkit-scrollbar-thumb:hover {
+html[data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
   background-color: rgba(255, 255, 255, 0.3);
 }
 
@@ -675,25 +690,29 @@ html.font-size-xl .blog-post-content {
   line-height: 1.8;
 }
 
-.theme-doc-markdown h1, .blog-post-content h1 {
+.theme-doc-markdown h1,
+.blog-post-content h1 {
   margin-top: 2em;
   margin-bottom: 0.8em;
   font-weight: 700;
 }
 
-.theme-doc-markdown h2, .blog-post-content h2 {
+.theme-doc-markdown h2,
+.blog-post-content h2 {
   margin-top: 1.8em;
   margin-bottom: 0.8em;
   border-bottom: 1px solid var(--ifm-border-color);
   padding-bottom: 0.3em;
 }
 
-.theme-doc-markdown h3, .blog-post-content h3 {
+.theme-doc-markdown h3,
+.blog-post-content h3 {
   margin-top: 1.5em;
   margin-bottom: 0.6em;
 }
 
-.theme-doc-markdown blockquote, .blog-post-content blockquote {
+.theme-doc-markdown blockquote,
+.blog-post-content blockquote {
   border-left: 3px solid var(--ifm-color-primary);
   background-color: rgba(127, 127, 127, 0.05);
   padding: 0.8em 1em;
@@ -701,43 +720,50 @@ html.font-size-xl .blog-post-content {
   border-radius: 0 0.5em 0.5em 0;
 }
 
-.theme-doc-markdown blockquote p, .blog-post-content blockquote p {
+.theme-doc-markdown blockquote p,
+.blog-post-content blockquote p {
   margin-bottom: 0;
 }
 
-.theme-doc-markdown img, .blog-post-content img {
+.theme-doc-markdown img,
+.blog-post-content img {
   margin: 2em auto;
   display: block;
   max-width: 100%;
   border-radius: 0.5em;
 }
 
-.theme-doc-markdown pre, .blog-post-content pre {
+.theme-doc-markdown pre,
+.blog-post-content pre {
   margin: 1.5em 0;
   border-radius: 0.5em;
 }
 
 /* 优化表格显示 */
-.theme-doc-markdown table, .blog-post-content table {
+.theme-doc-markdown table,
+.blog-post-content table {
   display: block;
   overflow-x: auto;
   margin: 1.5em 0;
 }
 
 /* 优化列表间距 */
-.theme-doc-markdown ul, .blog-post-content ul,
-.theme-doc-markdown ol, .blog-post-content ol {
+.theme-doc-markdown ul,
+.blog-post-content ul,
+.theme-doc-markdown ol,
+.blog-post-content ol {
   margin-bottom: 1.5em;
   padding-left: 1.5em;
 }
 
-.theme-doc-markdown li, .blog-post-content li {
+.theme-doc-markdown li,
+.blog-post-content li {
   margin-bottom: 0.5em;
 }
 
 /* 暗模式优化 */
-html[data-theme='dark'] .theme-doc-markdown blockquote,
-html[data-theme='dark'] .blog-post-content blockquote {
+html[data-theme="dark"] .theme-doc-markdown blockquote,
+html[data-theme="dark"] .blog-post-content blockquote {
   background-color: rgba(255, 255, 255, 0.05);
 }
 
@@ -762,15 +788,18 @@ html[data-theme='dark'] .blog-post-content blockquote {
     padding: 0 1rem;
   }
 
-  .theme-doc-markdown h1, .blog-post-content h1 {
+  .theme-doc-markdown h1,
+  .blog-post-content h1 {
     font-size: 1.75rem;
   }
 
-  .theme-doc-markdown h2, .blog-post-content h2 {
+  .theme-doc-markdown h2,
+  .blog-post-content h2 {
     font-size: 1.5rem;
   }
 
-  .theme-doc-markdown h3, .blog-post-content h3 {
+  .theme-doc-markdown h3,
+  .blog-post-content h3 {
     font-size: 1.25rem;
   }
 }
@@ -825,7 +854,7 @@ p:target {
   box-shadow: 0 12px 36px rgba(0, 0, 0, 0.2) !important;
 }
 
-html[data-theme='dark'] #feature-buttons-group {
+html[data-theme="dark"] #feature-buttons-group {
   background-color: rgba(30, 41, 59, 0.9) !important;
   border: 1px solid rgba(255, 255, 255, 0.05) !important;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3) !important;
@@ -871,7 +900,7 @@ html[data-theme='dark'] #feature-buttons-group {
 }
 
 /* 暗模式下的样式 */
-html[data-theme='dark'] #immersive-toggle-container {
+html[data-theme="dark"] #immersive-toggle-container {
   opacity: 0.9 !important;
 }
 
@@ -911,4 +940,30 @@ html[data-theme='dark'] #immersive-toggle-container {
   }
 
   /* 移动端社交媒体链接样式已移至专用CSS文件 */
+}
+--ifm-navbar-link-color: var(--ifm-heading-color);
+--ifm-navbar-link-hover-color: var(--ifm-color-primary);
+--ifm-navbar-link-active-color: var(--ifm-color-primary);
+--ifm-navbar-background-color: transparent;
+--ifm-navbar-link-color: var(--ifm-heading-color);
+--ifm-navbar-link-hover-color: var(--ifm-color-primary);
+--ifm-navbar-link-active-color: var(--ifm-color-primary);
+--ifm-navbar-background-color: transparent;
+.sectionBand {
+  padding: 2rem 0;
+}
+.sectionBand--projects {
+  background: var(--ifm-background-surface-color);
+  border-radius: 24px;
+}
+.sectionBand--articles {
+  background: transparent;
+}
+/* Hide horizontal scrollbar for avant-garde tag rail */
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
 }

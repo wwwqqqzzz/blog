@@ -118,8 +118,12 @@ html[data-theme='dark'] :global(.dropdown__menu) {
 
 /* 移动端导航栏样式 */
 .mobileNavbar {
-  background-color: var(--ifm-navbar-background-color);
-  backdrop-filter: none;
+  background: linear-gradient(
+    to bottom,
+    rgba(9, 98, 72, 0.32),
+    rgba(9, 98, 72, 0.24)
+  );
+  backdrop-filter: blur(8px) saturate(1.05);
   z-index: var(--ifm-z-index-fixed);
   position: relative;
 }
@@ -142,8 +146,12 @@ html[data-theme='dark'] .mobileShadow {
 
   /* 修复移动端社交媒体按钮被覆盖的问题 */
   .glassmorphism {
-    backdrop-filter: none;
-    background-color: var(--ifm-navbar-background-color);
+    backdrop-filter: blur(8px);
+    background: linear-gradient(
+      to bottom,
+      rgba(9, 98, 72, 0.24),
+      rgba(9, 98, 72, 0.18)
+    );
   }
 
   /* 移动端禁用悬停效果，避免干扰触摸操作 */

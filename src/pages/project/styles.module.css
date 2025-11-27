@@ -127,6 +127,8 @@
 /* 项目展示区域 */
 .showcaseSection {
   padding: 1rem 0 3rem;
+  position: relative;
+  overflow: hidden;
 }
 
 /* 简化类型选择器 */
@@ -211,6 +213,148 @@
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 1.5rem;
+}
+
+/* Ambient glow and parallax */
+.ambient {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background: radial-gradient(600px at var(--cursorX) var(--cursorY), rgba(16, 185, 129, 0.12), transparent 60%),
+    radial-gradient(800px at 80% 10%, rgba(16, 185, 129, 0.08), transparent 60%),
+    radial-gradient(900px at 10% 80%, rgba(64, 169, 255, 0.08), transparent 60%);
+}
+
+/* Glass top bar */
+.glassTopBar {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 1rem;
+  margin-bottom: 0.5rem;
+  backdrop-filter: blur(12px);
+  background: linear-gradient(to right, rgba(255,255,255,0.35), rgba(255,255,255,0.18));
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 10px;
+}
+
+.glassLogo {
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: var(--ifm-color-primary);
+}
+
+.glassActions svg {
+  font-size: 1.2rem;
+  margin-left: 0.5rem;
+  color: var(--ifm-color-emphasis-700);
+}
+
+/* New card style */
+.card {
+  position: relative;
+  height: 320px;
+  background-size: cover;
+  background-position: center;
+  border-radius: 5px;
+  overflow: hidden;
+  box-shadow: var(--ifm-shadow-lw);
+  cursor: pointer;
+  transition: transform 0.6s ease, box-shadow 0.3s ease;
+  will-change: transform;
+}
+
+.cardContent {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px;
+  transform: translateY(calc(100% - 90px));
+  background: transparent;
+  transition: all 0.8s ease;
+}
+
+.card:hover .cardContent {
+  transform: translateY(0);
+  background: linear-gradient(rgba(1, 82, 220, 0.45), rgba(0, 0, 0, 0.75));
+}
+
+.cardHeading h3 {
+  color: #a9a9a9;
+  font-size: 1.6rem;
+  text-align: center;
+}
+
+.cardBody {
+  width: 85%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.cardBody p {
+  font-size: 0.95rem;
+  color: #cecece;
+  margin-bottom: 10px;
+  text-shadow: 1px 1px #000;
+}
+
+.rating {
+  display: flex;
+  align-items: center;
+}
+
+.rating svg {
+  color: #ffd700;
+  margin-left: 3px;
+  font-size: 1rem;
+}
+
+.cardButtons {
+  width: 90%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.buttonWatch,
+.buttonWatchlist {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 5px;
+  font-size: 16px;
+  font-weight: 600;
+  box-shadow: 2px 2px 20px 1px #000;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.buttonWatch {
+  background-color: #207c5a;
+  color: #cecece;
+}
+
+.buttonWatchlist {
+  background-color: #b0363a;
+  color: #cecece;
+}
+
+.buttonWatch:hover,
+.buttonWatchlist:hover {
+  opacity: 0.85;
+  transform: translateY(-2px);
 }
 
 /* 项目卡片 - 与博客卡片风格统一 */

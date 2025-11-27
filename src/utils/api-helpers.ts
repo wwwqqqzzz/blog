@@ -37,13 +37,11 @@ const DEFAULT_LOCATION = {
 const CACHE_KEYS = {
   WEATHER: 'cached_weather_data',
   LOCATION: 'cached_location_data',
-  DAILY_QUOTE: 'cached_daily_quote',
 }
 
 const CACHE_EXPIRY = {
   WEATHER: 30 * 60 * 1000, // 30 minutes in milliseconds
   LOCATION: 24 * 60 * 60 * 1000, // 24 hours in milliseconds
-  DAILY_QUOTE: 12 * 60 * 60 * 1000, // 12 hours in milliseconds
 }
 
 /**

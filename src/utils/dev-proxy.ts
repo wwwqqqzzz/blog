@@ -106,8 +106,6 @@ export async function devProxy(endpoint: string): Promise<any> {
   
   // 根据端点路由到相应的处理函数
   switch (endpoint) {
-    case '/api/daily-quote':
-      return await fetchDailyQuoteFromSource();
     default:
       throw new Error(`未知的API端点: ${endpoint}`);
   }

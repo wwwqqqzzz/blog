@@ -2,6 +2,7 @@ import React, { useEffect } from 'react'
 import { ReadingProgressBar } from '@site/src/components/ui'
 import PageTransition from '@site/src/components/PageTransition'
 import { useLocation } from '@docusaurus/router'
+import CustomCursor from '@site/src/components/ui/CustomCursor'
 
 // 导入webpack客户端配置（用于禁用错误覆盖层）
 
@@ -197,6 +198,7 @@ export default function Root({ children }: { children: React.ReactNode }): React
       <>
         {/* 全局阅读进度条 */}
         <ReadingProgressBar showPercentage position="top" height={3} />
+        <CustomCursor />
 
         {/* 页面过渡动画 */}
         <PageTransition type="fade">

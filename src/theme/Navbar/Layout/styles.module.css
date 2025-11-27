@@ -5,3 +5,24 @@
 .navbarHidden {
   transform: translate3d(0, calc(-100% - 2px), 0);
 }
+
+.navbar3d {
+  background: linear-gradient(
+    to bottom,
+    rgba(9, 98, 72, 0.24),
+    rgba(9, 98, 72, 0.18)
+  );
+  backdrop-filter: saturate(1.1) blur(6px);
+  border-bottom: 1px solid rgba(9, 98, 72, 0.5);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.12);
+}
+
+html[data-theme='dark'] .navbar3d {
+  background: linear-gradient(
+    to bottom,
+    rgba(9, 98, 72, 0.32),
+    rgba(9, 98, 72, 0.24)
+  );
+  border-bottom-color: rgba(9, 98, 72, 0.6);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.32);
+}
