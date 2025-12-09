@@ -13,7 +13,7 @@
   border: 1px solid rgba(148, 163, 184, 0.25);
   border-radius: 16px;
   padding: 20px;
-  background: color-mix(in oklab, var(--ifm-background-color) 96%, transparent);
+  background: color-mix(in oklab, var(--ifm-background-color) 25%, transparent);
 }
 html[data-theme="dark"] .subscribe-card {
   background: rgba(2, 6, 23, 0.6);
