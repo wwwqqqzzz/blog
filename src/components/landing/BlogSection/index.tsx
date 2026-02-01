@@ -277,7 +277,7 @@ export default function BlogSection(): React.ReactNode {
                 transition={{ delay: 0.1 }}
                 className="text-5xl font-black tracking-tighter text-white md:text-7xl"
               >
-                Digital{" "}
+                <span className="text-[#10B981] dark:text-white">Digital</span>{" "}
                 <span
                   className="text-transparent"
                   style={{ WebkitTextStroke: "1px #475569" as any }}

