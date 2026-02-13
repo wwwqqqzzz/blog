@@ -75,40 +75,31 @@ const config: Config = {
       ],
     },
     footer: {
-      style: "dark",
+      style: "light",
       links: [
         {
-          title: "技术",
+          title: "探索",
           items: [
-            { label: "博客", to: "blog" },
-            { label: "归档", to: "blog/archive" },
-            { label: "系列", to: "blog/collections" },
+            { label: "博客文章", to: "blog" },
             { label: "项目展示", to: "project" },
+            { label: "关于我", to: "about" },
           ],
         },
         {
-          title: "社交媒体",
+          title: "联系",
           items: [
-            { label: "关于我", to: "/about" },
             { label: "GitHub", href: social.github.href },
-          ],
-        },
-        {
-          title: "导航",
-          items: [
-            { label: "友链", to: "friends" },
-            {
-              html: `
-                <a href="https://docusaurus.io" target="_blank" rel="noreferrer noopener">
-                  <img src="/img/buildwith.png" alt="build with docusaurus" width="120" height="50"/>
-                </a>
-                `,
-            },
+            { label: "Email", href: "mailto:wangqizhe2003@gmail.com" },
+            { label: "Twitter", href: "https://twitter.com" },
           ],
         },
       ],
       copyright: `
-        <p>Copyright © 2024 - ${new Date().getFullYear()} 王起哲 | Built with Docusaurus.</p>
+        <div class="footer-copyright-wrapper">
+            <span>© ${new Date().getFullYear()} 王起哲</span>
+            <span class="footer-separator">///</span>
+            <span>Est. 2024</span>
+        </div>
         `,
     },
     // 搜索功能已完全禁用
@@ -234,6 +225,8 @@ const config: Config = {
         authorsMapPath: "authors.yml",
         readingTime: ({ content, frontMatter, defaultReadingTime }) =>
           defaultReadingTime({ content, options: { wordsPerMinute: 300 } }),
+        remarkPlugins: [require("remark-math")],
+        rehypePlugins: [require("rehype-katex")],
         feedOptions: {
           type: "all",
           title: "王起哲",
@@ -266,7 +259,7 @@ const config: Config = {
       console.log(
         `%c Wang Blog %c https://github.com/wwwqqqzzz/blog`,
         "color: #fff; margin: 1em 0; padding: 5px 0; background: #12affa;",
-        "margin: 1em 0; padding: 5px 0; background: #efefef;"
+        "margin: 1em 0; padding: 5px 0; background: #efefef;",
       );
 
       const motto = `

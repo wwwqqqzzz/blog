@@ -1,4 +1,3 @@
-@import "katex/dist/katex.min.css";
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -57,14 +56,9 @@
     --ifm-color-primary-lightest: #d1fae5;
     --ifm-code-font-size: 95%;
     @import url("https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;600;700&display=swap");
-    @import url("https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap");
-
-    --ifm-font-family-base:
-      "Manrope", "Noto Sans SC", "PingFang SC", "Microsoft YaHei",
-      ui-sans-serif, system-ui, -apple-system;
-    --ifm-heading-font-family:
-      "Space Grotesk", "Noto Sans SC", "Manrope", "PingFang SC",
-      "Microsoft YaHei", ui-sans-serif, system-ui, -apple-system;
+    --ifm-font-family-base: "Manrope", ui-sans-serif, system-ui, -apple-system;
+    --ifm-heading-font-family: "Space Grotesk", "Manrope", ui-sans-serif,
+      system-ui, -apple-system;
 
     --ifm-navbar-background-color: white;
     --ifm-navbar-shadow: 0 4px 28px rgb(0 0 0 / 10%);
@@ -109,10 +103,10 @@
 
     /* 阴影 */
     --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-    --shadow-md:
-      0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-    --shadow-lg:
-      0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+      0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+      0 4px 6px -2px rgba(0, 0, 0, 0.05);
 
     /* AI 小助手颜色变量 */
     --ai-terminal-bg: #0f172a;
@@ -158,10 +152,10 @@
 
     /* 阴影 - 暗色模式 */
     --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.15);
-    --shadow-md:
-      0 4px 6px -1px rgba(0, 0, 0, 0.2), 0 2px 4px -1px rgba(0, 0, 0, 0.15);
-    --shadow-lg:
-      0 10px 15px -3px rgba(0, 0, 0, 0.2), 0 4px 6px -2px rgba(0, 0, 0, 0.15);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.2),
+      0 2px 4px -1px rgba(0, 0, 0, 0.15);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.2),
+      0 4px 6px -2px rgba(0, 0, 0, 0.15);
 
     /* AI 小助手暗色模式颜色变量 */
     --ai-terminal-bg: #0f172a;
@@ -251,11 +245,7 @@ body {
 }
 
 body {
-  font-family:
-    misans,
-    system-ui,
-    -apple-system,
-    "PingFang SC",
+  font-family: misans, system-ui, -apple-system, "PingFang SC",
     "Microsoft YaHei";
 }
 
@@ -289,17 +279,6 @@ article .markdown a.link:focus {
 
 article .markdown code {
   border: 0.1rem solid transparent;
-  font-style: normal !important; /* Force non-italic */
-  font-weight: 600; /* Semi-bold for focus */
-  background: rgba(var(--ifm-color-primary-rgb), 0.1); /* Subtle theme tint */
-  color: var(--ifm-color-primary-darker);
-  padding: 0.1rem 0.3rem;
-  border-radius: 4px;
-}
-
-html[data-theme="dark"] article .markdown code {
-  color: var(--ifm-color-primary-lightest);
-  background: rgba(var(--ifm-color-primary-rgb), 0.2);
 }
 
 article .markdown .alert {
@@ -487,23 +466,20 @@ div[class^="announcementBar_"] {
 }
 
 .theme-transition-active * {
-  transition-property:
-    color, background-color, border-color, outline-color, fill, stroke, opacity,
-    box-shadow, transform;
+  transition-property: color, background-color, border-color, outline-color,
+    fill, stroke, opacity, box-shadow, transform;
   transition-duration: 0.3s !important;
   transition-timing-function: ease !important;
 }
 
 /* 增强暗模式阴影效果 */
 html[data-theme="dark"] .shadow-md {
-  box-shadow:
-    0 4px 6px -1px rgba(0, 0, 0, 0.3),
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3),
     0 2px 4px -2px rgba(0, 0, 0, 0.2);
 }
 
 html[data-theme="dark"] .shadow-lg {
-  box-shadow:
-    0 10px 15px -3px rgba(0, 0, 0, 0.4),
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.4),
     0 4px 6px -4px rgba(0, 0, 0, 0.3);
 }
 
@@ -535,9 +511,7 @@ html[data-theme="dark"] code {
 .immersive-mode .navbar {
   opacity: 0;
   transform: translateY(-100%);
-  transition:
-    transform 0.3s ease,
-    opacity 0.3s ease;
+  transition: transform 0.3s ease, opacity 0.3s ease;
 }
 
 .immersive-mode .navbar:hover,
@@ -822,649 +796,5 @@ html[data-theme="dark"] .blog-post-content blockquote {
   .theme-doc-markdown h2,
   .blog-post-content h2 {
     font-size: 1.5rem;
-  }
-
-  .theme-doc-markdown h3,
-  .blog-post-content h3 {
-    font-size: 1.25rem;
-  }
-}
-
-/* 阅读辅助 - 当前段落高亮效果 */
-p:target {
-  animation: highlight 2s ease;
-}
-
-@keyframes highlight {
-  0% {
-    background-color: rgba(var(--ifm-color-primary-rgb), 0.2);
-  }
-  100% {
-    background-color: transparent;
-  }
-}
-
-/* 功能按钮组样式 - 增强版 */
-#feature-buttons-group {
-  visibility: visible !important;
-  opacity: 1 !important;
-  display: flex !important;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.75rem;
-  background-color: rgba(255, 255, 255, 0.9) !important;
-  backdrop-filter: blur(10px) !important;
-  -webkit-backdrop-filter: blur(10px) !important;
-  border-radius: 12px !important;
-  padding: 0.75rem !important;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15) !important;
-  border: 1px solid rgba(0, 0, 0, 0.05) !important;
-  transition:
-    transform 0.3s ease,
-    opacity 0.3s ease,
-    box-shadow 0.3s ease !important;
-  z-index: 9999 !important;
-  animation: feature-buttons-fade-in 0.5s ease-out;
-}
-
-@keyframes feature-buttons-fade-in {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-#feature-buttons-group:hover {
-  transform: scale(1.02);
-  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.2) !important;
-}
-
-html[data-theme="dark"] #feature-buttons-group {
-  background-color: rgba(30, 41, 59, 0.9) !important;
-  border: 1px solid rgba(255, 255, 255, 0.05) !important;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3) !important;
-}
-
-@media (max-width: 768px) {
-  #feature-buttons-group {
-    bottom: 1rem !important;
-    right: 1rem !important;
-    padding: 0.5rem !important;
-    gap: 0.5rem;
-  }
-
-  /* 避免与侧边栏冲突 */
-  .navbar-sidebar--show + #feature-buttons-group {
-    opacity: 0 !important;
-    visibility: hidden !important;
-    pointer-events: none !important;
-  }
-}
-
-/* 左侧沉浸式阅读按钮样式 - 增强版 */
-#immersive-toggle-container {
-  visibility: visible !important;
-  opacity: 1 !important;
-  display: flex !important;
-  transition:
-    transform 0.3s ease,
-    opacity 0.3s ease,
-    box-shadow 0.3s ease !important;
-  z-index: 9999 !important;
-}
-
-/* 脉冲动画效果 */
-@keyframes pulse-border {
-  0% {
-    box-shadow: 0 0 0 0 rgba(var(--ifm-color-primary-rgb), 0.4);
-  }
-  100% {
-    box-shadow: 0 0 0 10px rgba(var(--ifm-color-primary-rgb), 0);
-  }
-}
-
-#immersive-toggle-container:hover {
-  transform: scale(1.05) !important;
-}
-
-/* 暗模式下的样式 */
-html[data-theme="dark"] #immersive-toggle-container {
-  opacity: 0.9 !important;
-}
-
-/* 社交媒体链接容器样式 */
-.social-links-container {
-  position: relative;
-  z-index: 200;
-  width: fit-content;
-  margin: 0 auto;
-}
-
-/* 移动设备适配 */
-@media (max-width: 768px) {
-  #immersive-toggle-container {
-    padding: 0 !important;
-  }
-
-  /* 确保移动端侧边栏正确显示 */
-  .navbar-sidebar {
-    width: 85%;
-    max-width: 300px;
-  }
-
-  .navbar-sidebar__backdrop {
-    z-index: calc(var(--ifm-z-index-fixed) - 1);
-  }
-
-  /* 移动端社交媒体链接容器样式 */
-  .social-links-container {
-    width: auto;
-    max-width: 100%;
-    padding: 0.25rem;
-    background-color: rgba(var(--ifm-background-color-rgb), 0.5);
-    border-radius: 9999px;
-    backdrop-filter: blur(4px);
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  }
-
-  /* 移动端社交媒体链接样式已移至专用CSS文件 */
-}
-/* =========================================
-   Global Beautification (2026 Update)
-   ========================================= */
-
-/* 1. Mac-style Code Blocks - Theme Aligned */
-.theme-code-block {
-  border-radius: 12px;
-  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.15); /* Softer shadow */
-  margin-bottom: 2rem;
-  overflow: hidden;
-  position: relative;
-  /* Light Mode: Pure White with distinct border for cleaner look */
-  background-color: #ffffff;
-  border: 1px solid rgba(0, 0, 0, 0.08); /* Subtle border instead of gray bg */
-}
-
-/* Header bar for Light Mode */
-.theme-code-block pre {
-  padding-top: 3.5rem !important;
-  /* Very subtle primary tint for the code area if desired, or keep white */
-  background-color: #ffffff !important;
-  backdrop-filter: blur(10px);
-}
-
-/* Mac Window Controls (Traffic Lights) */
-.theme-code-block::before {
-  content: "";
-  position: absolute;
-  top: 15px;
-  left: 15px;
-  width: 12px;
-  height: 12px;
-  background-color: #ff5f56; /* Red */
-  border-radius: 50%;
-  box-shadow:
-    20px 0 0 #ffbd2e,
-    40px 0 0 #27c93f; /* Yellow & Green */
-  z-index: 10;
-}
-
-/* Glassmorphism Header - Tinted */
-.theme-code-block::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 40px;
-  /* Subtle light gray/tint header */
-  background: rgba(var(--ifm-color-primary-rgb), 0.03);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-  pointer-events: none;
-}
-
-/* Dark Mode Overrides - Rich Dark (Not Gray) */
-html[data-theme="dark"] .theme-code-block {
-  /* Deep Blue/Black (Slate 900) - Much richer than gray */
-  background-color: #0f172a;
-  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.6);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-html[data-theme="dark"] .theme-code-block pre {
-  background-color: #0f172a !important;
-}
-
-html[data-theme="dark"] .theme-code-block::after {
-  background: rgba(255, 255, 255, 0.03);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-/* 2. Animated Links */
-article .markdown a:not(.anchor) {
-  position: relative;
-  text-decoration: none;
-  background-image: linear-gradient(
-    var(--ifm-color-primary),
-    var(--ifm-color-primary)
-  );
-  background-position: 0% 100%;
-  background-repeat: no-repeat;
-  background-size: 0% 2px;
-  transition:
-    background-size 0.3s,
-    color 0.3s;
-  color: var(--ifm-color-primary);
-  font-weight: 500;
-}
-
-article .markdown a:not(.anchor):hover {
-  background-size: 100% 2px;
-  color: var(--ifm-color-primary-dark);
-}
-
-/* 3. Modern Admonitions (Callouts) - Enhanced & Clean */
-.alert {
-  border: none !important;
-  border-left: 5px solid !important;
-  border-radius: 12px;
-  /* Use surface color which is usually white or deep dark, avoid gray */
-  background: var(--ifm-background-surface-color);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-  padding: 1.5rem;
-  margin-bottom: 1.5rem;
-  position: relative;
-  overflow: hidden;
-  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-}
-
-.alert:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-}
-
-/* Add generic icon for alerts if Docusaurus doesn't provide */
-.alert::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 60px;
-  height: 60px;
-  opacity: 0.1;
-  pointer-events: none;
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: contain;
-  transform: translate(20%, -20%);
-}
-
-.alert--info {
-  background-color: rgba(59, 130, 246, 0.05);
-  border-left-color: #3b82f6 !important;
-}
-.alert--success {
-  background-color: rgba(16, 185, 129, 0.05);
-  border-left-color: #10b981 !important;
-}
-.alert--warning {
-  background-color: rgba(245, 158, 11, 0.05);
-  border-left-color: #f59e0b !important;
-}
-.alert--danger {
-  background-color: rgba(239, 68, 68, 0.05);
-  border-left-color: #ef4444 !important;
-}
-
-/* 8. Math Formulas (KaTeX) Styling */
-.katex-display {
-  background: var(--ifm-background-surface-color);
-  padding: 1.5rem;
-  border-radius: 12px;
-  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.05);
-  margin: 2rem 0;
-  overflow-x: auto;
-  text-align: center;
-  transition: all 0.3s ease;
-}
-
-.katex-display:hover {
-  box-shadow:
-    inset 0 0 0 1px var(--ifm-color-primary-light),
-    0 4px 12px rgba(0, 0, 0, 0.05);
-  transform: scale(1.01);
-}
-
-/* Inline math */
-.katex {
-  font-size: 1.1em;
-  color: var(--ifm-color-primary-dark);
-  padding: 0 0.2rem;
-}
-
-html[data-theme="dark"] .katex-display {
-  background: rgba(255, 255, 255, 0.02);
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1);
-}
-
-html[data-theme="dark"] .katex {
-  color: var(--ifm-color-primary-light);
-}
-
-/* 4. Rounded Tables */
-article .markdown table {
-  border-collapse: separate;
-  border-spacing: 0;
-  width: 100%;
-  border-radius: 12px;
-  overflow: hidden;
-  margin: 2rem 0;
-  border: 1px solid var(--ifm-border-color);
-}
-
-article .markdown th {
-  background-color: var(--ifm-color-primary-lightest);
-  color: var(--ifm-color-primary-darkest);
-  padding: 12px 16px;
-  text-transform: uppercase;
-  font-size: 0.85rem;
-  letter-spacing: 0.05em;
-  border: none;
-}
-
-article .markdown td {
-  padding: 12px 16px;
-  border-top: 1px solid var(--ifm-border-color);
-  border-left: none;
-  border-right: none;
-  border-bottom: none;
-}
-
-article .markdown tr:nth-child(even) {
-  background-color: rgba(0, 0, 0, 0.02);
-}
-
-html[data-theme="dark"] article .markdown th {
-  background-color: rgba(16, 185, 129, 0.2);
-  color: var(--ifm-color-primary-lightest);
-}
-
-html[data-theme="dark"] article .markdown tr:nth-child(even) {
-  background-color: rgba(255, 255, 255, 0.02);
-}
-
-/* 5. Selection Color */
-::selection {
-  background: var(--ifm-color-primary);
-  color: white;
-}
-
-/* 6. List Styling */
-article .markdown ul {
-  list-style-type: none;
-  padding-left: 1.5rem;
-}
-
-article .markdown ul li {
-  position: relative;
-  padding-left: 1.5rem;
-}
-
-article .markdown ul li::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 0.6em;
-  width: 6px;
-  height: 6px;
-  background-color: var(--ifm-color-primary);
-  border-radius: 50%;
-}
-
-/* 7. Image Styling with Shadows */
-article .markdown img {
-  border-radius: 12px;
-  box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.2);
-  transition: transform 0.3s ease;
-}
-
-article .markdown img:hover {
-  transform: scale(1.01);
-}
-
-/* Hide Docusaurus default code block background to let our glass effect shine */
-html[data-theme="dark"] .theme-code-block,
-html[data-theme="light"] .theme-code-block {
-  background-color: transparent !important;
-}
-.sectionBand {
-  padding: 2rem 0;
-}
-.sectionBand--projects {
-  background: var(--ifm-background-surface-color);
-  border-radius: 24px;
-}
-.sectionBand--articles {
-  background: transparent;
-}
-/* Hide horizontal scrollbar for avant-garde tag rail */
-.scrollbar-none {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-.scrollbar-none::-webkit-scrollbar {
-  display: none;
-}
-/* ========================================= */
-/*   Refined Editorial Header & Footer      */
-/* ========================================= */
-
-/* --- GLASSIFICATION NAVBAR --- */
-.navbar {
-  /* Cleaner blur and color */
-  background: rgba(255, 255, 255, 0.85) !important;
-  backdrop-filter: blur(20px) saturate(160%);
-  -webkit-backdrop-filter: blur(20px) saturate(160%);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.04);
-  box-shadow: none !important;
-  height: 4rem; /* Fixed comfortable height */
-  transition: all 0.3s ease;
-}
-
-html[data-theme="dark"] .navbar {
-  background: rgba(10, 10, 12, 0.8) !important;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-}
-
-.navbar__brand {
-  font-family: "Space Grotesk", sans-serif;
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  font-size: 1.1rem;
-  margin-right: 2rem;
-}
-
-/* Nav Items */
-.navbar__item {
-  font-family: "Space Grotesk", sans-serif;
-  font-size: 0.95rem;
-  font-weight: 500;
-  color: var(--ifm-color-emphasis-700);
-  padding: 0.5rem 1rem;
-  border-radius: 8px; /* Softer touch target */
-  transition: all 0.2s ease;
-}
-
-.navbar__item:hover,
-.navbar__link:hover,
-.navbar__link--active {
-  color: var(--ifm-color-primary) !important;
-  background: rgba(
-    0,
-    0,
-    0,
-    0.03
-  ) !important; /* Subtle hover bg instead of just text color */
-}
-
-html[data-theme="dark"] .navbar__item:hover,
-html[data-theme="dark"] .navbar__link:hover,
-html[data-theme="dark"] .navbar__link--active {
-  background: rgba(255, 255, 255, 0.05) !important;
-}
-
-/* Remove the aggressive underline, use subtle bg pill instead */
-.navbar__link::after {
-  display: none;
-}
-
-/* --- MOBILE NAVIGATION FIXED --- */
-.navbar-sidebar {
-  background: var(
-    --ifm-background-color
-  ) !important; /* Solid bg for readability */
-  border-right: 1px solid var(--ifm-border-color);
-  z-index: 1000 !important; /* Ensure on top */
-}
-
-.navbar-sidebar__brand {
-  padding-top: 1rem;
-}
-
-.navbar-sidebar__items {
-  padding-top: 1rem;
-}
-
-.menu__link {
-  font-family: "Space Grotesk", sans-serif;
-  font-size: 1.1rem;
-  font-weight: 600;
-  padding: 0.8rem 1rem;
-}
-
-.navbar__toggle {
-  color: var(--ifm-color-emphasis-700);
-}
-
-/* --- SWISS GRID / INTERNATIONAL STYLE FOOTER --- */
-.footer {
-  background: var(--ifm-background-color) !important;
-  color: var(--ifm-font-color-base);
-  padding: 0; /* Remove default padding, we use grid */
-  border-top: 2px solid var(--ifm-color-primary); /* Green Border */
-  font-family:
-    "Space Grotesk", "MiSans", sans-serif; /* Add Chinese Font Support */
-  overflow: hidden;
-}
-
-.footer .container {
-  padding: 0;
-  max-width: 100% !important; /* Full width for grid impact */
-}
-
-.footer__links {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr); /* 4 Column Grid */
-  margin-bottom: 0;
-  width: 100%;
-  border-bottom: 2px solid var(--ifm-color-primary);
-}
-
-.footer__col {
-  margin: 0 !important;
-  padding: 4rem 2rem;
-  border-right: 1px solid var(--ifm-color-primary); /* Green Grid Lines */
-  display: flex;
-  flex-direction: column;
-}
-
-.footer__col:last-child {
-  border-right: none;
-}
-
-.footer__title {
-  font-size: 0.9rem;
-  letter-spacing: 0.1em;
-  font-weight: 700;
-  margin-bottom: 2rem;
-  color: var(--ifm-color-primary); /* Green Title */
-  opacity: 0.8;
-}
-
-.footer__items {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.footer__item {
-  margin-bottom: 0.8rem;
-}
-
-.footer__link-item {
-  font-size: 1.1rem;
-  font-weight: 500;
-  color: inherit;
-  text-decoration: none;
-  position: relative;
-  display: inline-block;
-  line-height: 1.4;
-  transition: all 0.3s ease;
-}
-
-.footer__link-item:hover {
-  color: var(--ifm-color-primary);
-  transform: translateX(5px);
-  text-decoration: none;
-}
-
-.footer__copyright {
-  text-align: center;
-  padding: 6rem 2rem; /* Massive padding for impact */
-  font-size: 15vw; /* RESPONSIVE MASSIVE TEXT */
-  line-height: 1;
-  font-weight: 900;
-  letter-spacing: 0.1em;
-  color: var(--ifm-color-primary); /* Green Signature */
-  opacity: 0.15; /* Subtle watermark feel */
-  white-space: nowrap;
-  overflow: hidden;
-  user-select: none;
-  font-family: "MiSans", "Space Grotesk", sans-serif;
-}
-
-.footer-copyright-wrapper {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.5rem;
-  color: var(--ifm-color-emphasis-600);
-}
-
-.footer-copyright-wrapper span:first-child {
-  /* The main name */
-  font-weight: bold;
-}
-
-/* Mobile Responsiveness */
-@media (max-width: 996px) {
-  .footer__links {
-    grid-template-columns: 1fr 1fr;
-  }
-  .footer__col {
-    border-right: none;
-    border-bottom: 1px solid var(--ifm-color-primary);
-  }
-  .footer__col:nth-child(odd) {
-    border-right: 1px solid var(--ifm-color-primary);
-  }
-
-  .footer__copyright {
-    font-size: 18vw;
-    padding: 4rem 1rem;
   }
 }

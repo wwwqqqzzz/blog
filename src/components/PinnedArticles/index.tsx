@@ -1,129 +1,75 @@
-import Link from '@docusaurus/Link'
-import { motion } from 'framer-motion'
-import React from 'react'
-import type { BlogPostData } from '@site/src/types/blog'
-import { cn } from '@site/src/lib/utils'
-import Tag from '@site/src/theme/Tag'
-import { Icon } from '@iconify/react'
+import Link from "@docusaurus/Link";
+import { motion } from "framer-motion";
+import React from "react";
+import type { BlogPostData } from "@site/src/types/blog";
+import { cn } from "@site/src/lib/utils";
+import Tag from "@site/src/theme/Tag";
+import { Icon } from "@iconify/react";
 
-interface PinnedArticlesProps {
-  items: BlogPostData[]
-  /**
-   * 当前选中的标签（如果有）
-   */
-  currentTag?: string
-}
-
-/**
- * 置顶文章组件
- * 在博客列表页面顶部显示置顶文章
- */
 export default function PinnedArticles({
   items,
-  currentTag = '',
-}: PinnedArticlesProps): React.ReactNode | null {
-  // 筛选出标记为pinned的文章
-  const pinnedItems = items.filter(item => item.pinned)
+  currentTag = "",
+}: {
+  items: BlogPostData[];
+  currentTag?: string;
+}) {
+  const pinnedItems = items.filter((item) => item.pinned);
+  if (pinnedItems.length === 0) return null;
 
-  // 如果没有置顶文章，不显示此组件
-  if (pinnedItems.length === 0) {
-    return null
-  }
-
-  // 如果有标签筛选，显示提示信息
-  const hasFilters = !!currentTag
+  // Swiss Hero Layout: Huge Type Left, Image Right (if 1)
+  // If multiple, stack them vertically as heroes.
 
   return (
-    <section className="mb-10 mt-6">
-      <h3 className="mb-6 flex items-center justify-center text-2xl font-bold text-gray-800 dark:text-gray-200">
-        <Icon icon="ri:pushpin-fill" className="mr-2 text-primary-500" />
-        置顶文章
-      </h3>
+    <section className="mb-20">
+      <div className="mb-4 flex items-center gap-2 text-xs font-bold tracking-[0.2em] text-[#10B981] uppercase font-mono">
+        <span className="h-2 w-2 bg-[#10B981]"></span>
+        置顶精选
+      </div>
 
-      {hasFilters
-        ? (
-            <div className="mb-6 rounded-lg bg-gray-50 p-4 text-center dark:bg-gray-800">
-              <p className="text-sm text-gray-600 dark:text-gray-400">
-                <span className="font-medium text-primary-600 dark:text-primary-400">置顶文章</span>
-                {' '}
-                始终显示，不受标签筛选影响。
-              </p>
-            </div>
-          )
-        : null}
-
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+      <div className="flex flex-col gap-12">
         {pinnedItems.map((item, index) => (
-          <PinnedArticleCard key={item.link} item={item} index={index} />
+          <motion.div
+            key={item.link}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: index * 0.1 }}
+          >
+            <Link
+              href={item.link}
+              className="group grid grid-cols-1 md:grid-cols-12 gap-8 items-center hover:no-underline"
+            >
+              {/* Content Side (Left) */}
+              <div className="md:col-span-7 flex flex-col justify-center order-2 md:order-1">
+                <h2 className="text-3xl md:text-5xl lg:text-6xl font-black leading-[1.1] text-slate-900 dark:text-white group-hover:text-[#10B981] transition-colors mb-6 font-['MiSans']">
+                  {item.title}
+                </h2>
+                <p className="text-lg text-slate-500 dark:text-slate-400 line-clamp-3 mb-8 max-w-2xl font-serif leading-relaxed">
+                  {item.description}
+                </p>
+
+                <div className="flex items-center gap-4 text-sm font-bold tracking-widest uppercase">
+                  <span className="text-white bg-black dark:bg-white dark:text-black px-3 py-1">
+                    READ NOW
+                  </span>
+                  <div className="h-px flex-1 bg-slate-200 dark:bg-white/10 group-hover:bg-[#10B981]"></div>
+                  <span className="text-[#10B981]">{item.date}</span>
+                </div>
+              </div>
+
+              {/* Image Side (Right) */}
+              <div className="md:col-span-5 h-[300px] md:h-[400px] w-full overflow-hidden order-1 md:order-2">
+                {item.image && (
+                  <img
+                    src={item.image}
+                    alt={item.title}
+                    className="w-full h-full object-cover grayscale transition-transform duration-700 ease-out group-hover:scale-105 group-hover:grayscale-0"
+                  />
+                )}
+              </div>
+            </Link>
+          </motion.div>
         ))}
       </div>
     </section>
-  )
-}
-
-interface PinnedArticleCardProps {
-  item: BlogPostData
-  index: number
-}
-
-function PinnedArticleCard({ item, index }: PinnedArticleCardProps): React.ReactNode {
-  const [isHovered, setIsHovered] = React.useState(false)
-
-  return (
-    <motion.div
-      className="group relative overflow-hidden rounded-lg border border-gray-100 bg-white shadow-md transition-all hover:-translate-y-1 hover:shadow-lg dark:border-gray-700 dark:bg-gray-800"
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4, delay: index * 0.1 }}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-    >
-      <Link href={item.link} className="flex h-full flex-col hover:no-underline">
-        {item.image && (
-          <div className="relative h-48 w-full overflow-hidden">
-            <img
-              src={item.image}
-              alt={item.title}
-              className={cn(
-                'h-full w-full object-cover transition-transform duration-700',
-                isHovered && 'scale-105',
-              )}
-            />
-            <div className="absolute right-2 top-2 flex items-center rounded-full bg-primary-500 px-3 py-1 text-xs font-medium text-white">
-              <Icon icon="ri:pushpin-fill" className="mr-1" />
-              置顶
-            </div>
-          </div>
-        )}
-        <div className="flex flex-1 flex-col p-5">
-          <h3 className="mb-2 line-clamp-2 text-xl font-bold text-gray-900 transition-colors group-hover:text-primary-600 dark:text-gray-100 dark:group-hover:text-primary-400">
-            {item.title}
-          </h3>
-          <p className="mb-4 line-clamp-2 flex-1 text-sm text-gray-500 dark:text-gray-400">
-            {item.description}
-          </p>
-          <div className="mt-auto flex items-center justify-between">
-            {item.tags && item.tags.length > 0
-              ? (
-                  <div className="flex flex-wrap gap-2">
-                    {item.tags.slice(0, 2).map(tag => (
-                      <Tag
-                        key={tag.permalink}
-                        label={tag.label}
-                        permalink={tag.permalink}
-                        description={tag.description || ''}
-                        className="inline-flex items-center rounded-full bg-primary-50 px-2.5 py-0.5 text-xs font-medium text-primary-700 hover:bg-primary-100 dark:bg-gray-700 dark:text-primary-300 dark:hover:bg-gray-600"
-                      />
-                    ))}
-                  </div>
-                )
-              : (
-                  <div />
-                )}
-            <div className="text-xs text-gray-500 dark:text-gray-400">{item.date}</div>
-          </div>
-        </div>
-      </Link>
-    </motion.div>
-  )
+  );
 }

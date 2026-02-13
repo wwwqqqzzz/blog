@@ -1,652 +1,264 @@
-.filterCheckbox {
-  justify-content: space-between;
+/* Global */
+.projectPage {
+  min-height: 100vh;
+  background: var(--ifm-background-color);
+  color: var(--ifm-text-color);
+  font-family: var(--ifm-font-family-base);
+  padding-bottom: 8rem;
+  overflow-x: hidden; /* Prevent horizontal scroll from floating elements */
+  cursor: default;
 }
 
-.filterCheckbox,
-.checkboxList {
-  display: flex;
-  align-items: center;
-}
-
-.filterCheckbox > div:first-child {
-  display: flex;
-  flex: 1 1 auto;
-  align-items: center;
-}
-
-.filterCheckbox > div > * {
-  margin-bottom: 0;
-  margin-right: 8px;
-}
-
-.checkboxList {
-  flex-wrap: wrap;
-}
-
-.checkboxList,
-.showcaseList {
-  padding: 0;
-  list-style: none;
-}
-
-.checkboxListItem {
-  user-select: none;
-  white-space: nowrap;
-  height: 32px;
-  font-size: 0.8rem;
-  margin-top: 0.5rem;
-  margin-right: 0.5rem;
-}
-
-.checkboxListItem:last-child {
-  margin-right: 0;
-}
-
-.searchContainer {
-  margin-left: auto;
-}
-
-.searchContainer input {
-  height: 30px;
-  border-radius: 15px;
-  padding: 10px;
-  border: 1px solid gray;
-}
-
-.showcaseList {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 24px;
-}
-
-.showcaseFavorite {
-  padding-top: 2rem;
-  padding-bottom: 2rem;
-  background-color: var(--site-color-favorite-background);
-}
-
-.showcaseFavoriteHeader {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.showcaseFavoriteHeader > h2 {
-  margin-bottom: 0;
-}
-
-.showcaseFavoriteHeader > svg {
-  width: 30px;
-  height: 30px;
-}
-
-.svgIconFavoriteXs,
-.svgIconFavorite {
-  color: var(--site-color-svg-icon-favorite);
-}
-
-.svgIconFavoriteXs {
-  margin-left: 0.625rem;
-  font-size: 1rem;
-}
-
-.svgIconFavorite {
-  margin-left: 1rem;
-}
-
-/* 页面标题区域 - 简化为与现有风格匹配 */
-.showcaseHeader {
-  text-align: center;
-  padding: 2rem 0 3rem;
-  margin-bottom: 2rem;
-}
-
-.showcaseHeaderContent {
-  max-width: 768px;
+.mainContainer {
+  max-width: 1440px;
   margin: 0 auto;
+  padding: 0 4rem;
+  position: relative;
+  z-index: 10; /* Above floating image if needed, or maybe below? */
+  /* Actually for floating image to be visible, it should be z-index high, but not block clicks. */
 }
 
-.showcaseHeaderTitle {
-  font-size: 2.5rem;
-  font-weight: 700;
+/* Header */
+.hero {
+  padding: 8rem 0 4rem;
+  border-bottom: 1px solid var(--ifm-border-color);
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.title {
+  font-size: clamp(4rem, 8vw, 8rem);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  margin: 0;
+  color: var(--ifm-heading-color);
+  font-family: var(--ifm-heading-font-family);
+  line-height: 0.9;
+}
+
+/* Filter */
+.filterBar {
+  display: flex;
+  gap: 1.5rem;
   margin-bottom: 1rem;
 }
 
-.showcaseHeaderDescription {
-  font-size: 1.1rem;
-  max-width: 640px;
-  margin: 0 auto;
-  color: var(--ifm-color-emphasis-700);
-}
-
-/* 移除复杂波浪效果 */
-.showcaseHeaderWave {
-  display: none;
-}
-
-/* 项目展示区域 */
-.showcaseSection {
-  padding: 1rem 0 3rem;
-  position: relative;
-  overflow: hidden;
-}
-
-/* 简化类型选择器 */
-.typeSelector {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 0.5rem;
-  margin-bottom: 2rem;
-}
-
-.typeButton {
-  display: inline-flex;
-  align-items: center;
-  padding: 0.5rem 1rem;
-  background: var(--ifm-background-surface-color);
-  border: 1px solid var(--ifm-color-emphasis-300);
-  border-radius: 0.5rem;
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: var(--ifm-font-color-base);
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.typeButton:hover {
-  border-color: var(--ifm-color-primary);
-  color: var(--ifm-color-primary);
-}
-
-.typeIcon {
-  margin-right: 0.5rem;
-  font-size: 1.125rem;
-}
-
-.activeType {
-  background: var(--ifm-color-primary-lightest);
-  color: var(--ifm-color-primary);
-  border-color: var(--ifm-color-primary);
-}
-
-/* 类型信息 */
-.typeInfo {
-  display: flex;
-  align-items: center;
-  gap: 1.5rem;
-  padding: 1.25rem;
-  background: var(--ifm-background-surface-color);
-  border: 1px solid var(--ifm-color-emphasis-300);
-  border-radius: 0.5rem;
-  margin-bottom: 2rem;
-}
-
-.typeIcon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 3rem;
-  height: 3rem;
-  border-radius: 0.5rem;
-  font-size: 1.5rem;
-  color: white;
-}
-
-.typeDetails {
-  flex: 1;
-}
-
-.typeTitle {
-  font-size: 1.25rem;
-  margin-bottom: 0.5rem;
-}
-
-.typeDescription {
-  margin: 0;
-  color: var(--ifm-color-emphasis-700);
-  font-size: 0.95rem;
-}
-
-/* 项目网格 - 使用与博客相同的网格样式 */
-.projectsGrid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 1.5rem;
-}
-
-/* Ambient glow and parallax */
-.ambient {
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 0;
-  background: radial-gradient(600px at var(--cursorX) var(--cursorY), rgba(16, 185, 129, 0.12), transparent 60%),
-    radial-gradient(800px at 80% 10%, rgba(16, 185, 129, 0.08), transparent 60%),
-    radial-gradient(900px at 10% 80%, rgba(64, 169, 255, 0.08), transparent 60%);
-}
-
-/* Glass top bar */
-.glassTopBar {
-  position: sticky;
-  top: 0;
-  z-index: 50;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0.5rem 1rem;
-  margin-bottom: 0.5rem;
-  backdrop-filter: blur(12px);
-  background: linear-gradient(to right, rgba(255,255,255,0.35), rgba(255,255,255,0.18));
-  border: 1px solid rgba(255, 255, 255, 0.35);
-  border-radius: 10px;
-}
-
-.glassLogo {
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  color: var(--ifm-color-primary);
-}
-
-.glassActions svg {
-  font-size: 1.2rem;
-  margin-left: 0.5rem;
-  color: var(--ifm-color-emphasis-700);
-}
-
-/* New card style */
-.card {
-  position: relative;
-  height: 320px;
-  background-size: cover;
-  background-position: center;
-  border-radius: 5px;
-  overflow: hidden;
-  box-shadow: var(--ifm-shadow-lw);
-  cursor: pointer;
-  transition: transform 0.6s ease, box-shadow 0.3s ease;
-  will-change: transform;
-}
-
-.cardContent {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  align-items: center;
-  justify-content: space-between;
-  padding: 16px;
-  transform: translateY(calc(100% - 90px));
+.filterChip {
   background: transparent;
-  transition: all 0.8s ease;
-}
-
-.card:hover .cardContent {
-  transform: translateY(0);
-  background: linear-gradient(rgba(1, 82, 220, 0.45), rgba(0, 0, 0, 0.75));
-}
-
-.cardHeading h3 {
-  color: #a9a9a9;
-  font-size: 1.6rem;
-  text-align: center;
-}
-
-.cardBody {
-  width: 85%;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-}
-
-.cardBody p {
-  font-size: 0.95rem;
-  color: #cecece;
-  margin-bottom: 10px;
-  text-shadow: 1px 1px #000;
-}
-
-.rating {
-  display: flex;
-  align-items: center;
-}
-
-.rating svg {
-  color: #ffd700;
-  margin-left: 3px;
-  font-size: 1rem;
-}
-
-.cardButtons {
-  width: 90%;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  margin-bottom: 10px;
-}
-
-.buttonWatch,
-.buttonWatchlist {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  text-decoration: none;
   border: none;
-  padding: 12px 20px;
-  border-radius: 5px;
-  font-size: 16px;
+  font-size: 1rem;
   font-weight: 600;
-  box-shadow: 2px 2px 20px 1px #000;
-  transition: transform 0.2s ease, opacity 0.2s ease;
-}
-
-.buttonWatch {
-  background-color: #207c5a;
-  color: #cecece;
-}
-
-.buttonWatchlist {
-  background-color: #b0363a;
-  color: #cecece;
-}
-
-.buttonWatch:hover,
-.buttonWatchlist:hover {
-  opacity: 0.85;
-  transform: translateY(-2px);
-}
-
-/* 项目卡片 - 与博客卡片风格统一 */
-.projectCard {
-  background: var(--ifm-background-surface-color);
-  border: 1px solid var(--ifm-color-emphasis-200);
-  border-radius: 0.5rem;
-  overflow: hidden;
-  box-shadow: var(--ifm-shadow-lw);
-  transition: all 0.2s ease;
+  color: var(--ifm-color-emphasis-500);
   cursor: pointer;
-}
-
-.projectCard:hover {
-  transform: translateY(-4px);
-  box-shadow: var(--ifm-shadow-md);
-  border-color: var(--ifm-color-emphasis-300);
-}
-
-.projectImage {
+  transition: color 0.3s ease;
   position: relative;
-  height: 180px;
-  overflow: hidden;
+  padding: 0;
 }
 
-.projectImage img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 0.3s ease;
+.filterChip:hover {
+  color: var(--ifm-text-color);
 }
 
-.projectCard:hover .projectImage img {
-  transform: scale(1.05);
+.filterChipActive {
+  color: var(--ifm-color-primary) !important;
 }
 
-.projectType {
+.filterChipActive::after {
+  content: "●";
   position: absolute;
-  top: 0.75rem;
-  right: 0.75rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 2rem;
-  height: 2rem;
-  background: rgba(0, 0, 0, 0.5);
-  color: white;
-  border-radius: 50%;
-  z-index: 2;
+  right: -15px;
+  top: 0px;
+  font-size: 0.6rem;
+  color: var(--ifm-color-primary);
 }
 
-.projectTypeIcon {
-  font-size: 1.125rem;
+/* Project List */
+.projectList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
 }
 
-.projectImageOverlay {
-  position: absolute;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.2);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  opacity: 0;
+.projectRow {
+  border-bottom: 1px solid rgba(150, 150, 150, 0.1);
   transition: opacity 0.3s ease;
 }
 
-.projectCard:hover .projectImageOverlay {
-  opacity: 1;
+.projectRow:last-child {
+  border-bottom: none;
 }
 
-.previewButton {
+.projectRow:hover {
+  /* JS handles spotlight effect */
+}
+
+.rowLink {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.4rem 1rem;
-  background: white;
-  color: var(--ifm-color-gray-900);
-  border: none;
-  border-radius: 0.25rem;
-  font-weight: 500;
-  cursor: pointer;
-  font-size: 0.875rem;
+  justify-content: space-between;
+  padding: 3rem 0;
+  text-decoration: none !important;
+  color: var(--ifm-text-color);
+  transition:
+    padding 0.3s ease,
+    color 0.3s ease;
 }
 
-.previewIcon {
-  font-size: 1.125rem;
+.rowLink:hover {
+  padding-left: 1rem;
+  padding-right: 1rem;
+  color: var(--ifm-color-emphasis-800);
 }
 
-.projectInfo {
-  padding: 1rem;
-}
-
-.projectTitle {
-  font-size: 1.125rem;
-  font-weight: 600;
-  margin-bottom: 0.5rem;
-}
-
-.projectDescription {
-  font-size: 0.875rem;
-  color: var(--ifm-color-emphasis-700);
-  margin-bottom: 1rem;
-  line-height: 1.5;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-.projectTags {
+.rowContent {
   display: flex;
-  flex-wrap: wrap;
-  gap: 0.375rem;
+  align-items: baseline;
+  gap: 2rem;
 }
 
-.projectTag {
-  padding: 0.2rem 0.625rem;
-  font-size: 0.75rem;
-  border-radius: 0.25rem;
-  font-weight: 500;
-}
-
-/* 预览模态框 - 简化样式 */
-.modalOverlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 100;
-  padding: 1rem;
-}
-
-.modalContent {
-  position: relative;
-  width: 100%;
-  max-width: 800px;
-  max-height: 90vh;
-  background: var(--ifm-background-surface-color);
-  border-radius: 0.5rem;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  box-shadow: var(--ifm-shadow-xl);
-}
-
-.modalClose {
-  position: absolute;
-  top: 0.75rem;
-  right: 0.75rem;
-  width: 2rem;
-  height: 2rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(0, 0, 0, 0.2);
-  border: none;
-  border-radius: 50%;
-  color: white;
+.rowIndex {
+  font-family: "Space Grotesk", monospace;
   font-size: 1rem;
-  cursor: pointer;
-  z-index: 10;
+  color: var(--ifm-color-emphasis-400);
 }
 
-.modalPreview {
-  position: relative;
-  height: 280px;
+.rowTitle {
+  font-size: clamp(2rem, 4vw, 3.5rem);
+  font-weight: 800;
+  margin: 0;
+  letter-spacing: -0.02em;
+  font-family: var(--ifm-heading-font-family);
+  transition: color 0.3s ease;
+}
+
+.rowLink:hover .rowTitle {
+  color: var(--ifm-color-primary); /* Highlight title on hover */
+}
+
+/* Meta Data */
+.rowMeta {
+  display: flex;
+  align-items: center;
+  gap: 3rem;
+  font-family: "Space Grotesk", monospace;
+  font-size: 1.1rem;
+  color: var(--ifm-color-emphasis-600);
+}
+
+.rowTag {
+  text-transform: uppercase;
+}
+
+.rowArrow {
+  font-size: 1.5rem;
+  transform: rotate(-45deg);
+  transition: transform 0.3s ease;
+}
+
+.rowLink:hover .rowArrow {
+  transform: rotate(0deg) translateX(5px);
+  color: var(--ifm-color-primary);
+}
+
+/* Floating Preview */
+.floatingPreview {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 50; /* Top most, but pointer-events none */
+  pointer-events: none;
+  width: 400px;
+  height: 300px;
+  /* Centered on cursor via JS style */
+}
+
+.previewImageWrapper {
+  width: 100%;
+  height: 100%;
+  border-radius: 12px;
   overflow: hidden;
-  border-bottom: 1px solid var(--ifm-color-emphasis-200);
+  position: relative;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
 }
 
-.modalPreview img {
+.previewImage {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
-.modalPreviewType {
+.previewMeta {
   position: absolute;
-  bottom: 0.75rem;
-  left: 0.75rem;
-  display: flex;
-  align-items: center;
-  gap: 0.375rem;
-  padding: 0.375rem 0.75rem;
-  border-radius: 0.25rem;
-  color: white;
-  font-size: 0.875rem;
-  font-weight: 500;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(10px);
+  padding: 1rem;
+  color: #fff;
+  font-size: 0.9rem;
+  transform: translateY(100%);
+  transition: transform 0.3s ease;
 }
 
-.modalInfo {
-  padding: 1.25rem;
-  overflow-y: auto;
+.previewImageWrapper:hover .previewMeta {
+  /* Not possible since wrapper has pointer-events: none, 
+     but keeping the styles just in case we change interaction */
+  transform: translateY(0);
 }
 
-.modalTitle {
-  font-size: 1.5rem;
-  font-weight: 700;
-  margin-bottom: 0.75rem;
-}
-
-.modalDescription {
-  color: var(--ifm-color-emphasis-700);
-  margin-bottom: 1.25rem;
-  line-height: 1.6;
-  font-size: 0.95rem;
-}
-
-.modalTags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.375rem;
-  margin-bottom: 1.25rem;
-}
-
-.modalTag {
-  padding: 0.2rem 0.625rem;
-  border-radius: 0.25rem;
-  color: white;
-  font-size: 0.75rem;
-  font-weight: 500;
-}
-
-.modalActions {
-  display: flex;
-  gap: 1rem;
-  margin-top: 1.25rem;
-}
-
-.modalButton {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.375rem;
-  padding: 0.5rem 1rem;
-  background: var(--ifm-color-primary);
-  color: white;
-  border: none;
-  border-radius: 0.25rem;
-  font-weight: 500;
-  font-size: 0.875rem;
-  text-decoration: none;
-}
-
-.modalButton:hover {
-  opacity: 0.9;
-  text-decoration: none;
-  color: white;
-}
-
-.modalButtonOutline {
-  background: transparent;
-  border: 1px solid var(--ifm-color-emphasis-300);
-  color: var(--ifm-font-color-base);
-}
-
-.modalButtonOutline:hover {
-  color: var(--ifm-font-color-base);
-  border-color: var(--ifm-color-emphasis-500);
-}
-
-.modalButtonIcon {
-  font-size: 1.125rem;
-}
-
-/* 响应式样式 */
-@media (max-width: 996px) {
-  .typeInfo {
-    flex-direction: column;
-    text-align: center;
-    gap: 0.75rem;
-    padding: 1rem;
-  }
-}
-
+/* Mobile Responsive */
 @media (max-width: 768px) {
-  .showcaseHeaderTitle {
+  .floatingPreview {
+    display: none; /* Disable floating on touch */
+  }
+
+  .mainContainer {
+    padding: 0 1.5rem;
+  }
+
+  .hero {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2rem;
+    padding: 6rem 0 3rem;
+  }
+
+  .title {
+    font-size: 3rem;
+  }
+
+  .rowLink {
+    padding: 2rem 0;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .rowLink:hover {
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  .rowContent {
+    gap: 1rem;
+  }
+
+  .rowTitle {
     font-size: 2rem;
   }
-  
-  .projectsGrid {
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  }
-}
 
-@media (max-width: 480px) {
-  .projectsGrid {
-    grid-template-columns: 1fr;
+  .rowMeta {
+    width: 100%;
+    justify-content: space-between;
+    font-size: 0.9rem;
+    gap: 0;
   }
-  
-  .modalActions {
-    flex-direction: column;
+
+  .rowArrow {
+    transform: rotate(0deg);
   }
 }
