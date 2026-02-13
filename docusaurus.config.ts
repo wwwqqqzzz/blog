@@ -75,20 +75,30 @@ const config: Config = {
       ],
     },
     footer: {
-      style: "light", // Switch to light to allow custom CSS to control dark mode easier, or keep dark. Let's use light for cleaner base.
+      style: "light",
       links: [
         {
-          title: "Connect",
+          title: "探索",
+          items: [
+            { label: "博客文章", to: "blog" },
+            { label: "项目展示", to: "project" },
+            { label: "关于我", to: "about" },
+          ],
+        },
+        {
+          title: "联系",
           items: [
             { label: "GitHub", href: social.github.href },
-            { label: "Email", href: "mailto:wangqizhe2003@gmail.com" }, // Assuming email based on bio or common practice, can verify later or generic
+            { label: "Email", href: "mailto:wangqizhe2003@gmail.com" },
             { label: "Twitter", href: "https://twitter.com" },
           ],
         },
       ],
       copyright: `
-        <div style="font-family: 'Space Grotesk', sans-serif; opacity: 0.5; margin-top: 2rem;">
-            © ${new Date().getFullYear()} Wang Qizhe. Crafted with <span style="color: #e25555;">♥</span> and Docusaurus.
+        <div class="footer-copyright-wrapper">
+            <span>© ${new Date().getFullYear()} 王起哲</span>
+            <span class="footer-separator">///</span>
+            <span>Est. 2024</span>
         </div>
         `,
     },
@@ -215,6 +225,8 @@ const config: Config = {
         authorsMapPath: "authors.yml",
         readingTime: ({ content, frontMatter, defaultReadingTime }) =>
           defaultReadingTime({ content, options: { wordsPerMinute: 300 } }),
+        remarkPlugins: [require("remark-math")],
+        rehypePlugins: [require("rehype-katex")],
         feedOptions: {
           type: "all",
           title: "王起哲",
