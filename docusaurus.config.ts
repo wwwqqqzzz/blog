@@ -8,6 +8,10 @@ const beian = "";
 const beian1 = "";
 
 const config: Config = {
+  markdown: {
+    mermaid: true,
+  },
+  themes: ["@docusaurus/theme-mermaid"],
   title: "王起哲的博客",
   url: "https://20030727.xyz",
   baseUrl: "/",
