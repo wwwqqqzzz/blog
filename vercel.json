@@ -1,11 +1,18 @@
 {
-  "buildCommand": "NODE_ENV=production CI=false DISABLE_ESLINT_PLUGIN=true SKIP_PREFLIGHT_CHECK=true pnpm build",
-  "outputDirectory": "build",
-  "installCommand": "pnpm install --no-frozen-lockfile",
-  "framework": null,
-  "functions": {
-    "api/**/*.js": {
-      "runtime": "nodejs20.x"
+  "version": 2,
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "installCommand": "pnpm install --no-frozen-lockfile",
+        "buildCommand": "NODE_ENV=production CI=false DISABLE_ESLINT_PLUGIN=true SKIP_PREFLIGHT_CHECK=true pnpm build",
+        "outputDirectory": "build"
+      }
+    },
+    {
+      "src": "api/**/*.js",
+      "use": "@vercel/node@3"
     }
-  }
+  ]
 }
