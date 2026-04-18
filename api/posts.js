@@ -33,7 +33,7 @@ export default async function handler(req, res) {
 
   const adminToken = process.env.ADMIN_TOKEN || 'blog-admin-2024'
   const authHeader = req.headers.authorization
-  const authToken = authHeader?.replace('Bearer ', '')
+  const authToken = authHeader?.replace('Bearer ', '') || req.query?.token
   const bodyToken = req.body?.token
 
   // 验证管理员权限
@@ -104,14 +104,15 @@ async function listPosts(res, headers) {
     const allPosts = []
 
     for (const category of VALID_CATEGORIES) {
-      const response = await githubRequest(
-        `/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/blog/${category}`,
-        headers
-      )
+      try {
+        const response = await githubRequest(
+          `/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/blog/${category}`,
+          headers
+        )
 
-      if (!response.ok) continue
+        if (!response.ok) continue
 
-      const contents = await response.json()
+        const contents = await response.json()
 
       // Filter for .md files and directories
       for (const item of Array.isArray(contents) ? contents : []) {
