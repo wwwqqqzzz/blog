@@ -134,13 +134,13 @@ async function listPosts(res, headers) {
   try {
     const allPosts = []
 
-    for (const category of VALID_CATEGORIES) {
+    async function scanDirectory(dirPath, cat) {
       try {
         const response = await githubRequest(
-          `/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/blog/${category}`,
+          `/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${dirPath}`,
           headers
         )
-        if (!response.ok) continue
+        if (!response.ok) return
         const contents = await response.json()
 
         for (const item of Array.isArray(contents) ? contents : []) {
@@ -148,36 +148,20 @@ async function listPosts(res, headers) {
             allPosts.push({
               name: item.name,
               path: item.path,
-              category,
+              category: cat,
               sha: item.sha,
               size: item.size,
               date: '',
             })
-          } else if (item.type === 'dir') {
-            const indexPath = `${item.path}/index.md`
-            try {
-              const subRes = await githubRequest(
-                `/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${item.path}`,
-                headers
-              )
-              if (subRes.ok) {
-                const sub = await subRes.json()
-                const idx = (Array.isArray(sub) ? sub : []).find(f => f.name === 'index.md')
-                if (idx) {
-                  allPosts.push({
-                    name: item.name,
-                    path: indexPath,
-                    category,
-                    sha: idx.sha,
-                    size: idx.size,
-                    date: '',
-                  })
-                }
-              }
-            } catch { }
+          } else if (item.type === 'dir' && item.name !== 'assets') {
+            await scanDirectory(item.path, cat)
           }
         }
       } catch { }
+    }
+
+    for (const category of VALID_CATEGORIES) {
+      await scanDirectory(`blog/${category}`, category)
     }
 
     // 逐个读取 front matter 提取 date（并发，5个一组避免速率限制）
