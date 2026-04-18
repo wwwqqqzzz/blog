@@ -393,7 +393,7 @@ async function triggerRebuild(res, token) {
     if (!response.ok) {
       const data = await response.json()
       return res.status(200).json({
-        message: '网站将通过 GitHub push 自动重建，
+        message: '网站将通过 GitHub push 自动重建',
         auto: true,
       })
     }
