@@ -132,29 +132,8 @@ async function githubRequest(path, headers, method = 'GET', body = null) {
 
 async function listPosts(res, headers) {
   try {
-    // 用 GitHub Commits API 获取每篇文章最近提交日期
-    const commitDateMap = new Map()
-    for (const category of VALID_CATEGORIES) {
-      try {
-        const response = await githubRequest(
-          `/repos/${GITHUB_OWNER}/${GITHUB_REPO}/commits?per_page=100&path=blog/${category}`,
-          headers
-        )
-        if (!response.ok) continue
-        const commits = await response.json()
-        for (const commit of Array.isArray(commits) ? commits : []) {
-          const date = commit.commit?.author?.date || commit.commit?.committer?.date || ''
-          for (const f of (commit.files || [])) {
-            if (f.filename && f.filename.startsWith('blog/') && f.filename.endsWith('.md') && !commitDateMap.has(f.filename)) {
-              commitDateMap.set(f.filename, date)
-            }
-          }
-        }
-      } catch { }
-    }
-
-    // 用 Contents API 获取文件列表
     const allPosts = []
+
     for (const category of VALID_CATEGORIES) {
       try {
         const response = await githubRequest(
@@ -172,7 +151,7 @@ async function listPosts(res, headers) {
               category,
               sha: item.sha,
               size: item.size,
-              date: commitDateMap.get(item.path) || '',
+              date: '',
             })
           } else if (item.type === 'dir') {
             const indexPath = `${item.path}/index.md`
@@ -191,7 +170,7 @@ async function listPosts(res, headers) {
                     category,
                     sha: idx.sha,
                     size: idx.size,
-                    date: commitDateMap.get(indexPath) || '',
+                    date: '',
                   })
                 }
               }
@@ -199,6 +178,29 @@ async function listPosts(res, headers) {
           }
         }
       } catch { }
+    }
+
+    // 逐个读取 front matter 提取 date（并发，5个一组避免速率限制）
+    const batchSize = 5
+    for (let i = 0; i < allPosts.length; i += batchSize) {
+      const batch = allPosts.slice(i, i + batchSize)
+      const results = await Promise.allSettled(
+        batch.map(async (post) => {
+          try {
+            const fileRes = await githubRequest(
+              `/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${post.path}`,
+              headers
+            )
+            if (!fileRes.ok) return
+            const fileData = await fileRes.json()
+            const content = Buffer.from(fileData.content, 'base64').toString('utf-8')
+            const dateMatch = content.match(/^---[\s\S]*?date:\s*['"]?(\d{4}[-/]\d{2}[-/]\d{2})/)
+            if (dateMatch) {
+              post.date = dateMatch[1].replace(/\//g, '-')
+            }
+          } catch { }
+        })
+      )
     }
 
     // 按 date 倒序（最新在前），无日期的排最后
