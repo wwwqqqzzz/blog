@@ -15,25 +15,30 @@ const RATE_LIMIT_WINDOW_S = 60
 const ADMIN_TOKEN = process.env.ADMIN_TOKEN || 'blog-admin-2024'
 
 function getRedisConfig() {
+  // 优先用 Vercel Upstash Integration 自动创建的变量名
   const url =
     process.env.UPSTASH_REDIS_REST_URL_KV_REST_API_URL ||
-    process.env.UPSTASH_REDIS_REST_URL ||
-    process.env.KV_REST_API_URL
+    process.env.KV_REST_API_URL ||
+    process.env.UPSTASH_REDIS_REST_URL
 
   const token =
     process.env.UPSTASH_REDIS_REST_URL_KV_REST_API_TOKEN ||
-    process.env.UPSTASH_REDIS_REST_TOKEN ||
-    process.env.KV_REST_API_TOKEN
+    process.env.KV_REST_API_TOKEN ||
+    process.env.UPSTASH_REDIS_REST_TOKEN
 
   return url && token ? { url, token } : null
 }
 
 async function redisCmd(...args) {
   const config = getRedisConfig()
-  if (!config) return null
+  if (!config) {
+    console.error('Redis config not found. Available env vars:', Object.keys(process.env).filter(k => k.includes('REDIS') || k.includes('KV') || k.includes('UPSTASH')).join(', '))
+    return null
+  }
 
   try {
-    const res = await fetch(`${config.url}`, {
+    const apiUrl = config.url.endsWith('/') ? config.url.slice(0, -1) : config.url
+    const res = await fetch(apiUrl, {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${config.token}`,
@@ -42,7 +47,8 @@ async function redisCmd(...args) {
       body: JSON.stringify(args),
     })
     if (!res.ok) {
-      console.error('Redis REST error:', res.status, await res.text())
+      const errText = await res.text()
+      console.error('Redis REST error:', res.status, errText)
       return null
     }
     const data = await res.json()
@@ -168,6 +174,19 @@ export default async function handler(req, res) {
 
   if (req.method === 'GET') {
     const { slug, action } = req.query
+
+    // 调试端点：查看环境变量是否可用
+    if (action === 'debug') {
+      const config = getRedisConfig()
+      const envKeys = Object.keys(process.env).filter(k => k.includes('REDIS') || k.includes('KV') || k.includes('UPSTASH'))
+      return res.status(200).json({
+        hasConfig: !!config,
+        configUrl: config ? config.url?.slice(0, 30) + '...' : null,
+        hasToken: config ? !!config.token : false,
+        relevantEnvVars: envKeys,
+      })
+    }
+
     if (action === 'list') {
       const authHeader = req.headers.authorization
       const token = authHeader?.replace('Bearer ', '') || req.query.token
