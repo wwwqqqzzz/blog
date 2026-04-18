@@ -2,5 +2,10 @@
   "buildCommand": "NODE_ENV=production CI=false DISABLE_ESLINT_PLUGIN=true SKIP_PREFLIGHT_CHECK=true pnpm build",
   "outputDirectory": "build",
   "installCommand": "pnpm install --no-frozen-lockfile",
-  "framework": null
+  "framework": null,
+  "functions": {
+    "api/**/*.js": {
+      "runtime": "nodejs20.x"
+    }
+  }
 }
