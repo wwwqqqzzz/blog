@@ -1,41 +1,42 @@
 /**
- * 极简评论 API — 直接用 fetch 调用 Upstash REST API，无需 SDK
+ * 极简评论 API — 直接用 fetch 调用 Upstash REST API
  * GET  `/api/comments?slug=<path>` — 获取评论列表
  * POST `/api/comments` body: { slug, content, nickname } — 提交评论
  * GET  `/api/comments?action=list` — 管理员：列出所有 slug
- * DELETE `/api/comments` body: { token, slug, id? } — 管理员：删除评论
+ * DELETE `/api/comments` body: { token, slug, id? } — 删除评论
  */
 
 const memoryStore = new Map()
-
 const MAX_CONTENT_LENGTH = 2000
 const MAX_NICKNAME_LENGTH = 20
 const RATE_LIMIT_MAX = 5
 const RATE_LIMIT_WINDOW_S = 60
 const ADMIN_TOKEN = process.env.ADMIN_TOKEN || 'blog-admin-2024'
 
+function normalizeSlug(s) {
+  if (!s) return s
+  try { return decodeURIComponent(s) } catch { return s }
+}
+
 function getRedisConfig() {
-  // 优先用 Vercel Upstash Integration 自动创建的变量名
   const url =
     process.env.UPSTASH_REDIS_REST_URL_KV_REST_API_URL ||
     process.env.KV_REST_API_URL ||
     process.env.UPSTASH_REDIS_REST_URL
-
   const token =
     process.env.UPSTASH_REDIS_REST_URL_KV_REST_API_TOKEN ||
     process.env.KV_REST_API_TOKEN ||
     process.env.UPSTASH_REDIS_REST_TOKEN
-
   return url && token ? { url, token } : null
 }
 
 async function redisCmd(...args) {
   const config = getRedisConfig()
   if (!config) {
-    console.error('Redis config not found. Available env vars:', Object.keys(process.env).filter(k => k.includes('REDIS') || k.includes('KV') || k.includes('UPSTASH')).join(', '))
+    console.error('Redis: no config. Env vars with REDIS/KV/UPSTASH:',
+      Object.keys(process.env).filter(k => /REDIS|KV|UPSTASH/.test(k)).join(', '))
     return null
   }
-
   try {
     const apiUrl = config.url.endsWith('/') ? config.url.slice(0, -1) : config.url
     const res = await fetch(apiUrl, {
@@ -47,8 +48,7 @@ async function redisCmd(...args) {
       body: JSON.stringify(args),
     })
     if (!res.ok) {
-      const errText = await res.text()
-      console.error('Redis REST error:', res.status, errText)
+      console.error('Redis REST error:', res.status, await res.text())
       return null
     }
     const data = await res.json()
@@ -71,13 +71,15 @@ function sanitize(str) {
 
 async function getComments(slug) {
   const result = await redisCmd('LRANGE', `comments:${slug}`, 0, -1)
-  if (!result) return memoryStore.get(slug) || []
-  return (Array.isArray(result) ? result : []).map((i) => (typeof i === 'string' ? JSON.parse(i) : i))
+  if (result !== null && result !== undefined) {
+    return (Array.isArray(result) ? result : []).map((i) => (typeof i === 'string' ? JSON.parse(i) : i))
+  }
+  return memoryStore.get(slug) || []
 }
 
 async function addComment(slug, comment) {
   const result = await redisCmd('RPUSH', `comments:${slug}`, JSON.stringify(comment))
-  if (result === null) {
+  if (result === null || result === undefined) {
     const list = memoryStore.get(slug) || []
     list.push(comment)
     memoryStore.set(slug, list)
@@ -86,11 +88,11 @@ async function addComment(slug, comment) {
 
 async function deleteComment(slug, id) {
   const result = await redisCmd('LRANGE', `comments:${slug}`, 0, -1)
-  const items = result !== null
+  const items = result !== null && result !== undefined
     ? (Array.isArray(result) ? result : []).map((i) => (typeof i === 'string' ? JSON.parse(i) : i))
     : (memoryStore.get(slug) || [])
   const filtered = items.filter((c) => c.id !== id)
-  if (result !== null) {
+  if (result !== null && result !== undefined) {
     await redisCmd('DEL', `comments:${slug}`)
     if (filtered.length > 0) {
       for (const c of filtered) {
@@ -104,26 +106,41 @@ async function deleteComment(slug, id) {
 
 async function deleteAllComments(slug) {
   const result = await redisCmd('DEL', `comments:${slug}`)
-  if (result === null) {
+  if (result === null || result === undefined) {
     memoryStore.delete(slug)
   }
 }
 
 async function listAllSlugs() {
   const result = await redisCmd('KEYS', 'comments:*')
-  if (!result) {
+  if (result !== null && result !== undefined) {
+    const keys = Array.isArray(result) ? result : []
     const slugs = []
-    for (const [slug, list] of memoryStore.entries()) {
-      slugs.push({ slug, count: list.length })
+    for (const k of keys) {
+      const slug = normalizeSlug(k.replace('comments:', ''))
+      const count = await redisCmd('LLEN', k)
+      // 检查旧 key（编码过的）是否需要迁移
+      const decodedKey = `comments:${slug}`
+      if (k !== decodedKey) {
+        // 迁移：读取旧 key 数据，写入新 key，删除旧 key
+        const items = await redisCmd('LRANGE', k, 0, -1)
+        if (Array.isArray(items) && items.length > 0) {
+          await redisCmd('DEL', k)
+          // 如果新 key 已有数据，先读取合并
+          const existing = await redisCmd('LRANGE', decodedKey, 0, -1)
+          const allItems = [...(Array.isArray(existing) ? existing : []), ...items]
+          for (const item of allItems) {
+            await redisCmd('RPUSH', decodedKey, typeof item === 'string' ? item : JSON.stringify(item))
+          }
+        }
+      }
+      slugs.push({ slug, count: count || 0 })
     }
     return slugs
   }
-  const keys = Array.isArray(result) ? result : []
   const slugs = []
-  for (const k of keys) {
-    const slug = k.replace('comments:', '')
-    const count = await redisCmd('LLEN', k)
-    slugs.push({ slug, count: count || 0 })
+  for (const [slug, list] of memoryStore.entries()) {
+    slugs.push({ slug, count: list.length })
   }
   return slugs
 }
@@ -131,7 +148,7 @@ async function listAllSlugs() {
 async function checkRateLimit(ip) {
   const key = `ratelimit:${ip}`
   const result = await redisCmd('INCR', key)
-  if (result === null) {
+  if (result === null || result === undefined) {
     const now = Date.now()
     const entry = memoryStore.get(key)
     if (!entry || now - entry.time > RATE_LIMIT_WINDOW_S * 1000) {
@@ -161,7 +178,8 @@ export default async function handler(req, res) {
   }
 
   if (req.method === 'DELETE') {
-    const { token, slug, id } = req.body || {}
+    const { token, slug: rawSlug, id } = req.body || {}
+    const slug = normalizeSlug(rawSlug)
     if (!verifyAdmin(token)) return res.status(403).json({ error: '无效的管理令牌' })
     if (!slug) return res.status(400).json({ error: 'Missing slug' })
     if (id) {
@@ -173,67 +191,8 @@ export default async function handler(req, res) {
   }
 
   if (req.method === 'GET') {
-    const { slug, action } = req.query
-
-    // 调试端点：测试 Redis 是否真的能读写
-    if (action === 'debug') {
-      const config = getRedisConfig()
-      const envKeys = Object.keys(process.env).filter(k => k.includes('REDIS') || k.includes('KV') || k.includes('UPSTASH'))
-
-      // 尝试实际写入和读取
-      let writeOk = false
-      let readOk = false
-      let writeError = ''
-      let readError = ''
-      let readResult = null
-
-      try {
-        const writeRes = await redisCmd('SET', 'test:ping', 'pong')
-        writeOk = writeRes === 'pong'
-        if (!writeOk) writeError = `SET returned: ${JSON.stringify(writeRes)}`
-      } catch (e) {
-        writeError = e.message
-      }
-
-      try {
-        readResult = await redisCmd('GET', 'test:ping')
-        readOk = readResult === 'pong'
-        if (!readOk) readError = `GET returned: ${JSON.stringify(readResult)}`
-      } catch (e) {
-        readError = e.message
-      }
-
-      // 清理测试数据
-      await redisCmd('DEL', 'test:ping')
-
-      // 查看已有的评论 keys
-      const commentKeys = await redisCmd('KEYS', 'comments:*')
-
-      // 查看 comments key 下的实际数据
-      let commentData = null
-      let commentDataError = ''
-      if (commentKeys.length > 0) {
-        try {
-          commentData = await redisCmd('LRANGE', commentKeys[0], 0, -1)
-        } catch (e) {
-          commentDataError = e.message
-        }
-      }
-
-      return res.status(200).json({
-        hasConfig: !!config,
-        configUrl: config ? config.url?.slice(0, 40) + '...' : null,
-        hasToken: config ? !!config.token : false,
-        relevantEnvVars: envKeys,
-        redisWrite: writeOk,
-        redisRead: readOk,
-        writeError,
-        readError,
-        commentKeys: commentKeys || [],
-        commentData: commentData,
-        commentDataError,
-      })
-    }
+    const { slug: rawSlug, action } = req.query
+    const slug = normalizeSlug(rawSlug)
 
     if (action === 'list') {
       const authHeader = req.headers.authorization
@@ -258,7 +217,8 @@ export default async function handler(req, res) {
       'unknown'
     const allowed = await checkRateLimit(ip)
     if (!allowed) return res.status(429).json({ error: '操作太频繁，请稍后再试' })
-    const { slug, content, nickname } = req.body || {}
+    const { slug: rawSlug, content, nickname } = req.body || {}
+    const slug = normalizeSlug(rawSlug)
     if (!slug || !content || !content.trim()) return res.status(400).json({ error: 'Slug and content are required' })
     if (content.length > MAX_CONTENT_LENGTH) return res.status(400).json({ error: `内容不能超过 ${MAX_CONTENT_LENGTH} 字` })
     const comment = {
