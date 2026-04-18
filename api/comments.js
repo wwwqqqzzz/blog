@@ -209,6 +209,17 @@ export default async function handler(req, res) {
       // 查看已有的评论 keys
       const commentKeys = await redisCmd('KEYS', 'comments:*')
 
+      // 查看 comments key 下的实际数据
+      let commentData = null
+      let commentDataError = ''
+      if (commentKeys.length > 0) {
+        try {
+          commentData = await redisCmd('LRANGE', commentKeys[0], 0, -1)
+        } catch (e) {
+          commentDataError = e.message
+        }
+      }
+
       return res.status(200).json({
         hasConfig: !!config,
         configUrl: config ? config.url?.slice(0, 40) + '...' : null,
@@ -219,6 +230,8 @@ export default async function handler(req, res) {
         writeError,
         readError,
         commentKeys: commentKeys || [],
+        commentData: commentData,
+        commentDataError,
       })
     }
 
