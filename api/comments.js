@@ -1,9 +1,5 @@
 /**
  * 极简评论 API — 直接用 fetch 调用 Upstash REST API
- * GET  `/api/comments?slug=<path>` — 获取评论列表
- * POST `/api/comments` body: { slug, content, nickname } — 提交评论
- * GET  `/api/comments?action=list` — 管理员：列出所有 slug
- * DELETE `/api/comments` body: { token, slug, id? } — 删除评论
  */
 
 const memoryStore = new Map()
@@ -32,11 +28,7 @@ function getRedisConfig() {
 
 async function redisCmd(...args) {
   const config = getRedisConfig()
-  if (!config) {
-    console.error('Redis: no config. Env vars with REDIS/KV/UPSTASH:',
-      Object.keys(process.env).filter(k => /REDIS|KV|UPSTASH/.test(k)).join(', '))
-    return null
-  }
+  if (!config) return null
   try {
     const apiUrl = config.url.endsWith('/') ? config.url.slice(0, -1) : config.url
     const res = await fetch(apiUrl, {
@@ -115,33 +107,28 @@ async function listAllSlugs() {
   const result = await redisCmd('KEYS', 'comments:*')
   if (result !== null && result !== undefined) {
     const keys = Array.isArray(result) ? result : []
-    const slugMap = new Map()
-
-    // 先迁移旧 key
+    const seen = new Map()
     for (const k of keys) {
       const slug = normalizeSlug(k.replace('comments:', ''))
-      const decodedKey = `comments:${slug}`
+      const count = await redisCmd('LLEN', k)
+      seen.set(slug, (seen.get(slug) || 0) + (count || 0))
+    }
+    // 清理重复的编码 key：合并到解码 key 后删除旧 key
+    for (const k of keys) {
+      const decodedSlug = normalizeSlug(k.replace('comments:', ''))
+      const decodedKey = `comments:${decodedSlug}`
       if (k !== decodedKey) {
+        // 旧编码 key 存在，迁移数据到解码 key
         const items = await redisCmd('LRANGE', k, 0, -1)
         if (Array.isArray(items) && items.length > 0) {
-          await redisCmd('DEL', k)
           for (const item of items) {
             await redisCmd('RPUSH', decodedKey, typeof item === 'string' ? item : JSON.stringify(item))
           }
         }
+        await redisCmd('DEL', k)
       }
     }
-
-    // 重新读取迁移后的 keys
-    const newKeys = await redisCmd('KEYS', 'comments:*')
-    const finalKeys = Array.isArray(newKeys) ? newKeys : []
-    for (const k of finalKeys) {
-      const slug = normalizeSlug(k.replace('comments:', ''))
-      const count = await redisCmd('LLEN', k)
-      slugMap.set(slug, (slugMap.get(slug) || 0) + (count || 0))
-    }
-    return Array.from(slugMap.entries()).map(([slug, count]) => ({ slug, count }))
-  }
+    return Array.from(seen.entries()).map(([slug, count]) => ({ slug, count }))
   }
   const slugs = []
   for (const [slug, list] of memoryStore.entries()) {
@@ -207,12 +194,22 @@ export default async function handler(req, res) {
         const comments = await getComments(slug)
         return res.status(200).json({ slug, comments })
       }
-      const slugs = await listAllSlugs()
-      return res.status(200).json({ slugs })
+      try {
+        const slugs = await listAllSlugs()
+        return res.status(200).json({ slugs })
+      } catch (err) {
+        console.error('listAllSlugs error:', err)
+        return res.status(500).json({ error: '获取列表失败', details: err.message })
+      }
     }
     if (!slug) return res.status(400).json({ error: 'Missing slug' })
-    const comments = await getComments(slug)
-    return res.status(200).json({ comments })
+    try {
+      const comments = await getComments(slug)
+      return res.status(200).json({ comments })
+    } catch (err) {
+      console.error('getComments error:', err)
+      return res.status(500).json({ error: '获取评论失败', details: err.message })
+    }
   }
 
   if (req.method === 'POST') {
