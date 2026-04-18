@@ -98,11 +98,14 @@ export default async function handler(req, res) {
     return listPosts(res, headers)
   }
 
-  // POST — create or rebuild
+  // POST — create or restore
   if (req.method === 'POST') {
     const { action } = req.body || {}
     if (action === 'rebuild') {
       return triggerRebuild(res, token)
+    }
+    if (action === 'restore') {
+      return restorePost(res, headers, req.body)
     }
     return createPost(res, headers, req.body)
   }
@@ -115,6 +118,11 @@ export default async function handler(req, res) {
   // DELETE
   if (req.method === 'DELETE') {
     return deletePost(res, headers, req.body)
+  }
+
+  // GET — list trash
+  if (req.method === 'GET' && req.query.action === 'list_trash') {
+    return listTrash(res, headers)
   }
 
   return res.status(405).json({ error: 'Method not allowed' })
@@ -323,14 +331,19 @@ async function updatePost(res, headers, body) {
 }
 
 async function deletePost(res, headers, body) {
-  const { path, sha, commitMessage } = body || {}
+  const { path, sha, commitMessage, permanent } = body || {}
 
   if (!path) {
     return res.status(400).json({ error: 'path 为必填项' })
   }
 
-  // Get SHA if not provided
+  const TRASH_DIR = 'blog/_trash'
+  const fileName = path.split('/').pop()
+  const targetPath = `${TRASH_DIR}/${Date.now()}_${fileName}`
+
+  // Get file info
   let fileSha = sha
+  let fileContent = ''
   if (!fileSha) {
     const getResponse = await githubRequest(
       `/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${path}`,
@@ -342,34 +355,129 @@ async function deletePost(res, headers, body) {
     }
     const getData = await getResponse.json()
     fileSha = getData.sha
+    fileContent = Buffer.from(getData.content, 'base64').toString('utf-8')
   }
 
-  const message = commitMessage || `docs: 删除文章 ${path.split('/').pop()}`
+  try {
+    if (permanent) {
+      // 真正删除
+      const message = commitMessage || `docs: 永久删除文章 ${fileName}`
+      const response = await githubRequest(
+        `/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${path}`,
+        headers,
+        'DELETE',
+        { message, sha: fileSha, branch: GITHUB_BRANCH }
+      )
+      if (!response.ok) {
+        const data = await response.json()
+        return res.status(response.status).json({ error: '永久删除失败', details: data.message })
+      }
+      return res.status(200).json({ message: '文章已永久删除' })
+    } else {
+      // 移动到回收站
+      const message = commitMessage || `docs: 移入回收站 ${fileName}`
+      const response = await githubRequest(
+        `/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${targetPath}`,
+        headers,
+        'PUT',
+        { message, content: Buffer.from(fileContent || '').toString('base64'), branch: GITHUB_BRANCH }
+      )
+      if (!response.ok) {
+        const data = await response.json()
+        return res.status(response.status).json({ error: '移入回收站失败', details: data.message })
+      }
+      // 删除原文件
+      await githubRequest(
+        `/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${path}`,
+        headers,
+        'DELETE',
+        { message: `docs: 移入回收站后删除 ${fileName}`, sha: fileSha, branch: GITHUB_BRANCH }
+      )
+      return res.status(200).json({
+        message: '文章已移入回收站，可从 /admin?tab=trash 恢复',
+        path: targetPath,
+      })
+    }
+  } catch (error) {
+    console.error('Delete post error:', error)
+    return res.status(500).json({ error: '删除失败', details: error.message })
+  }
+}
+
+async function listTrash(res, headers) {
+  try {
+    const TRASH_DIR = 'blog/_trash'
+    const response = await githubRequest(
+      `/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${TRASH_DIR}`,
+      headers
+    )
+    if (!response.ok) {
+      return res.status(200).json({ posts: [] })
+    }
+    const contents = await response.json()
+    const posts = (Array.isArray(contents) ? contents : [])
+      .filter(item => item.type === 'file' && item.name.endsWith('.md'))
+      .map(item => ({
+        name: item.name.replace(/^\d+_/, ''),
+        path: item.path,
+        sha: item.sha,
+        deletedAt: item.name.split('_')[0],
+      }))
+    return res.status(200).json({ posts })
+  } catch {
+    return res.status(200).json({ posts: [] })
+  }
+}
+
+async function restorePost(res, headers, body) {
+  const { path, targetCategory } = body || {}
+  if (!path) {
+    return res.status(400).json({ error: 'path 为必填项' })
+  }
+
+  const TRASH_DIR = 'blog/_trash'
+  const fileName = path.split('/').pop().replace(/^\d+_/, '')
+  const originalName = fileName.replace(/^\d+_/, '')
+
+  if (!VALID_CATEGORIES.includes(targetCategory)) {
+    return res.status(400).json({ error: 'targetCategory 为必填项' })
+  }
+
+  const targetPath = `blog/${targetCategory}/${fileName.replace(/^\d+_/, '')}`
 
   try {
-    const response = await githubRequest(
+    const getResponse = await githubRequest(
+      `/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${path}`,
+      headers
+    )
+    if (!getResponse.ok) {
+      return res.status(getResponse.status).json({ error: '获取文件失败', details: (await getResponse.json()).message })
+    }
+    const getData = await getResponse.json()
+    const content = Buffer.from(getData.content, 'base64').toString('utf-8')
+
+    const message = `docs: 恢复文章 ${fileName}`
+    const putResponse = await githubRequest(
+      `/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${targetPath}`,
+      headers,
+      'PUT',
+      { message, content: Buffer.from(content).toString('base64'), branch: GITHUB_BRANCH }
+    )
+    if (!putResponse.ok) {
+      return res.status(putResponse.status).json({ error: '恢复失败', details: (await putResponse.json()).message })
+    }
+
+    await githubRequest(
       `/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${path}`,
       headers,
       'DELETE',
-      {
-        message,
-        sha: fileSha,
-        branch: GITHUB_BRANCH,
-      }
+      { message: `docs: 恢复后删除回收站文件`, sha: getData.sha, branch: GITHUB_BRANCH }
     )
 
-    const data = await response.json()
-
-    if (!response.ok) {
-      return res.status(response.status).json({ error: '删除文章失败', details: data.message })
-    }
-
-    return res.status(200).json({
-      message: '文章删除成功，网站将在几分钟后自动更新',
-    })
+    return res.status(200).json({ message: '文章已恢复', path: targetPath })
   } catch (error) {
-    console.error('Delete post error:', error)
-    return res.status(500).json({ error: '删除文章失败', details: error.message })
+    console.error('Restore error:', error)
+    return res.status(500).json({ error: '恢复失败', details: error.message })
   }
 }
 

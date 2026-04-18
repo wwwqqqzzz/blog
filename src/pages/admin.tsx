@@ -124,7 +124,7 @@ export default function AdminPage(): JSX.Element {
   )
 }
 
-type Tab = 'comments' | 'posts'
+type Tab = 'comments' | 'posts' | 'trash'
 
 function AdminPanel(): JSX.Element {
   const isDev = isLocalDev()
@@ -229,9 +229,15 @@ function AdminPanel(): JSX.Element {
         >
           📝 文章管理
         </button>
+        <button
+          className={`admin-tab ${activeTab === 'trash' ? 'active' : ''}`}
+          onClick={() => setActiveTab('trash')}
+        >
+          🗑️ 回收站
+        </button>
       </div>
 
-      {activeTab === 'comments' ? <CommentManager token={token} isDev={isDev} /> : <PostManager token={token} isDev={isDev} />}
+      {activeTab === 'comments' ? <CommentManager token={token} isDev={isDev} /> : activeTab === 'trash' ? <TrashManager token={token} isDev={isDev} /> : <PostManager token={token} isDev={isDev} />}
     </div>
   )
 }
@@ -619,6 +625,111 @@ function PostManager({ token, isDev }: { token: string; isDev: boolean }): JSX.E
           </div>
         </div>
       )}
+    </div>
+  )
+}
+
+/* ===== Trash Manager ===== */
+interface TrashItem {
+  name: string
+  path: string
+  deletedAt: string
+}
+
+function TrashManager({ token, isDev }: { token: string; isDev: boolean }): JSX.Element {
+  const [posts, setPosts] = useState<TrashItem[]>([])
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
+  const [msg, setMsg] = useState('')
+
+  const fetchTrash = useCallback(async () => {
+    setLoading(true)
+    setError('')
+    try {
+      const res = await fetch(`/api/posts?action=list_trash&token=${encodeURIComponent(token)}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      if (!res.ok) { setError('获取失败'); return }
+      const data = await res.json()
+      setPosts(data.posts || [])
+    } catch { setError('网络错误') }
+    finally { setLoading(false) }
+  }, [token])
+
+  useEffect(() => { if (!isDev) fetchTrash() }, [fetchTrash, isDev])
+
+  const handleRestore = async (post: TrashItem, category: string) => {
+    setLoading(true)
+    try {
+      const res = await fetch('/api/posts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token, action: 'restore', path: post.path, targetCategory: category }),
+      })
+      if (!res.ok) { const data = await res.json(); setError(data.error || '恢复失败'); return }
+      setMsg('文章已恢复')
+      fetchTrash()
+    } catch { setError('网络错误') }
+    finally { setLoading(false) }
+  }
+
+  const handlePermanentDelete = async (post: TrashItem) => {
+    if (!confirm(`确定永久删除 ${post.name} 吗？此操作不可恢复！`)) return
+    setLoading(true)
+    try {
+      const res = await fetch('/api/posts', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token, path: post.path, sha: '', permanent: true }),
+      })
+      if (!res.ok) { const data = await res.json(); setError(data.error || '删除失败'); return }
+      setMsg('已永久删除')
+      fetchTrash()
+    } catch { setError('网络错误') }
+    finally { setLoading(false) }
+  }
+
+  function formatDeletedAt(ts: string): string {
+    if (!ts) return ''
+    const d = new Date(parseInt(ts))
+    return d.toLocaleDateString('zh-CN') + ' ' + d.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' })
+  }
+
+  if (isDev) {
+    return <div className="admin-main"><p className="admin-hint">⚠️ 回收站仅在线上环境可用</p></div>
+  }
+
+  return (
+    <div className="admin-main">
+      {error && <div className="admin-error">{error}</div>}
+      {msg && <div className="admin-success-msg" onClick={() => setMsg('')}>{msg} ✕</div>}
+
+      <div className="admin-post-header">
+        <h3>🗑️ 回收站 ({posts.length})</h3>
+        <button onClick={fetchTrash} className="admin-btn admin-btn-sm">刷新</button>
+      </div>
+
+      {loading && !posts.length ? <p className="admin-hint">加载中...</p>
+        : posts.length === 0 ? <p className="admin-hint">回收站为空</p>
+          : <div className="admin-post-list">
+              {posts.map(p => (
+                <div key={p.path} className="admin-post-item">
+                  <div className="admin-post-info">
+                    <span className="admin-post-name">{p.name}</span>
+                    <span className="admin-post-size">{formatDeletedAt(p.deletedAt)}</span>
+                  </div>
+                  <div className="admin-post-actions">
+                    {CATEGORIES.map(cat => (
+                      <button key={cat} onClick={() => handleRestore(p, cat)} className="admin-btn admin-btn-edit">
+                        恢复到{CATEGORY_LABELS[cat]}
+                      </button>
+                    ))}
+                    <button onClick={() => handlePermanentDelete(p)} className="admin-btn admin-btn-danger admin-btn-xs">永久删除</button>
+                  </div>
+                </div>
+              ))}
+            </div>
+      }
     </div>
   )
 }
