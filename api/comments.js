@@ -1,12 +1,9 @@
 /**
- * 极简评论 API
+ * 极简评论 API — 直接用 fetch 调用 Upstash REST API，无需 SDK
  * GET  `/api/comments?slug=<path>` — 获取评论列表
  * POST `/api/comments` body: { slug, content, nickname } — 提交评论
  * GET  `/api/comments?action=list` — 管理员：列出所有 slug
  * DELETE `/api/comments` body: { token, slug, id? } — 管理员：删除评论
- *
- * 存储使用 Upstash Redis (REST API)
- * 本地开发时若未配置则降级为内存存储
  */
 
 const memoryStore = new Map()
@@ -16,6 +13,45 @@ const MAX_NICKNAME_LENGTH = 20
 const RATE_LIMIT_MAX = 5
 const RATE_LIMIT_WINDOW_S = 60
 const ADMIN_TOKEN = process.env.ADMIN_TOKEN || 'blog-admin-2024'
+
+function getRedisConfig() {
+  const url =
+    process.env.UPSTASH_REDIS_REST_URL_KV_REST_API_URL ||
+    process.env.UPSTASH_REDIS_REST_URL ||
+    process.env.KV_REST_API_URL
+
+  const token =
+    process.env.UPSTASH_REDIS_REST_URL_KV_REST_API_TOKEN ||
+    process.env.UPSTASH_REDIS_REST_TOKEN ||
+    process.env.KV_REST_API_TOKEN
+
+  return url && token ? { url, token } : null
+}
+
+async function redisCmd(...args) {
+  const config = getRedisConfig()
+  if (!config) return null
+
+  try {
+    const res = await fetch(`${config.url}`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${config.token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(args),
+    })
+    if (!res.ok) {
+      console.error('Redis REST error:', res.status, await res.text())
+      return null
+    }
+    const data = await res.json()
+    return data.result
+  } catch (err) {
+    console.error('Redis fetch error:', err)
+    return null
+  }
+}
 
 function sanitize(str) {
   return String(str || '')
@@ -27,115 +63,82 @@ function sanitize(str) {
     .replace(/\n/g, '<br/>')
 }
 
-let _redis = null
-async function getRedis() {
-  if (_redis) return _redis
-
-  const restUrl =
-    process.env.UPSTASH_REDIS_REST_URL ||
-    process.env.UPSTASH_REDIS_REST_URL_KV_REST_API_URL ||
-    process.env.KV_REST_API_URL
-
-  const restToken =
-    process.env.UPSTASH_REDIS_REST_TOKEN ||
-    process.env.UPSTASH_REDIS_REST_URL_KV_REST_API_TOKEN ||
-    process.env.KV_REST_API_TOKEN
-
-  if (!restUrl || !restToken) return null
-
-  try {
-    const { Redis } = await import('@upstash/redis')
-    _redis = new Redis({ url: restUrl, token: restToken })
-    return _redis
-  } catch (err) {
-    console.error('Failed to init Redis:', err)
-    return null
-  }
-}
-
 async function getComments(slug) {
-  const redis = await getRedis()
-  if (redis) {
-    const items = await redis.lrange(`comments:${slug}`, 0, -1)
-    return items.map((i) => (typeof i === 'string' ? JSON.parse(i) : i))
-  }
-  return memoryStore.get(slug) || []
+  const result = await redisCmd('LRANGE', `comments:${slug}`, 0, -1)
+  if (!result) return memoryStore.get(slug) || []
+  return (Array.isArray(result) ? result : []).map((i) => (typeof i === 'string' ? JSON.parse(i) : i))
 }
 
 async function addComment(slug, comment) {
-  const redis = await getRedis()
-  if (redis) {
-    await redis.rpush(`comments:${slug}`, JSON.stringify(comment))
-    return
+  const result = await redisCmd('RPUSH', `comments:${slug}`, JSON.stringify(comment))
+  if (result === null) {
+    const list = memoryStore.get(slug) || []
+    list.push(comment)
+    memoryStore.set(slug, list)
   }
-  const list = memoryStore.get(slug) || []
-  list.push(comment)
-  memoryStore.set(slug, list)
 }
 
 async function deleteComment(slug, id) {
-  const redis = await getRedis()
-  if (redis) {
-    const items = await redis.lrange(`comments:${slug}`, 0, -1)
-    const parsed = items.map((i) => (typeof i === 'string' ? JSON.parse(i) : i))
-    const filtered = parsed.filter((c) => c.id !== id)
-    await redis.del(`comments:${slug}`)
+  const result = await redisCmd('LRANGE', `comments:${slug}`, 0, -1)
+  const items = result !== null
+    ? (Array.isArray(result) ? result : []).map((i) => (typeof i === 'string' ? JSON.parse(i) : i))
+    : (memoryStore.get(slug) || [])
+  const filtered = items.filter((c) => c.id !== id)
+  if (result !== null) {
+    await redisCmd('DEL', `comments:${slug}`)
     if (filtered.length > 0) {
-      await redis.rpush(`comments:${slug}`, ...filtered.map((c) => JSON.stringify(c)))
+      for (const c of filtered) {
+        await redisCmd('RPUSH', `comments:${slug}`, JSON.stringify(c))
+      }
     }
-    return true
+  } else {
+    memoryStore.set(slug, filtered)
   }
-  const list = memoryStore.get(slug) || []
-  memoryStore.set(slug, list.filter((c) => c.id !== id))
-  return true
 }
 
 async function deleteAllComments(slug) {
-  const redis = await getRedis()
-  if (redis) {
-    await redis.del(`comments:${slug}`)
-    return
+  const result = await redisCmd('DEL', `comments:${slug}`)
+  if (result === null) {
+    memoryStore.delete(slug)
   }
-  memoryStore.delete(slug)
 }
 
 async function listAllSlugs() {
-  const redis = await getRedis()
-  if (redis) {
-    const keys = await redis.keys('comments:*')
-    const slugs = keys.map((k) => k.replace('comments:', ''))
-    const result = []
-    for (const slug of slugs) {
-      const count = await redis.llen(`comments:${slug}`)
-      result.push({ slug, count })
+  const result = await redisCmd('KEYS', 'comments:*')
+  if (!result) {
+    const slugs = []
+    for (const [slug, list] of memoryStore.entries()) {
+      slugs.push({ slug, count: list.length })
     }
-    return result
+    return slugs
   }
-  const result = []
-  for (const [slug, list] of memoryStore.entries()) {
-    result.push({ slug, count: list.length })
+  const keys = Array.isArray(result) ? result : []
+  const slugs = []
+  for (const k of keys) {
+    const slug = k.replace('comments:', '')
+    const count = await redisCmd('LLEN', k)
+    slugs.push({ slug, count: count || 0 })
   }
-  return result
+  return slugs
 }
 
 async function checkRateLimit(ip) {
   const key = `ratelimit:${ip}`
-  const redis = await getRedis()
-  if (redis) {
-    const count = await redis.incr(key)
-    if (count === 1) {
-      await redis.expire(key, RATE_LIMIT_WINDOW_S)
+  const result = await redisCmd('INCR', key)
+  if (result === null) {
+    const now = Date.now()
+    const entry = memoryStore.get(key)
+    if (!entry || now - entry.time > RATE_LIMIT_WINDOW_S * 1000) {
+      memoryStore.set(key, { time: now, count: 1 })
+      return true
     }
-    return count <= RATE_LIMIT_MAX
+    entry.count++
+    return entry.count <= RATE_LIMIT_MAX
   }
-  const now = Date.now()
-  const entry = memoryStore.get(key)
-  if (!entry || now - entry.time > RATE_LIMIT_WINDOW_S * 1000) {
-    memoryStore.set(key, { time: now, count: 1 })
-    return true
+  if (result === 1) {
+    await redisCmd('EXPIRE', key, RATE_LIMIT_WINDOW_S)
   }
-  entry.count++
-  return entry.count <= RATE_LIMIT_MAX
+  return result <= RATE_LIMIT_MAX
 }
 
 function verifyAdmin(token) {
