@@ -419,9 +419,6 @@ div[class^="announcementBar_"] {
   border-left: 3px solid #ff000080;
 }
 
-.gsc-comments textarea {
-  background: var(--content-background);
-}
 
 .tag::after {
   content: "";
