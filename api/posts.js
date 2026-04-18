@@ -26,6 +26,19 @@ export default async function handler(req, res) {
     return res.status(200).end()
   }
 
+  // Vercel 有时不自动解析 body，手动处理
+  if (req.method !== 'GET' && req.method !== 'HEAD' && !req.body) {
+    try {
+      const chunks = []
+      for await (const chunk of req) {
+        chunks.push(chunk)
+      }
+      req.body = JSON.parse(Buffer.concat(chunks).toString())
+    } catch {
+      req.body = {}
+    }
+  }
+
   const token = process.env.GITHUB_TOKEN
   if (!token) {
     return res.status(500).json({ error: 'GITHUB_TOKEN 环境变量未配置' })
@@ -36,11 +49,9 @@ export default async function handler(req, res) {
   const authToken = authHeader?.replace('Bearer ', '') || req.query?.token
   const bodyToken = req.body?.token
 
-  // 验证管理员权限
-  if (req.method !== 'GET' || req.query.action === 'list') {
-    if (authToken !== adminToken && bodyToken !== adminToken) {
-      return res.status(403).json({ error: '无效的管理令牌' })
-    }
+  // 验证管理员权限：所有请求都需要 admin token
+  if (authToken !== adminToken && bodyToken !== adminToken) {
+    return res.status(403).json({ error: '无效的管理令牌', debug: { authToken: authToken?.slice(0,6), bodyToken: bodyToken?.slice(0,6), adminToken: adminToken?.slice(0,6) } })
   }
 
   const headers = {
