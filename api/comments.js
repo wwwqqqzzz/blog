@@ -11,11 +11,20 @@
 
 import { Redis } from '@upstash/redis'
 
-const redis = process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN
-  ? new Redis({
-      url: process.env.UPSTASH_REDIS_REST_URL,
-      token: process.env.UPSTASH_REDIS_REST_TOKEN,
-    })
+const REDIS_REST_URL =
+  process.env.UPSTASH_REDIS_REST_URL ||
+  process.env.UPSTASH_REDIS_REST_URL_KV_REST_API_URL ||
+  process.env.KV_REST_API_URL ||
+  process.env.KV_URL
+
+const REDIS_REST_TOKEN =
+  process.env.UPSTASH_REDIS_REST_TOKEN ||
+  process.env.UPSTASH_REDIS_REST_URL_KV_REST_API_TOKEN ||
+  process.env.KV_REST_API_TOKEN ||
+  process.env.UPSTASH_REDIS_REST_URL_KV_REST_API_READ_ONLY_TOKEN
+
+const redis = REDIS_REST_URL && REDIS_REST_TOKEN
+  ? new Redis({ url: REDIS_REST_URL, token: REDIS_REST_TOKEN })
   : null
 
 const memoryStore = new Map()
