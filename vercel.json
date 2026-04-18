@@ -14,5 +14,15 @@
       "src": "api/**/*.js",
       "use": "@vercel/node@3"
     }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "/api/$1"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/$1"
+    }
   ]
 }
