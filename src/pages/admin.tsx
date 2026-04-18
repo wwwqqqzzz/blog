@@ -147,9 +147,7 @@ function AdminPanel(): JSX.Element {
             localStorage.removeItem(ADMIN_TOKEN_KEY)
           }
         } catch {
-          // 网络错误，仍然允许进入（可能是本地开发）
-          setToken(saved)
-          setAuthenticated(true)
+          localStorage.removeItem(ADMIN_TOKEN_KEY)
         }
       }
     }
