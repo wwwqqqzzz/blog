@@ -132,19 +132,52 @@ function AdminPanel(): JSX.Element {
   const [authenticated, setAuthenticated] = useState(false)
   const [activeTab, setActiveTab] = useState<Tab>('comments')
 
+  const [loginError, setLoginError] = useState('')
+
   useEffect(() => {
-    const saved = localStorage.getItem(ADMIN_TOKEN_KEY)
-    if (saved) {
-      setToken(saved)
-      setAuthenticated(true)
+    const verify = async () => {
+      const saved = localStorage.getItem(ADMIN_TOKEN_KEY)
+      if (saved) {
+        try {
+          const res = await fetch(`/api/comments?action=list&token=${encodeURIComponent(saved)}`)
+          if (res.ok) {
+            setToken(saved)
+            setAuthenticated(true)
+          } else {
+            localStorage.removeItem(ADMIN_TOKEN_KEY)
+          }
+        } catch {
+          // 网络错误，仍然允许进入（可能是本地开发）
+          setToken(saved)
+          setAuthenticated(true)
+        }
+      }
     }
+    verify()
   }, [])
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!token.trim()) return
-    localStorage.setItem(ADMIN_TOKEN_KEY, token.trim())
-    setAuthenticated(true)
+    setLoginError('')
+
+    if (isDev) {
+      localStorage.setItem(ADMIN_TOKEN_KEY, token.trim())
+      setAuthenticated(true)
+      return
+    }
+
+    try {
+      const res = await fetch(`/api/comments?action=list&token=${encodeURIComponent(token.trim())}`)
+      if (res.ok) {
+        localStorage.setItem(ADMIN_TOKEN_KEY, token.trim())
+        setAuthenticated(true)
+      } else {
+        setLoginError('令牌无效，请重试')
+      }
+    } catch {
+      setLoginError('网络错误，请稍后重试')
+    }
   }
 
   const handleLogout = () => {
@@ -168,6 +201,7 @@ function AdminPanel(): JSX.Element {
             />
             <button type="submit" className="admin-btn admin-btn-primary">登录</button>
           </form>
+          {loginError && <p className="admin-error">{loginError}</p>}
           <p className="admin-hint">访问此页面需要管理令牌</p>
         </div>
       </div>

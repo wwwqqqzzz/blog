@@ -115,28 +115,33 @@ async function listAllSlugs() {
   const result = await redisCmd('KEYS', 'comments:*')
   if (result !== null && result !== undefined) {
     const keys = Array.isArray(result) ? result : []
-    const slugs = []
+    const slugMap = new Map()
+
+    // 先迁移旧 key
     for (const k of keys) {
       const slug = normalizeSlug(k.replace('comments:', ''))
-      const count = await redisCmd('LLEN', k)
-      // 检查旧 key（编码过的）是否需要迁移
       const decodedKey = `comments:${slug}`
       if (k !== decodedKey) {
-        // 迁移：读取旧 key 数据，写入新 key，删除旧 key
         const items = await redisCmd('LRANGE', k, 0, -1)
         if (Array.isArray(items) && items.length > 0) {
           await redisCmd('DEL', k)
-          // 如果新 key 已有数据，先读取合并
-          const existing = await redisCmd('LRANGE', decodedKey, 0, -1)
-          const allItems = [...(Array.isArray(existing) ? existing : []), ...items]
-          for (const item of allItems) {
+          for (const item of items) {
             await redisCmd('RPUSH', decodedKey, typeof item === 'string' ? item : JSON.stringify(item))
           }
         }
       }
-      slugs.push({ slug, count: count || 0 })
     }
-    return slugs
+
+    // 重新读取迁移后的 keys
+    const newKeys = await redisCmd('KEYS', 'comments:*')
+    const finalKeys = Array.isArray(newKeys) ? newKeys : []
+    for (const k of finalKeys) {
+      const slug = normalizeSlug(k.replace('comments:', ''))
+      const count = await redisCmd('LLEN', k)
+      slugMap.set(slug, (slugMap.get(slug) || 0) + (count || 0))
+    }
+    return Array.from(slugMap.entries()).map(([slug, count]) => ({ slug, count }))
+  }
   }
   const slugs = []
   for (const [slug, list] of memoryStore.entries()) {
