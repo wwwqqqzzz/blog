@@ -53,6 +53,26 @@ export default async function handler(req, res) {
   if (req.method === 'GET') {
     const { action, path } = req.query
 
+    // debug: test GitHub API access
+    if (action === 'debug') {
+      try {
+        const response = await githubRequest(
+          `/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/blog/develop`,
+          headers
+        )
+        const data = await response.json()
+        return res.status(200).json({
+          status: response.status,
+          ok: response.ok,
+          hasToken: !!process.env.GITHUB_TOKEN,
+          tokenPrefix: process.env.GITHUB_TOKEN?.slice(0, 6),
+          result: Array.isArray(data) ? `${data.length} files found` : data,
+        })
+      } catch (err) {
+        return res.status(500).json({ error: err.message })
+      }
+    }
+
     // list all posts
     if (action === 'list') {
       return listPosts(res, headers)
@@ -110,44 +130,50 @@ async function listPosts(res, headers) {
           headers
         )
 
-        if (!response.ok) continue
+        if (!response.ok) {
+          console.error(`GitHub API ${category}: ${response.status}`)
+          continue
+        }
 
         const contents = await response.json()
 
-      // Filter for .md files and directories
-      for (const item of Array.isArray(contents) ? contents : []) {
-        if (item.type === 'file' && item.name.endsWith('.md')) {
-          allPosts.push({
-            name: item.name,
-            path: item.path,
-            category,
-            sha: item.sha,
-            size: item.size,
-            url: item.download_url,
-          })
-        } else if (item.type === 'dir') {
-          // Check for index.md in subdirectory
-          const subResponse = await githubRequest(
-            `/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${item.path}`,
-            headers
-          )
-          if (subResponse.ok) {
-            const subContents = await subResponse.json()
-            const indexFile = (Array.isArray(subContents) ? subContents : []).find(
-              f => f.type === 'file' && f.name === 'index.md'
-            )
-            if (indexFile) {
-              allPosts.push({
-                name: item.name,
-                path: `${item.path}/index.md`,
-                category,
-                sha: indexFile.sha,
-                size: indexFile.size,
-                url: indexFile.download_url,
-              })
+        for (const item of Array.isArray(contents) ? contents : []) {
+          if (item.type === 'file' && item.name.endsWith('.md')) {
+            allPosts.push({
+              name: item.name,
+              path: item.path,
+              category,
+              sha: item.sha,
+              size: item.size,
+            })
+          } else if (item.type === 'dir') {
+            try {
+              const subResponse = await githubRequest(
+                `/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${item.path}`,
+                headers
+              )
+              if (subResponse.ok) {
+                const subContents = await subResponse.json()
+                const indexFile = (Array.isArray(subContents) ? subContents : []).find(
+                  f => f.type === 'file' && f.name === 'index.md'
+                )
+                if (indexFile) {
+                  allPosts.push({
+                    name: item.name,
+                    path: `${item.path}/index.md`,
+                    category,
+                    sha: indexFile.sha,
+                    size: indexFile.size,
+                  })
+                }
+              }
+            } catch {
+              // skip subdirectory errors
             }
           }
         }
+      } catch (catErr) {
+        console.error(`Category ${category} error:`, catErr)
       }
     }
 
