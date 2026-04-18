@@ -134,30 +134,6 @@ async function listPosts(res, headers) {
   try {
     const allPosts = []
 
-    // 用 GitHub Commits API 获取最新提交时间
-    let commits = []
-    try {
-      const commitsRes = await githubRequest(
-        `/repos/${GITHUB_OWNER}/${GITHUB_REPO}/commits?per_page=100&path=blog`,
-        headers
-      )
-      if (commitsRes.ok) {
-        commits = await commitsRes.json()
-      }
-    } catch {
-      // ignore commits fetch error
-    }
-
-    // 建立 path -> date 映射
-    const dateMap = new Map()
-    for (const commit of Array.isArray(commits) ? commits : []) {
-      for (const f of commit.files || []) {
-        if (f.filename && f.filename.startsWith('blog/') && !dateMap.has(f.filename)) {
-          dateMap.set(f.filename, commit.commit?.author?.date || commit.commit?.committer?.date || '')
-        }
-      }
-    }
-
     for (const category of VALID_CATEGORIES) {
       try {
         const response = await githubRequest(
@@ -165,15 +141,11 @@ async function listPosts(res, headers) {
           headers
         )
 
-        if (!response.ok) {
-          console.error(`GitHub API ${category}: ${response.status}`)
-          continue
-        }
+        if (!response.ok) continue
 
         const contents = await response.json()
 
         for (const item of Array.isArray(contents) ? contents : []) {
-          const path = item.type === 'dir' ? `${item.path}/index.md` : item.path
           if (item.type === 'file' && item.name.endsWith('.md')) {
             allPosts.push({
               name: item.name,
@@ -181,7 +153,7 @@ async function listPosts(res, headers) {
               category,
               sha: item.sha,
               size: item.size,
-              lastModified: dateMap.get(item.path) || item.git_last_modified_at || '',
+              date: '',
             })
           } else if (item.type === 'dir') {
             try {
@@ -201,13 +173,11 @@ async function listPosts(res, headers) {
                     category,
                     sha: indexFile.sha,
                     size: indexFile.size,
-                    lastModified: dateMap.get(`${item.path}/index.md`) || '',
+                    date: '',
                   })
                 }
               }
-            } catch {
-              // skip subdirectory errors
-            }
+            } catch { }
           }
         }
       } catch (catErr) {
@@ -215,11 +185,27 @@ async function listPosts(res, headers) {
       }
     }
 
-    // 按最新时间倒序排序
+    // 批量读取每篇文章的前几行来提取 date 字段
+    for (const post of allPosts) {
+      try {
+        const fileRes = await githubRequest(
+          `/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${post.path}`,
+          headers
+        )
+        if (fileRes.ok) {
+          const fileData = await fileRes.json()
+          const content = Buffer.from(fileData.content, 'base64').toString('utf-8')
+          const dateMatch = content.match(/^---\n[\s\S]*?date:\s*(\S+)/)
+          if (dateMatch) {
+            post.date = dateMatch[1]
+          }
+        }
+      } catch { }
+    }
+
+    // 按 date 倒序排序（最新在前）
     allPosts.sort((a, b) => {
-      const da = a.lastModified || ''
-      const db = b.lastModified || ''
-      return db.localeCompare(da)
+      return (b.date || '').localeCompare(a.date || '')
     })
 
     return res.status(200).json({ posts: allPosts })
