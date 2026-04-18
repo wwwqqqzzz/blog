@@ -132,17 +132,36 @@ async function githubRequest(path, headers, method = 'GET', body = null) {
 
 async function listPosts(res, headers) {
   try {
-    const allPosts = []
+    // 用 GitHub Commits API 获取每篇文章最近提交日期
+    const commitDateMap = new Map()
+    for (const category of VALID_CATEGORIES) {
+      try {
+        const response = await githubRequest(
+          `/repos/${GITHUB_OWNER}/${GITHUB_REPO}/commits?per_page=100&path=blog/${category}`,
+          headers
+        )
+        if (!response.ok) continue
+        const commits = await response.json()
+        for (const commit of Array.isArray(commits) ? commits : []) {
+          const date = commit.commit?.author?.date || commit.commit?.committer?.date || ''
+          for (const f of (commit.files || [])) {
+            if (f.filename && f.filename.startsWith('blog/') && f.filename.endsWith('.md') && !commitDateMap.has(f.filename)) {
+              commitDateMap.set(f.filename, date)
+            }
+          }
+        }
+      } catch { }
+    }
 
+    // 用 Contents API 获取文件列表
+    const allPosts = []
     for (const category of VALID_CATEGORIES) {
       try {
         const response = await githubRequest(
           `/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/blog/${category}`,
           headers
         )
-
         if (!response.ok) continue
-
         const contents = await response.json()
 
         for (const item of Array.isArray(contents) ? contents : []) {
@@ -153,61 +172,37 @@ async function listPosts(res, headers) {
               category,
               sha: item.sha,
               size: item.size,
-              date: '',
+              date: commitDateMap.get(item.path) || '',
             })
           } else if (item.type === 'dir') {
+            const indexPath = `${item.path}/index.md`
             try {
-              const subResponse = await githubRequest(
+              const subRes = await githubRequest(
                 `/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${item.path}`,
                 headers
               )
-              if (subResponse.ok) {
-                const subContents = await subResponse.json()
-                const indexFile = (Array.isArray(subContents) ? subContents : []).find(
-                  f => f.type === 'file' && f.name === 'index.md'
-                )
-                if (indexFile) {
+              if (subRes.ok) {
+                const sub = await subRes.json()
+                const idx = (Array.isArray(sub) ? sub : []).find(f => f.name === 'index.md')
+                if (idx) {
                   allPosts.push({
                     name: item.name,
-                    path: `${item.path}/index.md`,
+                    path: indexPath,
                     category,
-                    sha: indexFile.sha,
-                    size: indexFile.size,
-                    date: '',
+                    sha: idx.sha,
+                    size: idx.size,
+                    date: commitDateMap.get(indexPath) || '',
                   })
                 }
               }
             } catch { }
           }
         }
-      } catch (catErr) {
-        console.error(`Category ${category} error:`, catErr)
-      }
-    }
-
-    // 批量读取每篇文章的前几行来提取 date 字段
-    for (const post of allPosts) {
-      try {
-        const fileRes = await githubRequest(
-          `/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${post.path}`,
-          headers
-        )
-        if (fileRes.ok) {
-          const fileData = await fileRes.json()
-          const content = Buffer.from(fileData.content, 'base64').toString('utf-8')
-          const dateMatch = content.match(/^---\n[\s\S]*?date:\s*(\S+)/)
-          if (dateMatch) {
-            post.date = dateMatch[1]
-          }
-        }
       } catch { }
     }
 
-    // 按 date 倒序排序（最新在前）
-    allPosts.sort((a, b) => {
-      return (b.date || '').localeCompare(a.date || '')
-    })
-
+    // 按 date 倒序（最新在前），无日期的排最后
+    allPosts.sort((a, b) => (b.date || '').localeCompare(a.date || ''))
     return res.status(200).json({ posts: allPosts })
   } catch (error) {
     console.error('List posts error:', error)
