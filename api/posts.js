@@ -188,6 +188,12 @@ async function listPosts(res, headers) {
       }
     }
 
+    // 按分类和文件名排序：分类字母序，同分类按文件名倒序（最新在前）
+    allPosts.sort((a, b) => {
+      if (a.category !== b.category) return a.category.localeCompare(b.category)
+      return b.name.localeCompare(a.name)
+    })
+
     return res.status(200).json({ posts: allPosts })
   } catch (error) {
     console.error('List posts error:', error)
