@@ -134,6 +134,30 @@ async function listPosts(res, headers) {
   try {
     const allPosts = []
 
+    // 用 GitHub Commits API 获取最新提交时间
+    let commits = []
+    try {
+      const commitsRes = await githubRequest(
+        `/repos/${GITHUB_OWNER}/${GITHUB_REPO}/commits?per_page=100&path=blog`,
+        headers
+      )
+      if (commitsRes.ok) {
+        commits = await commitsRes.json()
+      }
+    } catch {
+      // ignore commits fetch error
+    }
+
+    // 建立 path -> date 映射
+    const dateMap = new Map()
+    for (const commit of Array.isArray(commits) ? commits : []) {
+      for (const f of commit.files || []) {
+        if (f.filename && f.filename.startsWith('blog/') && !dateMap.has(f.filename)) {
+          dateMap.set(f.filename, commit.commit?.author?.date || commit.commit?.committer?.date || '')
+        }
+      }
+    }
+
     for (const category of VALID_CATEGORIES) {
       try {
         const response = await githubRequest(
@@ -149,6 +173,7 @@ async function listPosts(res, headers) {
         const contents = await response.json()
 
         for (const item of Array.isArray(contents) ? contents : []) {
+          const path = item.type === 'dir' ? `${item.path}/index.md` : item.path
           if (item.type === 'file' && item.name.endsWith('.md')) {
             allPosts.push({
               name: item.name,
@@ -156,6 +181,7 @@ async function listPosts(res, headers) {
               category,
               sha: item.sha,
               size: item.size,
+              lastModified: dateMap.get(item.path) || item.git_last_modified_at || '',
             })
           } else if (item.type === 'dir') {
             try {
@@ -175,6 +201,7 @@ async function listPosts(res, headers) {
                     category,
                     sha: indexFile.sha,
                     size: indexFile.size,
+                    lastModified: dateMap.get(`${item.path}/index.md`) || '',
                   })
                 }
               }
@@ -188,10 +215,11 @@ async function listPosts(res, headers) {
       }
     }
 
-    // 按分类和文件名排序：分类字母序，同分类按文件名倒序（最新在前）
+    // 按最新时间倒序排序
     allPosts.sort((a, b) => {
-      if (a.category !== b.category) return a.category.localeCompare(b.category)
-      return b.name.localeCompare(a.name)
+      const da = a.lastModified || ''
+      const db = b.lastModified || ''
+      return db.localeCompare(da)
     })
 
     return res.status(200).json({ posts: allPosts })
