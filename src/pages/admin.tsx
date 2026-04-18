@@ -403,7 +403,7 @@ function PostManager({ token, isDev }: { token: string; isDev: boolean }): JSX.E
     setLoading(true)
     setError('')
     try {
-      const res = await fetch('/api/posts?action=list', {
+      const res = await fetch(`/api/posts?action=list&token=${encodeURIComponent(token)}`, {
         headers: { Authorization: `Bearer ${token}` },
       })
       if (!res.ok) { const data = await res.json(); setError(data.error || '获取失败'); return }
@@ -431,7 +431,7 @@ function PostManager({ token, isDev }: { token: string; isDev: boolean }): JSX.E
   const handleEdit = async (post: PostInfo) => {
     setLoading(true)
     try {
-      const res = await fetch(`/api/posts?path=${encodeURIComponent(post.path)}`, {
+      const res = await fetch(`/api/posts?path=${encodeURIComponent(post.path)}&token=${encodeURIComponent(token)}`, {
         headers: { Authorization: `Bearer ${token}` },
       })
       if (!res.ok) { setError('获取文章内容失败'); return }
