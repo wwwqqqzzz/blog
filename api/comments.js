@@ -175,15 +175,50 @@ export default async function handler(req, res) {
   if (req.method === 'GET') {
     const { slug, action } = req.query
 
-    // 调试端点：查看环境变量是否可用
+    // 调试端点：测试 Redis 是否真的能读写
     if (action === 'debug') {
       const config = getRedisConfig()
       const envKeys = Object.keys(process.env).filter(k => k.includes('REDIS') || k.includes('KV') || k.includes('UPSTASH'))
+
+      // 尝试实际写入和读取
+      let writeOk = false
+      let readOk = false
+      let writeError = ''
+      let readError = ''
+      let readResult = null
+
+      try {
+        const writeRes = await redisCmd('SET', 'test:ping', 'pong')
+        writeOk = writeRes === 'pong'
+        if (!writeOk) writeError = `SET returned: ${JSON.stringify(writeRes)}`
+      } catch (e) {
+        writeError = e.message
+      }
+
+      try {
+        readResult = await redisCmd('GET', 'test:ping')
+        readOk = readResult === 'pong'
+        if (!readOk) readError = `GET returned: ${JSON.stringify(readResult)}`
+      } catch (e) {
+        readError = e.message
+      }
+
+      // 清理测试数据
+      await redisCmd('DEL', 'test:ping')
+
+      // 查看已有的评论 keys
+      const commentKeys = await redisCmd('KEYS', 'comments:*')
+
       return res.status(200).json({
         hasConfig: !!config,
-        configUrl: config ? config.url?.slice(0, 30) + '...' : null,
+        configUrl: config ? config.url?.slice(0, 40) + '...' : null,
         hasToken: config ? !!config.token : false,
         relevantEnvVars: envKeys,
+        redisWrite: writeOk,
+        redisRead: readOk,
+        writeError,
+        readError,
+        commentKeys: commentKeys || [],
       })
     }
 
