@@ -755,6 +755,7 @@ function TrashManager({ token, isDev }: { token: string; isDev: boolean }): JSX.
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [msg, setMsg] = useState('')
+  const [restoreCat, setRestoreCat] = useState('develop')
 
   const fetchTrash = useCallback(async () => {
     setLoading(true)
@@ -770,15 +771,15 @@ function TrashManager({ token, isDev }: { token: string; isDev: boolean }): JSX.
     finally { setLoading(false) }
   }, [token])
 
-  useEffect(() => { if (!isDev) fetchTrash() }, [fetchTrash, isDev])
+  useEffect(() => { if (!isDev) fetchTrash() }, [isDev])
 
-  const handleRestore = async (post: TrashItem, category: string) => {
+  const handleRestore = async (post: TrashItem) => {
     setLoading(true)
     try {
       const res = await fetch('/api/posts', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ token, action: 'restore', path: post.path, targetCategory: category }),
+        body: JSON.stringify({ token, action: 'restore', path: post.path, targetCategory: restoreCat }),
       })
       if (!res.ok) { const data = await res.json(); setError(data.error || '恢复失败'); return }
       setMsg('文章已恢复')
@@ -825,24 +826,28 @@ function TrashManager({ token, isDev }: { token: string; isDev: boolean }): JSX.
 
       {loading && !posts.length ? <p className="admin-hint">加载中...</p>
         : posts.length === 0 ? <p className="admin-hint">回收站为空</p>
-          : <div className="admin-post-list">
-              {posts.map(p => (
-                <div key={p.path} className="admin-post-item">
-                  <div className="admin-post-info">
-                    <span className="admin-post-name">{p.name}</span>
-                    <span className="admin-post-size">{formatDeletedAt(p.deletedAt)}</span>
+          : <>
+              <div className="admin-filters">
+                <label>恢复到：</label>
+                <select value={restoreCat} onChange={e => setRestoreCat(e.target.value)} className="admin-input">
+                  {CATEGORIES.map(c => <option key={c} value={c}>{CATEGORY_LABELS[c]}</option>)}
+                </select>
+              </div>
+              <div className="admin-post-list">
+                {posts.map(p => (
+                  <div key={p.path} className="admin-post-item">
+                    <div className="admin-post-info">
+                      <span className="admin-post-name">{p.name.replace(/^\d+_/, '')}</span>
+                      <span className="admin-post-date">{formatDeletedAt(p.deletedAt)}</span>
+                    </div>
+                    <div className="admin-post-actions">
+                      <button onClick={() => handleRestore(p)} className="admin-btn admin-btn-primary">恢复</button>
+                      <button onClick={() => handlePermanentDelete(p)} className="admin-btn admin-btn-danger admin-btn-xs">删除</button>
+                    </div>
                   </div>
-                  <div className="admin-post-actions">
-                    {CATEGORIES.map(cat => (
-                      <button key={cat} onClick={() => handleRestore(p, cat)} className="admin-btn admin-btn-edit">
-                        恢复到{CATEGORY_LABELS[cat]}
-                      </button>
-                    ))}
-                    <button onClick={() => handlePermanentDelete(p)} className="admin-btn admin-btn-danger admin-btn-xs">永久删除</button>
-                  </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            </>
       }
     </div>
   )
