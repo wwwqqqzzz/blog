@@ -5,27 +5,9 @@
  * GET  `/api/comments?action=list` — 管理员：列出所有 slug
  * DELETE `/api/comments` body: { token, slug, id? } — 管理员：删除评论
  *
- * 存储使用 Upstash Redis (REST API)，通过 UPSTASH_REDIS_REST_URL + UPSTASH_REDIS_REST_TOKEN 连接
+ * 存储使用 Upstash Redis (REST API)
  * 本地开发时若未配置则降级为内存存储
  */
-
-import { Redis } from '@upstash/redis'
-
-const REDIS_REST_URL =
-  process.env.UPSTASH_REDIS_REST_URL ||
-  process.env.UPSTASH_REDIS_REST_URL_KV_REST_API_URL ||
-  process.env.KV_REST_API_URL ||
-  process.env.KV_URL
-
-const REDIS_REST_TOKEN =
-  process.env.UPSTASH_REDIS_REST_TOKEN ||
-  process.env.UPSTASH_REDIS_REST_URL_KV_REST_API_TOKEN ||
-  process.env.KV_REST_API_TOKEN ||
-  process.env.UPSTASH_REDIS_REST_URL_KV_REST_API_READ_ONLY_TOKEN
-
-const redis = REDIS_REST_URL && REDIS_REST_TOKEN
-  ? new Redis({ url: REDIS_REST_URL, token: REDIS_REST_TOKEN })
-  : null
 
 const memoryStore = new Map()
 
@@ -45,7 +27,34 @@ function sanitize(str) {
     .replace(/\n/g, '<br/>')
 }
 
+let _redis = null
+async function getRedis() {
+  if (_redis) return _redis
+
+  const restUrl =
+    process.env.UPSTASH_REDIS_REST_URL ||
+    process.env.UPSTASH_REDIS_REST_URL_KV_REST_API_URL ||
+    process.env.KV_REST_API_URL
+
+  const restToken =
+    process.env.UPSTASH_REDIS_REST_TOKEN ||
+    process.env.UPSTASH_REDIS_REST_URL_KV_REST_API_TOKEN ||
+    process.env.KV_REST_API_TOKEN
+
+  if (!restUrl || !restToken) return null
+
+  try {
+    const { Redis } = await import('@upstash/redis')
+    _redis = new Redis({ url: restUrl, token: restToken })
+    return _redis
+  } catch (err) {
+    console.error('Failed to init Redis:', err)
+    return null
+  }
+}
+
 async function getComments(slug) {
+  const redis = await getRedis()
   if (redis) {
     const items = await redis.lrange(`comments:${slug}`, 0, -1)
     return items.map((i) => (typeof i === 'string' ? JSON.parse(i) : i))
@@ -54,6 +63,7 @@ async function getComments(slug) {
 }
 
 async function addComment(slug, comment) {
+  const redis = await getRedis()
   if (redis) {
     await redis.rpush(`comments:${slug}`, JSON.stringify(comment))
     return
@@ -64,14 +74,13 @@ async function addComment(slug, comment) {
 }
 
 async function deleteComment(slug, id) {
+  const redis = await getRedis()
   if (redis) {
     const items = await redis.lrange(`comments:${slug}`, 0, -1)
     const parsed = items.map((i) => (typeof i === 'string' ? JSON.parse(i) : i))
     const filtered = parsed.filter((c) => c.id !== id)
-    if (filtered.length === 0) {
-      await redis.del(`comments:${slug}`)
-    } else {
-      await redis.del(`comments:${slug}`)
+    await redis.del(`comments:${slug}`)
+    if (filtered.length > 0) {
       await redis.rpush(`comments:${slug}`, ...filtered.map((c) => JSON.stringify(c)))
     }
     return true
@@ -82,6 +91,7 @@ async function deleteComment(slug, id) {
 }
 
 async function deleteAllComments(slug) {
+  const redis = await getRedis()
   if (redis) {
     await redis.del(`comments:${slug}`)
     return
@@ -90,6 +100,7 @@ async function deleteAllComments(slug) {
 }
 
 async function listAllSlugs() {
+  const redis = await getRedis()
   if (redis) {
     const keys = await redis.keys('comments:*')
     const slugs = keys.map((k) => k.replace('comments:', ''))
@@ -109,6 +120,7 @@ async function listAllSlugs() {
 
 async function checkRateLimit(ip) {
   const key = `ratelimit:${ip}`
+  const redis = await getRedis()
   if (redis) {
     const count = await redis.incr(key)
     if (count === 1) {
