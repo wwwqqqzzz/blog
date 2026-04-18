@@ -170,7 +170,7 @@ export default async function handler(req, res) {
     const { slug, action } = req.query
     if (action === 'list') {
       const authHeader = req.headers.authorization
-      const token = authHeader?.replace('Bearer ', '')
+      const token = authHeader?.replace('Bearer ', '') || req.query.token
       if (!verifyAdmin(token)) return res.status(403).json({ error: '无效的管理令牌' })
       if (slug) {
         const comments = await getComments(slug)

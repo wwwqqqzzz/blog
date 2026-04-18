@@ -221,7 +221,7 @@ function CommentManager({ token, isDev }: { token: string; isDev: boolean }): JS
         setSlugs(Object.entries(all).map(([slug, list]) => ({ slug, count: list.length })))
         return
       }
-      const res = await fetch('/api/comments?action=list', {
+      const res = await fetch(`/api/comments?action=list&token=${encodeURIComponent(token)}`, {
         headers: { Authorization: `Bearer ${token}` },
       })
       if (!res.ok) { setError('获取失败'); return }
@@ -239,7 +239,7 @@ function CommentManager({ token, isDev }: { token: string; isDev: boolean }): JS
         setComments(loadLocalComments()[slug] || [])
         return
       }
-      const res = await fetch(`/api/comments?action=list&slug=${encodeURIComponent(slug)}`, {
+      const res = await fetch(`/api/comments?action=list&slug=${encodeURIComponent(slug)}&token=${encodeURIComponent(token)}`, {
         headers: { Authorization: `Bearer ${token}` },
       })
       if (!res.ok) { setError('获取失败'); return }
