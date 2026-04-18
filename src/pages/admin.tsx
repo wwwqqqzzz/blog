@@ -23,6 +23,9 @@ interface PostInfo {
   category: string
   sha: string
   size: number
+  title?: string
+  date?: string
+  tags?: string[]
 }
 
 /* ===== Constants ===== */
@@ -403,11 +406,20 @@ function PostManager({ token, isDev }: { token: string; isDev: boolean }): JSX.E
   const [editBody, setEditBody] = useState('')
   const [saving, setSaving] = useState(false)
 
+  // Filters
+  const [search, setSearch] = useState('')
+  const [filterCategory, setFilterCategory] = useState('')
+  const [selectedPosts, setSelectedPosts] = useState<Set<string>>(new Set())
+  const [previewMode, setPreviewMode] = useState(false)
+
   const fetchPosts = useCallback(async () => {
     setLoading(true)
     setError('')
     try {
-      const res = await fetch(`/api/posts?action=list&token=${encodeURIComponent(token)}`, {
+      const params = new URLSearchParams({ action: 'list', token })
+      if (search) params.set('search', search)
+      if (filterCategory) params.set('category', filterCategory)
+      const res = await fetch(`/api/posts?${params}`, {
         headers: { Authorization: `Bearer ${token}` },
       })
       if (!res.ok) { const data = await res.json(); setError(data.error || '获取失败'); return }
@@ -415,9 +427,65 @@ function PostManager({ token, isDev }: { token: string; isDev: boolean }): JSX.E
       setPosts(data.posts || [])
     } catch { setError('网络错误 - 文章管理仅在线上环境可用') }
     finally { setLoading(false) }
-  }, [token])
+  }, [token, search, filterCategory])
 
-  useEffect(() => { if (!isDev) fetchPosts() }, [fetchPosts, isDev])
+  useEffect(() => { if (!isDev) fetchPosts() }, [isDev])
+
+  useEffect(() => {
+    const t = setTimeout(() => { if (!isDev && token) fetchPosts() }, 300)
+    return () => clearTimeout(t)
+  }, [search, filterCategory])
+
+  const toggleSelect = (path: string) => {
+    const next = new Set(selectedPosts)
+    next.has(path) ? next.delete(path) : next.add(path)
+    setSelectedPosts(next)
+  }
+
+  const toggleSelectAll = () => {
+    if (selectedPosts.size === posts.length) {
+      setSelectedPosts(new Set())
+    } else {
+      setSelectedPosts(new Set(posts.map(p => p.path)))
+    }
+  }
+
+  const handleBatchDelete = async () => {
+    if (selectedPosts.size === 0) return
+    if (!confirm(`确定删除选中的 ${selectedPosts.size} 篇文章吗？`)) return
+    setLoading(true)
+    try {
+      const paths = Array.from(selectedPosts)
+      const res = await fetch('/api/posts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token, action: 'batch_delete', paths }),
+      })
+      if (!res.ok) { setError('删除失败'); return }
+      setMsg(`已删除 ${paths.length} 篇`)
+      setSelectedPosts(new Set())
+      fetchPosts()
+    } catch { setError('网络错误') }
+    finally { setLoading(false) }
+  }
+
+  const handleBatchMove = async (targetCat: string) => {
+    if (selectedPosts.size === 0) return
+    setLoading(true)
+    try {
+      const paths = Array.from(selectedPosts)
+      const res = await fetch('/api/posts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token, action: 'batch_move', paths, targetCategory: targetCat }),
+      })
+      if (!res.ok) { setError('移动失败'); return }
+      setMsg(`已移动 ${paths.length} 篇到 ${CATEGORY_LABELS[targetCat]}`)
+      setSelectedPosts(new Set())
+      fetchPosts()
+    } catch { setError('网络错误') }
+    finally { setLoading(false) }
+  }
 
   const handleCreate = () => {
     setEditPath('')
@@ -545,17 +613,58 @@ function PostManager({ token, isDev }: { token: string; isDev: boolean }): JSX.E
         <>
           <div className="admin-post-header">
             <h3>全部文章 ({posts.length})</h3>
-            <button onClick={handleCreate} className="admin-btn admin-btn-primary">+ 新建文章</button>
+            <div className="admin-post-header-actions">
+              <button onClick={() => setPreviewMode(!previewMode)} className={`admin-btn admin-btn-sm ${previewMode ? 'admin-btn-primary' : ''}`}>
+                {previewMode ? '编辑模式' : '预览'}
+              </button>
+              <button onClick={handleCreate} className="admin-btn admin-btn-primary">+ 新建文章</button>
+            </div>
           </div>
+
+          <div className="admin-filters">
+            <input
+              type="text"
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+              placeholder="搜索标题或标签..."
+              className="admin-input admin-search"
+            />
+            <select value={filterCategory} onChange={e => setFilterCategory(e.target.value)} className="admin-input">
+              <option value="">全部分类</option>
+              {CATEGORIES.map(c => <option key={c} value={c}>{CATEGORY_LABELS[c]}</option>)}
+            </select>
+          </div>
+
+          {selectedPosts.size > 0 && (
+            <div className="admin-batch-actions">
+              <span>已选 {selectedPosts.size} 篇</span>
+              <button onClick={handleBatchDelete} className="admin-btn admin-btn-danger">批量删除</button>
+              {CATEGORIES.map(c => (
+                <button key={c} onClick={() => handleBatchMove(c)} className="admin-btn admin-btn-sm">移动到{CATEGORY_LABELS[c]}</button>
+              ))}
+            </div>
+          )}
+
           {loading && !posts.length ? <p className="admin-hint">加载中...</p>
             : posts.length === 0 ? <p className="admin-hint">暂无文章</p>
               : <div className="admin-post-list">
                   {posts.map(p => (
-                    <div key={p.path} className="admin-post-item">
-                      <div className="admin-post-info">
+                    <div key={p.path} className={`admin-post-item ${selectedPosts.has(p.path) ? 'selected' : ''}`}>
+                      <input
+                        type="checkbox"
+                        checked={selectedPosts.has(p.path)}
+                        onChange={() => toggleSelect(p.path)}
+                        className="admin-checkbox"
+                      />
+                      <div className="admin-post-info" onClick={() => handleEdit(p)}>
                         <span className="admin-post-category">{CATEGORY_LABELS[p.category] || p.category}</span>
-                        <span className="admin-post-name">{p.name}</span>
-                        <span className="admin-post-size">{(p.size / 1024).toFixed(1)} KB</span>
+                        <span className="admin-post-title">{p.title || p.name}</span>
+                        <span className="admin-post-date">{p.date || '-'}</span>
+                        {p.tags && p.tags.length > 0 && (
+                          <div className="admin-post-tags">
+                            {p.tags.slice(0, 3).map(t => <span key={t} className="admin-tag">{t}</span>)}
+                          </div>
+                        )}
                       </div>
                       <div className="admin-post-actions">
                         <button onClick={() => handleEdit(p)} className="admin-btn admin-btn-edit">编辑</button>
@@ -608,12 +717,17 @@ function PostManager({ token, isDev }: { token: string; isDev: boolean }): JSX.E
             </div>
             <div className="admin-form-row admin-form-grow">
               <label>正文（Markdown）</label>
-              <textarea
-                value={editBody}
-                onChange={e => setEditBody(e.target.value)}
-                placeholder="在这里写 Markdown 内容..."
-                className="admin-textarea"
-              />
+              <div className="admin-editor-split">
+                <textarea
+                  value={editBody}
+                  onChange={e => setEditBody(e.target.value)}
+                  placeholder="在这里写 Markdown 内容..."
+                  className="admin-textarea"
+                />
+                {previewMode && (
+                  <div className="admin-preview" dangerouslySetInnerHTML={{ __html: `<!-- Markdown preview placeholder --><p>预览功能开发中...</p>` }} />
+                )}
+              </div>
             </div>
           </div>
 

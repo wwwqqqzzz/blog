@@ -62,7 +62,7 @@ export default async function handler(req, res) {
 
   // GET
   if (req.method === 'GET') {
-    const { action, path } = req.query
+    const { action, path, search, category } = req.query
 
     // debug: test GitHub API access
     if (action === 'debug') {
@@ -94,11 +94,11 @@ export default async function handler(req, res) {
       return getPostContent(res, headers, path)
     }
 
-    // default: list all posts (public)
-    return listPosts(res, headers)
+    // default: list all posts (with optional search filter)
+    return listPosts(res, headers, String(search || ''), String(category || ''))
   }
 
-  // POST — create or restore
+  // POST — create, restore, restore, or batch
   if (req.method === 'POST') {
     const { action } = req.body || {}
     if (action === 'rebuild') {
@@ -106,6 +106,12 @@ export default async function handler(req, res) {
     }
     if (action === 'restore') {
       return restorePost(res, headers, req.body)
+    }
+    if (action === 'batch_delete') {
+      return batchDelete(res, headers, req.body)
+    }
+    if (action === 'batch_move') {
+      return batchMove(res, headers, req.body)
     }
     return createPost(res, headers, req.body)
   }
@@ -138,7 +144,7 @@ async function githubRequest(path, headers, method = 'GET', body = null) {
   return response
 }
 
-async function listPosts(res, headers) {
+async function listPosts(res, headers, search = '', category = '') {
   try {
     const allPosts = []
 
@@ -172,11 +178,11 @@ async function listPosts(res, headers) {
       await scanDirectory(`blog/${category}`, category)
     }
 
-    // 逐个读取 front matter 提取 date（并发，5个一组避免速率限制）
+    // 逐个读取 front matter 提取 date、title、tags（并发，5个一组避免速率限制）
     const batchSize = 5
     for (let i = 0; i < allPosts.length; i += batchSize) {
       const batch = allPosts.slice(i, i + batchSize)
-      const results = await Promise.allSettled(
+      await Promise.allSettled(
         batch.map(async (post) => {
           try {
             const fileRes = await githubRequest(
@@ -187,9 +193,11 @@ async function listPosts(res, headers) {
             const fileData = await fileRes.json()
             const content = Buffer.from(fileData.content, 'base64').toString('utf-8')
             const dateMatch = content.match(/^---[\s\S]*?date:\s*['"]?(\d{4}[-/]\d{2}[-/]\d{2})/)
-            if (dateMatch) {
-              post.date = dateMatch[1].replace(/\//g, '-')
-            }
+            const titleMatch = content.match(/^---[\s\S]*?title:\s*['"]?([^\n'"]+)/)
+            const tagsMatch = content.match(/^---[\s\S]*?tags:\s*\[([^\]]+)\]/m) || content.match(/^---[\s\S]*?tags:\s*['"]([^'"]+)['"]/m)
+            if (dateMatch) post.date = dateMatch[1].replace(/\//g, '-')
+            if (titleMatch) post.title = titleMatch[1].trim()
+            if (tagsMatch) post.tags = tagsMatch[1].split(',').map(t => t.trim().replace(/['"]/g, ''))
           } catch { }
         })
       )
@@ -197,7 +205,21 @@ async function listPosts(res, headers) {
 
     // 按 date 倒序（最新在前），无日期的排最后
     allPosts.sort((a, b) => (b.date || '').localeCompare(a.date || ''))
-    return res.status(200).json({ posts: allPosts })
+
+    // 过滤
+    let filtered = allPosts
+    if (category) {
+      filtered = filtered.filter(p => p.category === category)
+    }
+    if (search) {
+      const q = search.toLowerCase()
+      filtered = filtered.filter(p =>
+        (p.title || p.name).toLowerCase().includes(q) ||
+        (p.tags || []).some(t => t.toLowerCase().includes(q))
+      )
+    }
+
+    return res.status(200).json({ posts: filtered, total: allPosts.length })
   } catch (error) {
     console.error('List posts error:', error)
     return res.status(500).json({ error: '获取文章列表失败', details: error.message })
@@ -480,6 +502,75 @@ async function restorePost(res, headers, body) {
     return res.status(500).json({ error: '恢复失败', details: error.message })
   }
 }
+
+async function batchDelete(res, headers, body) {
+  const { paths, permanent } = body || {}
+  if (!paths || !Array.isArray(paths) || paths.length === 0) {
+    return res.status(400).json({ error: 'paths 为必填数组' })
+  }
+
+  const TRASH_DIR = 'blog/_trash'
+  const results = []
+
+  for (const p of paths) {
+    try {
+      const path = p.path || p
+      const fileName = path.split('/').pop()
+      if (permanent) {
+        const getRes = await githubRequest(`/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${path}`, headers)
+        if (getRes.ok) {
+          const data = await getRes.json()
+          await githubRequest(`/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${path}`, headers, 'DELETE', { message: `docs: 批量永久删除 ${fileName}`, sha: data.sha, branch: GITHUB_BRANCH })
+          results.push(fileName)
+        }
+      } else {
+        const getRes = await githubRequest(`/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${path}`, headers)
+        if (getRes.ok) {
+          const data = await getRes.json()
+          const content = Buffer.from(data.content, 'base64').toString('utf-8')
+          const targetPath = `${TRASH_DIR}/${Date.now()}_${fileName}`
+          await githubRequest(`/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${targetPath}`, headers, 'PUT', { message: `docs: 批量移入回收站 ${fileName}`, content: Buffer.from(content).toString('base64'), branch: GITHUB_BRANCH })
+          await githubRequest(`/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${path}`, headers, 'DELETE', { message: `docs: 批量移入回收站后删除 ${fileName}`, sha: data.sha, branch: GITHUB_BRANCH })
+          results.push(fileName)
+        }
+      }
+    } catch { }
+  }
+
+  return res.status(200).json({ message: `已删除 ${results.length} 篇文章`, deleted: results })
+}
+
+async function batchMove(res, headers, body) {
+  const { paths, targetCategory } = body || {}
+  if (!paths || !Array.isArray(paths) || paths.length === 0) {
+    return res.status(400).json({ error: 'paths 为必填数组' })
+  }
+  if (!targetCategory || !VALID_CATEGORIES.includes(targetCategory)) {
+    return res.status(400).json({ error: 'targetCategory 无效' })
+  }
+
+  const results = []
+
+  for (const p of paths) {
+    try {
+      const path = p.path || p
+      const fileName = path.split('/').pop()
+      const targetPath = `blog/${targetCategory}/${fileName}`
+      const getRes = await githubRequest(`/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${path}`, headers)
+      if (getRes.ok) {
+        const data = await getRes.json()
+        const content = Buffer.from(data.content, 'base64').toString('utf-8')
+        await githubRequest(`/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${targetPath}`, headers, 'PUT', { message: `docs: 批量移动 ${fileName} 到 ${targetCategory}`, content: Buffer.from(content).toString('base64'), branch: GITHUB_BRANCH })
+        await githubRequest(`/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${path}`, headers, 'DELETE', { message: `docs: 移动后删除原文件 ${fileName}`, sha: data.sha, branch: GITHUB_BRANCH })
+        results.push(fileName)
+      }
+    } catch { }
+  }
+
+  return res.status(200).json({ message: `已移动 ${results.length} 篇文章到 ${CATEGORY_LABELS[targetCategory]}`, moved: results })
+}
+
+const CATEGORY_LABELS = { ai: 'AI / 人工智能', develop: '开发笔记', program: '编程技术', project: '项目分享', lifestyle: '生活随笔', trade: '交易理财', reference: '参考资料' }
 
 async function triggerRebuild(res, token) {
   // Trigger Vercel redeploy via Vercel API

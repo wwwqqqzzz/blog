@@ -770,3 +770,86 @@ html[data-theme='dark'] .admin-post-item {
 html[data-theme='dark'] .admin-tab.active {
   border-bottom-color: var(--ifm-color-primary);
 }
+
+.admin-post-header-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.admin-filters {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.admin-search {
+  flex: 1;
+  max-width: 300px;
+}
+
+.admin-batch-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  background: var(--ifm-color-primary-lightest);
+  border-radius: 6px;
+  margin-bottom: 0.75rem;
+  color: var(--ifm-color-primary);
+  font-weight: 500;
+}
+
+.admin-checkbox {
+  width: 16px;
+  height: 16px;
+  margin-right: 0.5rem;
+  cursor: pointer;
+}
+
+.admin-post-item.selected {
+  border-color: var(--ifm-color-primary);
+  background: var(--ifm-color-primary-lightest);
+}
+
+.admin-post-title {
+  font-weight: 500;
+  color: var(--ifm-text-color);
+}
+
+.admin-post-date {
+  font-size: 0.75rem;
+  color: var(--ifm-color-secondary);
+}
+
+.admin-post-tags {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.admin-tag {
+  font-size: 0.65rem;
+  padding: 0.1rem 0.35rem;
+  background: rgba(18, 175, 250, 0.15);
+  color: var(--ifm-color-primary);
+  border-radius: 3px;
+}
+
+.admin-editor-split {
+  display: flex;
+  gap: 1rem;
+  flex: 1;
+  min-height: 300px;
+}
+
+.admin-editor-split .admin-textarea {
+  flex: 1;
+}
+
+.admin-preview {
+  flex: 1;
+  padding: 1rem;
+  border: 1px solid var(--ifm-border-color);
+  border-radius: 6px;
+  background: var(--ifm-card-background-color);
+  overflow: auto;
+}
