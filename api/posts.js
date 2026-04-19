@@ -357,139 +357,108 @@ async function updatePost(res, headers, body) {
   }
 }
 
-async function deletePost(res, headers, body) {
-  const { path, sha, commitMessage, permanent } = body || {}
-
-  if (!path) {
-    return res.status(400).json({ error: 'path 为必填项' })
-  }
-
-  const fileName = path.split('/').pop()
-
-  // Get file info
-  let fileSha = sha
-  let fileContent = ''
-  if (!fileSha) {
-    const getResponse = await githubRequest(
-      `/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${path}`,
+async function getDeletedList(headers) {
+  try {
+    const res = await githubRequest(
+      `/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/blog/_deleted.json`,
       headers
     )
-    if (!getResponse.ok) {
-      const data = await getResponse.json()
-      return res.status(getResponse.status).json({ error: '获取文件SHA失败', details: data.message })
-    }
-    const getData = await getResponse.json()
-    fileSha = getData.sha
-    fileContent = Buffer.from(getData.content, 'base64').toString('utf-8')
+    if (!res.ok) return { list: [], sha: null }
+    const data = await res.json()
+    return { list: JSON.parse(Buffer.from(data.content, 'base64').toString('utf-8')), sha: data.sha }
+  } catch {
+    return { list: [], sha: null }
   }
+}
+
+async function saveDeletedList(headers, list, sha) {
+  const content = Buffer.from(JSON.stringify(list, null, 2)).toString('base64')
+  const body = { message: 'docs: 更新回收站列表', content, branch: GITHUB_BRANCH }
+  if (sha) body.sha = sha
+  const res = await githubRequest(
+    `/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/blog/_deleted.json`,
+    headers,
+    'PUT',
+    body
+  )
+  return res
+}
+
+async function deletePost(res, headers, body) {
+  const { path, permanent } = body || {}
+  if (!path) return res.status(400).json({ error: 'path 为必填项' })
+  const fileName = path.split('/').pop()
 
   try {
     if (permanent) {
-      const message = commitMessage || `docs: 永久删除文章 ${fileName}`
-      const response = await githubRequest(
-        `/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${path}`,
-        headers,
-        'DELETE',
-        { message, sha: fileSha, branch: GITHUB_BRANCH }
-      )
-      if (!response.ok) {
-        const data = await response.json()
-        return res.status(response.status).json({ error: '永久删除失败', details: data.message })
-      }
+      // 真正删除：先从 _deleted.json 移除，再删除文件
+      const { list, sha } = await getDeletedList(headers)
+      const newList = list.filter(p => p.path !== path)
+      await saveDeletedList(headers, newList, sha)
+
+      const getRes = await githubRequest(`/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${path}`, headers)
+      if (!getRes.ok) return res.status(getRes.status).json({ error: '获取文件失败' })
+      const fileData = await getRes.json()
+      await githubRequest(`/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${path}`, headers, 'DELETE', {
+        message: `docs: 永久删除文章 ${fileName}`, sha: fileData.sha, branch: GITHUB_BRANCH
+      })
       return res.status(200).json({ message: '文章已永久删除' })
     } else {
-      // 标记删除：在 front matter closing --- 前添加 deleted: true
-      let content = fileContent || ''
-      const fmEnd = content.match(/^---\s*$/m)
-      if (fmEnd && content.indexOf('---') === 0) {
-        const firstLineEnd = content.indexOf('\n') + 1
-        const secondDashStart = content.indexOf('---', firstLineEnd)
-        if (secondDashStart > firstLineEnd) {
-          content = content.slice(0, secondDashStart) + 'deleted: true\n' + content.slice(secondDashStart)
-        } else {
-          content = `---\ndeleted: true\n---\n\n${content}`
-        }
-      } else {
-        content = `---\ndeleted: true\n---\n\n${content}`
+      // 软删除：只往 _deleted.json 加一条记录，不动文章
+      const { list, sha } = await getDeletedList(headers)
+      if (list.some(p => p.path === path)) {
+        return res.status(200).json({ message: '文章已在回收站中' })
       }
-      const message = commitMessage || `docs: 移入回收站 ${fileName}`
-      const response = await githubRequest(
-        `/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${path}`,
-        headers,
-        'PUT',
-        { message, content: Buffer.from(content).toString('base64'), sha: fileSha, branch: GITHUB_BRANCH }
-      )
-      if (!response.ok) {
-        const data = await response.json()
-        return res.status(response.status).json({ error: '标记删除失败', details: data.message })
+      list.push({ path, deletedAt: Date.now() })
+      const saveRes = await saveDeletedList(headers, list, sha)
+      if (!saveRes.ok) {
+        const data = await saveRes.json()
+        return res.status(saveRes.status).json({ error: '标记删除失败', details: data.message })
       }
       return res.status(200).json({ message: '文章已移入回收站' })
     }
   } catch (error) {
-    console.error('Delete post error:', error)
+    console.error('Delete error:', error)
     return res.status(500).json({ error: '删除失败', details: error.message })
   }
 }
 
 async function listTrash(res, headers) {
   try {
-    // 复用 listPosts 获取所有文章，然后筛选 deleted: true
-    const allPosts = []
-    async function scanTrash(dirPath, cat) {
-      try {
-        const response = await githubRequest(
-          `/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${dirPath}`,
-          headers
-        )
-        if (!response.ok) return
-        const contents = await response.json()
-        for (const item of Array.isArray(contents) ? contents : []) {
-          if (item.type === 'file' && item.name.endsWith('.md')) {
-            allPosts.push({ name: item.name, path: item.path, category: cat, sha: item.sha })
-          } else if (item.type === 'dir' && item.name !== 'assets' && item.name !== '_trash') {
-            await scanTrash(item.path, cat)
-          }
-        }
-      } catch { }
-    }
-    for (const category of VALID_CATEGORIES) {
-      await scanTrash(`blog/${category}`, category)
-    }
+    const { list } = await getDeletedList(headers)
+    if (!list.length) return res.status(200).json({ posts: [] })
 
-    // 只返回 deleted: true 的文章
-    const trashPosts = []
+    // 批量取文章元数据
+    const posts = []
     const batchSize = 5
-    for (let i = 0; i < allPosts.length; i += batchSize) {
-      const batch = allPosts.slice(i, i + batchSize)
-      await Promise.allSettled(
-        batch.map(async (post) => {
-          try {
-            const fileRes = await githubRequest(
-              `/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${post.path}`,
-              headers
-            )
-            if (!fileRes.ok) return
-            const fileData = await fileRes.json()
-            const content = Buffer.from(fileData.content, 'base64').toString('utf-8')
-            const deletedMatch = content.match(/^---[\s\S]*?deleted:\s*true/m)
-            if (deletedMatch) {
-              const titleMatch = content.match(/^---[\s\S]*?title:\s*['"]?([^\n'"]+)/)
-              const dateMatch = content.match(/^---[\s\S]*?date:\s*['"]?(\d{4}[-/]\d{2}[-/]\d{2})/)
-              trashPosts.push({
-                name: post.name,
-                path: post.path,
-                category: post.category,
-                title: titleMatch ? titleMatch[1].trim() : post.name,
-                date: dateMatch ? dateMatch[1].replace(/\//g, '-') : '',
-              })
-            }
-          } catch { }
-        })
-      )
+    for (let i = 0; i < list.length; i += batchSize) {
+      const batch = list.slice(i, i + batchSize)
+      await Promise.allSettled(batch.map(async (item) => {
+        try {
+          const fileRes = await githubRequest(
+            `/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${item.path}`,
+            headers
+          )
+          if (!fileRes.ok) return
+          const fileData = await fileRes.json()
+          const content = Buffer.from(fileData.content, 'base64').toString('utf-8')
+          const titleMatch = content.match(/^---[\s\S]*?title:\s*['"]?([^\n'"]+)/)
+          const dateMatch = content.match(/^---[\s\S]*?date:\s*['"]?(\d{4}[-/]\d{2}[-/]\d{2})/)
+          const cat = item.path.split('/')[1] || ''
+          posts.push({
+            name: item.path.split('/').pop(),
+            path: item.path,
+            category: cat,
+            title: titleMatch ? titleMatch[1].trim() : item.path.split('/').pop(),
+            date: dateMatch ? dateMatch[1].replace(/\//g, '-') : '',
+            deletedAt: item.deletedAt,
+          })
+        } catch { }
+      }))
     }
 
-    trashPosts.sort((a, b) => (b.date || '').localeCompare(a.date || ''))
-    return res.status(200).json({ posts: trashPosts })
+    posts.sort((a, b) => (b.deletedAt || 0) - (a.deletedAt || 0))
+    return res.status(200).json({ posts })
   } catch {
     return res.status(200).json({ posts: [] })
   }
@@ -497,37 +466,19 @@ async function listTrash(res, headers) {
 
 async function restorePost(res, headers, body) {
   const { path } = body || {}
-  if (!path) {
-    return res.status(400).json({ error: 'path 为必填项' })
-  }
+  if (!path) return res.status(400).json({ error: 'path 为必填项' })
 
   try {
-    const getResponse = await githubRequest(
-      `/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${path}`,
-      headers
-    )
-    if (!getResponse.ok) {
-      return res.status(getResponse.status).json({ error: '获取文件失败', details: (await getResponse.json()).message })
+    const { list, sha } = await getDeletedList(headers)
+    const newList = list.filter(p => p.path !== path)
+    if (newList.length === list.length) {
+      return res.status(200).json({ message: '文章不在回收站中' })
     }
-    const getData = await getResponse.json()
-    let content = Buffer.from(getData.content, 'base64').toString('utf-8')
-
-    // 去掉 deleted: true 行
-    content = content.replace(/^deleted:\s*true\r?\n?/m, '')
-
-    const fileName = path.split('/').pop()
-    const message = `docs: 恢复文章 ${fileName}`
-    const putResponse = await githubRequest(
-      `/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${path}`,
-      headers,
-      'PUT',
-      { message, content: Buffer.from(content).toString('base64'), sha: getData.sha, branch: GITHUB_BRANCH }
-    )
-    if (!putResponse.ok) {
-      const data = await putResponse.json()
-      return res.status(putResponse.status).json({ error: '恢复失败', details: data.message })
+    const saveRes = await saveDeletedList(headers, newList, sha)
+    if (!saveRes.ok) {
+      const data = await saveRes.json()
+      return res.status(saveRes.status).json({ error: '恢复失败', details: data.message })
     }
-
     return res.status(200).json({ message: '文章已恢复' })
   } catch (error) {
     console.error('Restore error:', error)
@@ -542,32 +493,29 @@ async function batchDelete(res, headers, body) {
   }
 
   const results = []
-
-  for (const p of paths) {
-    try {
-      const path = p.path || p
-      const fileName = path.split('/').pop()
-      const getRes = await githubRequest(`/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${path}`, headers)
-      if (getRes.ok) {
-        const data = await getRes.json()
-        const content = Buffer.from(data.content, 'base64').toString('utf-8')
-        if (permanent) {
+  if (permanent) {
+    for (const p of paths) {
+      try {
+        const path = p.path || p
+        const fileName = path.split('/').pop()
+        const getRes = await githubRequest(`/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${path}`, headers)
+        if (getRes.ok) {
+          const data = await getRes.json()
           await githubRequest(`/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${path}`, headers, 'DELETE', { message: `docs: 批量永久删除 ${fileName}`, sha: data.sha, branch: GITHUB_BRANCH })
           results.push(fileName)
-        } else {
-          let newContent = content
-          const firstLineEnd = newContent.indexOf('\n') + 1
-          const secondDashStart = newContent.indexOf('---', firstLineEnd)
-          if (secondDashStart > firstLineEnd) {
-            newContent = newContent.slice(0, secondDashStart) + 'deleted: true\n' + newContent.slice(secondDashStart)
-          } else {
-            newContent = `---\ndeleted: true\n---\n\n${newContent}`
-          }
-          await githubRequest(`/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${path}`, headers, 'PUT', { message: `docs: 批量移入回收站 ${fileName}`, content: Buffer.from(newContent).toString('base64'), sha: data.sha, branch: GITHUB_BRANCH })
-          results.push(fileName)
         }
+      } catch { }
+    }
+  } else {
+    const { list, sha } = await getDeletedList(headers)
+    for (const p of paths) {
+      const path = p.path || p
+      if (!list.some(item => item.path === path)) {
+        list.push({ path, deletedAt: Date.now() })
+        results.push(path.split('/').pop())
       }
-    } catch { }
+    }
+    if (results.length) await saveDeletedList(headers, list, sha)
   }
 
   return res.status(200).json({ message: `已删除 ${results.length} 篇文章`, deleted: results })

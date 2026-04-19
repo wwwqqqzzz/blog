@@ -750,6 +750,7 @@ interface TrashItem {
   category: string
   title?: string
   date?: string
+  deletedAt?: number
 }
 
 function TrashManager({ token, isDev }: { token: string; isDev: boolean }): JSX.Element {
