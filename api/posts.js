@@ -495,6 +495,10 @@ async function restorePost(res, headers, body) {
 
     const catMatch = content.match(/original_category:\s*(\w+)/)
     const originalCat = catMatch ? catMatch[1] : (targetCategory || 'develop')
+    let cleanContent = content.replace(/<!-- original_category:\s*\w+\s*-->$/m, '').trim()
+    if (!cleanContent) {
+      return res.status(500).json({ error: '文件内容为空' })
+    }
     if (!VALID_CATEGORIES.includes(originalCat)) {
       return res.status(400).json({ error: '原分类无效' })
     }
@@ -505,7 +509,7 @@ async function restorePost(res, headers, body) {
       `/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${targetPath}`,
       headers,
       'PUT',
-      { message, content: Buffer.from(content).toString('base64'), branch: GITHUB_BRANCH }
+      { message, content: Buffer.from(cleanContent).toString('base64'), branch: GITHUB_BRANCH }
     )
     if (!putResponse.ok) {
       return res.status(putResponse.status).json({ error: '恢复失败', details: (await putResponse.json()).message })
