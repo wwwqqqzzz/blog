@@ -853,3 +853,16 @@ html[data-theme='dark'] .admin-tab.active {
   background: var(--ifm-card-background-color);
   overflow: auto;
 }
+
+.admin-preview-full {
+  padding: 1rem;
+  border: 1px solid var(--ifm-border-color);
+  border-radius: 6px;
+  background: var(--ifm-card-background-color);
+  overflow: auto;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  font-size: 0.85rem;
+  line-height: 1.6;
+  max-height: 70vh;
+}

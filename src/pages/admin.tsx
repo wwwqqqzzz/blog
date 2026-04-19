@@ -757,6 +757,8 @@ function TrashManager({ token, isDev }: { token: string; isDev: boolean }): JSX.
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [msg, setMsg] = useState('')
+  const [viewPath, setViewPath] = useState('')
+  const [viewContent, setViewContent] = useState('')
 
   const fetchTrash = useCallback(async () => {
     setLoading(true)
@@ -774,6 +776,21 @@ function TrashManager({ token, isDev }: { token: string; isDev: boolean }): JSX.
 
   useEffect(() => { if (!isDev) fetchTrash() }, [isDev])
 
+  const handleView = async (post: TrashItem) => {
+    setLoading(true)
+    try {
+      const res = await fetch(`/api/posts?path=${encodeURIComponent(post.path)}&token=${encodeURIComponent(token)}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      if (!res.ok) { setError('获取内容失败'); return }
+      const data = await res.json()
+      const bodyMatch = data.content.match(/^---\n[\s\S]*?\n---\n([\s\S]*)/)
+      setViewContent(bodyMatch ? bodyMatch[1] : data.content)
+      setViewPath(post.path)
+    } catch { setError('网络错误') }
+    finally { setLoading(false) }
+  }
+
   const handleRestore = async (post: TrashItem) => {
     setLoading(true)
     try {
@@ -784,6 +801,7 @@ function TrashManager({ token, isDev }: { token: string; isDev: boolean }): JSX.
       })
       if (!res.ok) { const data = await res.json(); setError(data.error || '恢复失败'); return }
       setMsg('文章已恢复')
+      setViewPath('')
       fetchTrash()
     } catch { setError('网络错误') }
     finally { setLoading(false) }
@@ -800,6 +818,7 @@ function TrashManager({ token, isDev }: { token: string; isDev: boolean }): JSX.
       })
       if (!res.ok) { const data = await res.json(); setError(data.error || '删除失败'); return }
       setMsg('已永久删除')
+      setViewPath('')
       fetchTrash()
     } catch { setError('网络错误') }
     finally { setLoading(false) }
@@ -814,29 +833,42 @@ function TrashManager({ token, isDev }: { token: string; isDev: boolean }): JSX.
       {error && <div className="admin-error">{error}</div>}
       {msg && <div className="admin-success-msg" onClick={() => setMsg('')}>{msg} ✕</div>}
 
-      <div className="admin-post-header">
-        <h3>🗑️ 回收站 ({posts.length})</h3>
-        <button onClick={fetchTrash} className="admin-btn admin-btn-sm">刷新</button>
-      </div>
+      {viewPath ? (
+        <div className="admin-editor">
+          <div className="admin-editor-header">
+            <button onClick={() => { setViewPath(''); setViewContent('') }} className="admin-btn admin-btn-sm">← 返回列表</button>
+            <h3>查看文章</h3>
+          </div>
+          <pre className="admin-preview-full">{viewContent}</pre>
+        </div>
+      ) : (
+        <>
+          <div className="admin-post-header">
+            <h3>🗑️ 回收站 ({posts.length})</h3>
+            <button onClick={fetchTrash} className="admin-btn admin-btn-sm">刷新</button>
+          </div>
 
-      {loading && !posts.length ? <p className="admin-hint">加载中...</p>
-        : posts.length === 0 ? <p className="admin-hint">回收站为空</p>
-          : <div className="admin-post-list">
-              {posts.map(p => (
-                <div key={p.path} className="admin-post-item">
-                  <div className="admin-post-info">
-                    <span className="admin-post-category">{CATEGORY_LABELS[p.category] || p.category}</span>
-                    <span className="admin-post-title">{p.title || p.name}</span>
-                    <span className="admin-post-date">{p.date || '-'}</span>
-                  </div>
-                  <div className="admin-post-actions">
-                    <button onClick={() => handleRestore(p)} className="admin-btn admin-btn-primary">恢复</button>
-                    <button onClick={() => handlePermanentDelete(p)} className="admin-btn admin-btn-danger admin-btn-xs">永久删除</button>
-                  </div>
+          {loading && !posts.length ? <p className="admin-hint">加载中...</p>
+            : posts.length === 0 ? <p className="admin-hint">回收站为空</p>
+              : <div className="admin-post-list">
+                  {posts.map(p => (
+                    <div key={p.path} className="admin-post-item">
+                      <div className="admin-post-info">
+                        <span className="admin-post-category">{CATEGORY_LABELS[p.category] || p.category}</span>
+                        <span className="admin-post-title">{p.title || p.name}</span>
+                        <span className="admin-post-date">{p.date || '-'}</span>
+                      </div>
+                      <div className="admin-post-actions">
+                        <button onClick={() => handleView(p)} className="admin-btn admin-btn-edit">查看</button>
+                        <button onClick={() => handleRestore(p)} className="admin-btn admin-btn-primary">恢复</button>
+                        <button onClick={() => handlePermanentDelete(p)} className="admin-btn admin-btn-danger admin-btn-xs">永久删除</button>
+                      </div>
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
-      }
+          }
+        </>
+      )}
     </div>
   )
 }

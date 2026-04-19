@@ -398,10 +398,17 @@ async function deletePost(res, headers, body) {
       }
       return res.status(200).json({ message: '文章已永久删除' })
     } else {
-      // 标记删除：在 front matter 中添加 deleted: true
+      // 标记删除：在 front matter closing --- 前添加 deleted: true
       let content = fileContent || ''
-      if (content.match(/^---\r?\n/)) {
-        content = content.replace(/^---\r?\n/, `---\ndeleted: true\n`)
+      const fmEnd = content.match(/^---\s*$/m)
+      if (fmEnd && content.indexOf('---') === 0) {
+        const firstLineEnd = content.indexOf('\n') + 1
+        const secondDashStart = content.indexOf('---', firstLineEnd)
+        if (secondDashStart > firstLineEnd) {
+          content = content.slice(0, secondDashStart) + 'deleted: true\n' + content.slice(secondDashStart)
+        } else {
+          content = `---\ndeleted: true\n---\n\n${content}`
+        }
       } else {
         content = `---\ndeleted: true\n---\n\n${content}`
       }
@@ -549,8 +556,10 @@ async function batchDelete(res, headers, body) {
           results.push(fileName)
         } else {
           let newContent = content
-          if (newContent.match(/^---\r?\n/)) {
-            newContent = newContent.replace(/^---\r?\n/, `---\ndeleted: true\n`)
+          const firstLineEnd = newContent.indexOf('\n') + 1
+          const secondDashStart = newContent.indexOf('---', firstLineEnd)
+          if (secondDashStart > firstLineEnd) {
+            newContent = newContent.slice(0, secondDashStart) + 'deleted: true\n' + newContent.slice(secondDashStart)
           } else {
             newContent = `---\ndeleted: true\n---\n\n${newContent}`
           }
