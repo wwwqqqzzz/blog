@@ -1,5 +1,4 @@
 ---
 deleted: true
-deleted: true
 ---
 
