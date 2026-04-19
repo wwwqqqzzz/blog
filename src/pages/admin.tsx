@@ -748,6 +748,7 @@ interface TrashItem {
   name: string
   path: string
   deletedAt: string
+  originalCategory?: string
 }
 
 function TrashManager({ token, isDev }: { token: string; isDev: boolean }): JSX.Element {
@@ -766,7 +767,11 @@ function TrashManager({ token, isDev }: { token: string; isDev: boolean }): JSX.
       })
       if (!res.ok) { setError('获取失败'); return }
       const data = await res.json()
-      setPosts(data.posts || [])
+      const items = data.posts || []
+      setPosts(items)
+      if (items.length > 0 && items[0].originalCategory) {
+        setRestoreCat(items[0].originalCategory)
+      }
     } catch { setError('网络错误') }
     finally { setLoading(false) }
   }, [token])

@@ -167,7 +167,7 @@ async function listPosts(res, headers, search = '', category = '') {
               size: item.size,
               date: '',
             })
-          } else if (item.type === 'dir' && item.name !== 'assets') {
+          } else if (item.type === 'dir' && item.name !== 'assets' && item.name !== '_trash') {
             await scanDirectory(item.path, cat)
           }
         }
@@ -437,14 +437,29 @@ async function listTrash(res, headers) {
       return res.status(200).json({ posts: [] })
     }
     const contents = await response.json()
-    const posts = (Array.isArray(contents) ? contents : [])
+    const items = (Array.isArray(contents) ? contents : [])
       .filter(item => item.type === 'file' && item.name.endsWith('.md'))
-      .map(item => ({
-        name: item.name.replace(/^\d+_/, ''),
-        path: item.path,
-        sha: item.sha,
-        deletedAt: item.name.split('_')[0],
-      }))
+
+    const posts = []
+    for (const item of items) {
+      try {
+        const fileRes = await githubRequest(
+          `/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${item.path}`,
+          headers
+        )
+        if (!fileRes.ok) continue
+        const fileData = await fileRes.json()
+        const content = Buffer.from(fileData.content, 'base64').toString('utf-8')
+        const categoryMatch = content.match(/^---[\s\S]*?authors:\s*['"]?(\w+)/m)
+        posts.push({
+          name: item.name.replace(/^\d+_/, ''),
+          path: item.path,
+          sha: item.sha,
+          deletedAt: item.name.split('_')[0],
+          originalCategory: categoryMatch ? categoryMatch[1] : 'develop',
+        })
+      } catch { }
+    }
     return res.status(200).json({ posts })
   } catch {
     return res.status(200).json({ posts: [] })
