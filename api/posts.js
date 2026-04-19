@@ -396,13 +396,15 @@ async function deletePost(res, headers, body) {
       }
       return res.status(200).json({ message: '文章已永久删除' })
     } else {
-      // 移动到回收站
+      // 移动到回收站，提取原分类
+      const originalCategory = path.split('/')[1] || 'develop'
+      const trashContent = (fileContent || '') + `\n\n<!-- original_category: ${originalCategory} -->`
       const message = commitMessage || `docs: 移入回收站 ${fileName}`
       const response = await githubRequest(
         `/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${targetPath}`,
         headers,
         'PUT',
-        { message, content: Buffer.from(fileContent || '').toString('base64'), branch: GITHUB_BRANCH }
+        { message, content: Buffer.from(trashContent).toString('base64'), branch: GITHUB_BRANCH }
       )
       if (!response.ok) {
         const data = await response.json()
@@ -450,7 +452,7 @@ async function listTrash(res, headers) {
         if (!fileRes.ok) continue
         const fileData = await fileRes.json()
         const content = Buffer.from(fileData.content, 'base64').toString('utf-8')
-        const categoryMatch = content.match(/^---[\s\S]*?authors:\s*['"]?(\w+)/m)
+        const categoryMatch = content.match(/original_category:\s*(\w+)/)
         posts.push({
           name: item.name.replace(/^\d+_/, ''),
           path: item.path,
