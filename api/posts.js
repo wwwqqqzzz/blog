@@ -400,8 +400,8 @@ async function deletePost(res, headers, body) {
     } else {
       // 标记删除：在 front matter 中添加 deleted: true
       let content = fileContent || ''
-      if (content.match(/^---/)) {
-        content = content.replace(/^---\n/, `---\ndeleted: true\n`)
+      if (content.match(/^---\r?\n/)) {
+        content = content.replace(/^---\r?\n/, `---\ndeleted: true\n`)
       } else {
         content = `---\ndeleted: true\n---\n\n${content}`
       }
@@ -506,7 +506,7 @@ async function restorePost(res, headers, body) {
     let content = Buffer.from(getData.content, 'base64').toString('utf-8')
 
     // 去掉 deleted: true 行
-    content = content.replace(/^deleted:\s*true\n?/m, '')
+    content = content.replace(/^deleted:\s*true\r?\n?/m, '')
 
     const fileName = path.split('/').pop()
     const message = `docs: 恢复文章 ${fileName}`
@@ -549,8 +549,8 @@ async function batchDelete(res, headers, body) {
           results.push(fileName)
         } else {
           let newContent = content
-          if (newContent.match(/^---/)) {
-            newContent = newContent.replace(/^---\n/, `---\ndeleted: true\n`)
+          if (newContent.match(/^---\r?\n/)) {
+            newContent = newContent.replace(/^---\r?\n/, `---\ndeleted: true\n`)
           } else {
             newContent = `---\ndeleted: true\n---\n\n${newContent}`
           }
