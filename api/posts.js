@@ -89,6 +89,11 @@ export default async function handler(req, res) {
       return listPosts(res, headers)
     }
 
+    // list trash
+    if (action === 'list_trash') {
+      return listTrash(res, headers)
+    }
+
     // get single post content
     if (path) {
       return getPostContent(res, headers, path)
