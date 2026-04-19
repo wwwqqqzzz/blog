@@ -1,3 +1,4 @@
 ---
+deleted: true
 ---
 
