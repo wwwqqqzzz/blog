@@ -527,16 +527,16 @@ function PostManager({ token, isDev }: { token: string; isDev: boolean }): JSX.E
   }
 
   const handleDelete = async (post: PostInfo) => {
-    if (!confirm(`确定删除文章 ${post.name} 吗？此操作将删除 GitHub 仓库中的文件。`)) return
+    if (!confirm(`确定删除文章 ${post.title || post.name} 吗？可从回收站恢复。`)) return
     setLoading(true)
     try {
       const res = await fetch('/api/posts', {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ token, path: post.path, sha: post.sha }),
+        body: JSON.stringify({ token, path: post.path }),
       })
       if (!res.ok) { const data = await res.json(); setError(data.error || '删除失败'); return }
-      setMsg('文章已删除，网站将在几分钟后更新')
+      setMsg('文章已移入回收站')
       fetchPosts()
     } catch { setError('网络错误') }
     finally { setLoading(false) }
@@ -747,8 +747,9 @@ function PostManager({ token, isDev }: { token: string; isDev: boolean }): JSX.E
 interface TrashItem {
   name: string
   path: string
-  deletedAt: string
-  originalCategory?: string
+  category: string
+  title?: string
+  date?: string
 }
 
 function TrashManager({ token, isDev }: { token: string; isDev: boolean }): JSX.Element {
@@ -782,32 +783,26 @@ function TrashManager({ token, isDev }: { token: string; isDev: boolean }): JSX.
         body: JSON.stringify({ token, action: 'restore', path: post.path }),
       })
       if (!res.ok) { const data = await res.json(); setError(data.error || '恢复失败'); return }
-      setMsg(`已恢复到 ${post.originalCategory || '原分类'}`)
+      setMsg('文章已恢复')
       fetchTrash()
     } catch { setError('网络错误') }
     finally { setLoading(false) }
   }
 
   const handlePermanentDelete = async (post: TrashItem) => {
-    if (!confirm(`确定永久删除 ${post.name} 吗？此操作不可恢复！`)) return
+    if (!confirm(`确定永久删除 ${(post.title || post.name)} 吗？此操作不可恢复！`)) return
     setLoading(true)
     try {
       const res = await fetch('/api/posts', {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ token, path: post.path, sha: '', permanent: true }),
+        body: JSON.stringify({ token, path: post.path, permanent: true }),
       })
       if (!res.ok) { const data = await res.json(); setError(data.error || '删除失败'); return }
       setMsg('已永久删除')
       fetchTrash()
     } catch { setError('网络错误') }
     finally { setLoading(false) }
-  }
-
-  function formatDeletedAt(ts: string): string {
-    if (!ts) return ''
-    const d = new Date(parseInt(ts))
-    return d.toLocaleDateString('zh-CN') + ' ' + d.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' })
   }
 
   if (isDev) {
@@ -830,12 +825,13 @@ function TrashManager({ token, isDev }: { token: string; isDev: boolean }): JSX.
               {posts.map(p => (
                 <div key={p.path} className="admin-post-item">
                   <div className="admin-post-info">
-                    <span className="admin-post-name">{p.name.replace(/^\d+_/, '')}</span>
-                    <span className="admin-post-date">{formatDeletedAt(p.deletedAt)}</span>
+                    <span className="admin-post-category">{CATEGORY_LABELS[p.category] || p.category}</span>
+                    <span className="admin-post-title">{p.title || p.name}</span>
+                    <span className="admin-post-date">{p.date || '-'}</span>
                   </div>
                   <div className="admin-post-actions">
                     <button onClick={() => handleRestore(p)} className="admin-btn admin-btn-primary">恢复</button>
-                    <button onClick={() => handlePermanentDelete(p)} className="admin-btn admin-btn-danger admin-btn-xs">删除</button>
+                    <button onClick={() => handlePermanentDelete(p)} className="admin-btn admin-btn-danger admin-btn-xs">永久删除</button>
                   </div>
                 </div>
               ))}

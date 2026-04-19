@@ -11,16 +11,17 @@ async function blogPluginEnhanced(context, options) {
     async contentLoaded({ content, allContent, actions }) {
       // Sort blog with pinned and sticky
       content.blogPosts.sort((a, b) => {
-        // 首先按照 pinned 字段排序
         const isPinnedA = a.metadata.frontMatter.pinned === true
         const isPinnedB = b.metadata.frontMatter.pinned === true
 
         if (isPinnedA && !isPinnedB) return -1
         if (!isPinnedA && isPinnedB) return 1
 
-        // 如果 pinned 状态相同，则按照 sticky 字段排序
         return (b.metadata.frontMatter.sticky || 0) - (a.metadata.frontMatter.sticky || 0)
       })
+
+      // Filter out deleted posts (moved to trash)
+      content.blogPosts = content.blogPosts.filter(post => post.metadata?.frontMatter?.deleted !== true)
 
       // Group posts by postsPerPage
       const groupedPosts = Array.from({ length: Math.ceil(content.blogPosts.length / postsPerPage) }, (_, i) => ({
