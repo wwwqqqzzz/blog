@@ -481,13 +481,6 @@ async function restorePost(res, headers, body) {
 
   const TRASH_DIR = 'blog/_trash'
   const fileName = path.split('/').pop().replace(/^\d+_/, '')
-  const originalName = fileName.replace(/^\d+_/, '')
-
-  if (!VALID_CATEGORIES.includes(targetCategory)) {
-    return res.status(400).json({ error: 'targetCategory 为必填项' })
-  }
-
-  const targetPath = `blog/${targetCategory}/${fileName.replace(/^\d+_/, '')}`
 
   try {
     const getResponse = await githubRequest(
@@ -500,7 +493,14 @@ async function restorePost(res, headers, body) {
     const getData = await getResponse.json()
     const content = Buffer.from(getData.content, 'base64').toString('utf-8')
 
-    const message = `docs: 恢复文章 ${fileName}`
+    const catMatch = content.match(/original_category:\s*(\w+)/)
+    const originalCat = catMatch ? catMatch[1] : (targetCategory || 'develop')
+    if (!VALID_CATEGORIES.includes(originalCat)) {
+      return res.status(400).json({ error: '原分类无效' })
+    }
+
+    const targetPath = `blog/${originalCat}/${fileName}`
+    const message = `docs: 恢复文章 ${fileName} 到 ${originalCat}`
     const putResponse = await githubRequest(
       `/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${targetPath}`,
       headers,

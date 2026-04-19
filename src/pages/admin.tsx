@@ -756,7 +756,6 @@ function TrashManager({ token, isDev }: { token: string; isDev: boolean }): JSX.
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [msg, setMsg] = useState('')
-  const [restoreCat, setRestoreCat] = useState('develop')
 
   const fetchTrash = useCallback(async () => {
     setLoading(true)
@@ -767,11 +766,7 @@ function TrashManager({ token, isDev }: { token: string; isDev: boolean }): JSX.
       })
       if (!res.ok) { setError('获取失败'); return }
       const data = await res.json()
-      const items = data.posts || []
-      setPosts(items)
-      if (items.length > 0 && items[0].originalCategory) {
-        setRestoreCat(items[0].originalCategory)
-      }
+      setPosts(data.posts || [])
     } catch { setError('网络错误') }
     finally { setLoading(false) }
   }, [token])
@@ -784,10 +779,10 @@ function TrashManager({ token, isDev }: { token: string; isDev: boolean }): JSX.
       const res = await fetch('/api/posts', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ token, action: 'restore', path: post.path, targetCategory: restoreCat }),
+        body: JSON.stringify({ token, action: 'restore', path: post.path }),
       })
       if (!res.ok) { const data = await res.json(); setError(data.error || '恢复失败'); return }
-      setMsg('文章已恢复')
+      setMsg(`已恢复到 ${post.originalCategory || '原分类'}`)
       fetchTrash()
     } catch { setError('网络错误') }
     finally { setLoading(false) }
@@ -831,14 +826,7 @@ function TrashManager({ token, isDev }: { token: string; isDev: boolean }): JSX.
 
       {loading && !posts.length ? <p className="admin-hint">加载中...</p>
         : posts.length === 0 ? <p className="admin-hint">回收站为空</p>
-          : <>
-              <div className="admin-filters">
-                <label>恢复到：</label>
-                <select value={restoreCat} onChange={e => setRestoreCat(e.target.value)} className="admin-input">
-                  {CATEGORIES.map(c => <option key={c} value={c}>{CATEGORY_LABELS[c]}</option>)}
-                </select>
-              </div>
-              <div className="admin-post-list">
+          : <div className="admin-post-list">
                 {posts.map(p => (
                   <div key={p.path} className="admin-post-item">
                     <div className="admin-post-info">
