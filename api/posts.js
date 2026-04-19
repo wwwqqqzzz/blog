@@ -495,7 +495,7 @@ async function restorePost(res, headers, body) {
 
     const catMatch = content.match(/original_category:\s*(\w+)/)
     const originalCat = catMatch ? catMatch[1] : (targetCategory || 'develop')
-    let cleanContent = content.replace(/<!-- original_category:\s*\w+\s*-->$/m, '').trim()
+    let cleanContent = content.replace(/<!-- original_category:\s*\w+\s*-->/g, '').replace(/\n{3,}/g, '\n\n').trim()
     if (!cleanContent) {
       return res.status(500).json({ error: '文件内容为空' })
     }
