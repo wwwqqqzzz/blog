@@ -827,20 +827,19 @@ function TrashManager({ token, isDev }: { token: string; isDev: boolean }): JSX.
       {loading && !posts.length ? <p className="admin-hint">加载中...</p>
         : posts.length === 0 ? <p className="admin-hint">回收站为空</p>
           : <div className="admin-post-list">
-                {posts.map(p => (
-                  <div key={p.path} className="admin-post-item">
-                    <div className="admin-post-info">
-                      <span className="admin-post-name">{p.name.replace(/^\d+_/, '')}</span>
-                      <span className="admin-post-date">{formatDeletedAt(p.deletedAt)}</span>
-                    </div>
-                    <div className="admin-post-actions">
-                      <button onClick={() => handleRestore(p)} className="admin-btn admin-btn-primary">恢复</button>
-                      <button onClick={() => handlePermanentDelete(p)} className="admin-btn admin-btn-danger admin-btn-xs">删除</button>
-                    </div>
+              {posts.map(p => (
+                <div key={p.path} className="admin-post-item">
+                  <div className="admin-post-info">
+                    <span className="admin-post-name">{p.name.replace(/^\d+_/, '')}</span>
+                    <span className="admin-post-date">{formatDeletedAt(p.deletedAt)}</span>
                   </div>
-                ))}
-              </div>
-            </>
+                  <div className="admin-post-actions">
+                    <button onClick={() => handleRestore(p)} className="admin-btn admin-btn-primary">恢复</button>
+                    <button onClick={() => handlePermanentDelete(p)} className="admin-btn admin-btn-danger admin-btn-xs">删除</button>
+                  </div>
+                </div>
+              ))}
+            </div>
       }
     </div>
   )
