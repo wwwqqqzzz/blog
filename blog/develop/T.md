@@ -1,4 +1,3 @@
 ---
-deleted: true
 ---
 
